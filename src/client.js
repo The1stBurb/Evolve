@@ -19,6 +19,8 @@ rl.on("line", async (line) => {
 
 // Login to the server. Replace `archipelago.gg:XXXXX` and `Phar` with the address/url and slot name for your room.
 // If no game is provided, client will connect in "TextOnly" mode, which is fine for this example.
-client.login("archipelago.gg:52836", "burb")
+export function login(){
+    client.login("archipelago.gg:52836", "burb")
     .then(() => console.log("Connected to the Archipelago server!"))
     .catch(console.error);
+}

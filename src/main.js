@@ -23,6 +23,8 @@ import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { enableDebug, updateDebugData } from './debug.js';
 
+import {login}from "./client.js"
+
 {
     $(document).ready(function() {
         if (!window.matchMedia)
