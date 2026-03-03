@@ -958,6 +958,7 @@ export function index(){
                 <h2 class="is-sr-only">${loc('message_filters')}</h2>
                 <div id="msgQueueFilters" class="hscroll msgQueueFilters"></div>
                 <h2 class="is-sr-only">${loc('messages')}</h2>
+                <div id="ArchapeligoInput" class="ArchapeligoInput"><form id="commandInpForm"><input type="text" id="commandInput" class="commandInput" placeholder="Type a command"></form></div>
                 <div id="msgQueueLog" aria-live="polite"></div>
             </div>
         </div>
