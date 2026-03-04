@@ -5878,8 +5878,11 @@ export function checkTechRequirements(tech,predList){
     let isMet = true; let precog = false;
 
     let failChecks = {};
+    // console.log(actions.tech.club.arch.locked+" "+(actions.tech[tech].hasOwnProperty('arch') && actions.tech[tech].arch.locked)+" "+(!global.tech[req] || global.tech[req] < actions.tech[tech].reqs[req]||(actions.tech[tech].hasOwnProperty('arch') && actions.tech[tech].arch.locked)))
     Object.keys(actions.tech[tech].reqs).forEach(function (req){
         if (skipRequirement(req, global.tech[req] || 0)){ return; }
+        // if(tech=="club"){
+            // console.log(tech+" "+req+" "+(!global.tech[req] || global.tech[req] < actions.tech[tech].reqs[req]));//}
         if (!global.tech[req] || global.tech[req] < actions.tech[tech].reqs[req]){
             isMet = false;
             failChecks[req] = actions.tech[tech].reqs[req];
@@ -5900,7 +5903,12 @@ export function checkTechRequirements(tech,predList){
             }
         });
     }
+    if(actions.tech[tech].hasOwnProperty('arch') && actions.tech[tech].arch.locked){
+        // console.log(tech,isMet?"ok":"precog")
+        return false;
+    }
     if ((isMet || precog) && (!global.tech[actions.tech[tech].grant[0]] || global.tech[actions.tech[tech].grant[0]] < actions.tech[tech].grant[1])){
+        // if(tech=="club"){console.log("returning "+isMet);return "precog"}
         return isMet ? 'ok' : 'precog';
     }
     return false;

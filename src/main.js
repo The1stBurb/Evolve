@@ -23,7 +23,7 @@ import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { enableDebug, updateDebugData } from './debug.js';
 
-import {login}from "./client.js"
+import { login, initChatModule } from './client.js';
 
 {
     $(document).ready(function() {
@@ -170,11 +170,8 @@ $(document).mousemove(function(e){
 });
 
 index();
-document.getElementById("commandInpForm").addEventListener("submit", function (event) {
-  event.preventDefault(); // prevent page reload
-  console.log(document.getElementById("commandInput").value);
-  this.reset();
-});
+// login();
+initChatModule();
 var revision = global['revision'] ? global['revision'] : '';
 if (global['beta']){
     $('#topBar .version > a').html(`v${global.version} Beta ${global.beta}${revision}`);
