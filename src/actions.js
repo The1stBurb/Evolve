@@ -3469,7 +3469,7 @@ export const actions = {
         },
         shrine: buildTemplate(`shrine`,'city'),
         meditation: buildTemplate(`meditation`,'city'),
-        banquet: {
+        banquet: {  
             id: 'city-banquet',
             title: loc('city_banquet'),
             desc: loc(`city_banquet_desc`),
