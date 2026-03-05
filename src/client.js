@@ -103,6 +103,8 @@ function connectToServer(){
         // connectionOK();
         for(var i=0; i<items.length; i++){
             updateItems(items[i],i);
+            // jsonListener(items[i]);
+            messageQueue(`You recieved '${items[i]}'!`);
         }
         // updateItems(items,index);
         // updateMissingLocations(packet);
@@ -112,7 +114,7 @@ function connectToServer(){
     };
     function jsonListener(text, nodes) {
         console.log(`jsonlistener(${text},EEEEE, ${nodes.toString()})`);
-        console.log(typeof text);
+        // console.log(typeof text);
         // for(const node of nodes){
         //     console.log(node);
         // }
@@ -120,8 +122,21 @@ function connectToServer(){
         // const texts=text.split("\n");
         var msgText=[];
         for(const node of nodes){
-            // if(node.type==)
-            msgText.push(node.text);
+            var nodeTxt=node.text
+            console.log(node.type);
+            if(node.type=="player"){
+                if(node.player.slot==client.players.self.slot){
+                    nodeTxt=`<b>${nodeTxt}</b>`;
+                }
+                else{
+                    nodeTxt=`<i>${nodeTxt}</i>`;
+                }
+            }
+            else if(node.type=="item"){
+                nodeTxt=`<u>${nodeTxt}</u>`;
+            }
+            console.log(nodeTxt);
+            msgText.push(nodeTxt);
         }
         // messageQueue()
         msgText=msgText.join(" ").split("\n");
@@ -290,7 +305,8 @@ function sendCommand(text){
     }
     else if(text.slice(0,5)=="!send"){
         console.log("sending "+text.split(" ").slice(1).join(" "));
-        client.scout([1],1); 
+        client.scout([parseInt(text.split(" ").slice(1).join(" "))],1);
+        // client.messages.say();
         // sendMsg({"cmd": 'LocationChecks', "locations": text.split(" ").slice(1).join(" ")})
         return
     }
@@ -310,3 +326,4 @@ export function initChatModule(){
       this.reset();
     });
 }
+// fanaticism (Player 1), mythology (Player 1), oil_well (Player 1), iron_saw (Player 1), mining (Player 1), warehouse (Player 1), large_trades (Player 1), mercs (Player 1), stock_market (Player 1), iron_pickaxe (Player 1), iron_sledgehammer (Player 1), steel_saw (Player 1), eebonds (Player 1), tax_rates (Player 1), windmill (Player 1), electricity (Player 1), barns (Player 1), kroll_process (Player 1), freight (Player 1), playwright (Player 1), storage (Player 1), espionage (Player 1), rocketry (Player 1), carpentry (Player 1), uranium (Player 1), apartment (Player 1), mine_conveyor (Player 1), copper_hoe (Player 1), corpocracy (Player 1), alloy_drills (Player 1), steel_sledgehammer (Player 1), copper_pickaxe (Player 1), titanium_sledgehammer (Player 1), blast_furnace (Player 1), robotics (Player 1), dazzle (Player 1), hunter_process (Player 1), silo (Player 1), iron_mining (Player 1), trade (Player 1), investing (Player 1), library (Player 1), reinforced_crates (Player 1), flintlock_rifle (Player 1), arpa (Player 1), smelting (Player 1), indoctrination (Player 1), swiss_banking (Player 1), monument (Player 1), republic (Player 1), genetics (Player 1), steel_hoe (Player 1), plate_armor (Player 1), chainsaws (Player 1), diplomacy (Player 1), bayer_process (Player 1), alloy_containers (Player 1), technocracy (Player 1), assembly_line (Player 1), industrialization (Player 1), signing_bonus (Player 1), oil_depot (Player 1), casino (Player 1), containerization (Player 1), brickworks (Player 1), vocational_training (Player 1), currency (Player 1), irrigation (Player 1), bows (Player 1), research_grant (Player 1), theology (Player 1), corruption (Player 1), boot_camp (Player 1), coal_mining (Player 1), uranium_storage (Player 1), bonds (Player 1), iron_hoe (Player 1), market (Player 1), steel (Player 1), machinery (Player 1), safety_deposit (Player 1), foundry (Player 1), steel_vault (Player 1), mad (Player 1), sundial (Player 1), housing (Player 1), stone_axe (Player 1), club (Player 1), bessemer_process (Player 1), socialist (Player 1), steel_pickaxe (Player 1), code_breakers (Player 1), mill (Player 1), cement (Player 1), farm_house (Player 1), kevlar (Player 1), wharf (Player 1), gmfood (Player 1), government (Player 1), reinforced_shed (Player 1), cameras (Player 1), jackhammer (Player 1), copper_sledgehammer (Player 1), assistant (Player 1), fission (Player 1), radio (Player 1), copper_axes (Player 1), massive_trades (Player 1), steel_axes (Player 1), mad_science (Player 1), adjunct_professor (Player 1), thesis (Player 1), spy_training (Player 1), vault (Player 1), garrison (Player 1), screw_conveyor (Player 1), tv (Player 1), theocracy (Player 1), missionary (Player 1), archaeology (Player 1), banking (Player 1), synthetic_fur (Player 1), anfo (Player 1), agriculture (Player 1), titanium_drills (Player 1), steel_containers (Player 1), wooden_tools (Player 1), portland_cement (Player 1), windturbine (Player 1), thermomechanics (Player 1), iron_axes (Player 1), bioscience (Player 1), fracking (Player 1), titanium_axes (Player 1), cnc_machine (Player 1), rebar (Player 1), aphrodisiac (Player 1), steel_rebar (Player 1), titanium_crates (Player 1), artisans (Player 1), metal_working (Player 1), black_powder (Player 1), internet (Player 1), armor (Player 1), machine_gun (Player 1), oxygen_converter (Player 1), oil_power (Player 1), theatre (Player 1), dynamite (Player 1), scientific_journal (Player 1), home_safe (Player 1), hospital (Player 1), merchandising (Player 1), gantry_crane (Player 1), zoning_permits (Player 1), zealotry (Player 1), urbanization (Player 1), fluidized_bed_reactor (Player 1), bunk_beds (Player 1), apprentices (Player 1), titanium_hoe (Player 1), steel_beams (Player 1), electronics (Player 1), cottage (Player 1), spy_gadgets (Player 1), anthropology (Player 1), science (Player 1), cranes (Player 1), master_craftsman (Player 1), polymer (Player 1), spy (Player 1), jackhammer_mk2 (Player 1), rotary_kiln (Player 1), tesla_coil (Player 1), electric_arc_furnace (Player 1), urban_planning (Player 1), crispr (Player 1)

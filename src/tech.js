@@ -1807,6 +1807,9 @@ const techs = {
         category: 'entertainment',
         era: 'discovery',
         reqs: { theatre: 2, high_tech: 1 },
+        arch:{
+            locked:true
+        },
         grant: ['theatre',3],
         cost: {
             Knowledge(){ return 7920; }
@@ -9267,6 +9270,9 @@ const techs = {
         category: 'science',
         era: 'discovery',
         reqs: { anthropology: 2 },
+        arch:{
+            locked:true
+        },
         grant: ['anthropology',3],
         cost: {
             Knowledge(){ return 10000; }
