@@ -2,15 +2,17 @@ import { global, save, seededRandom, webWorker, clearSavedMessages, clearStates 
 import { tagEvent, calcPrestige, updateResetStats } from './functions.js';
 import { races, planetTraits } from './races.js';
 import { unlockAchieve, unlockFeat, checkAchievements, universeAffix, alevel } from './achieve.js';
-
+import { reachedGoal } from './client.js'
 // Mutual Assured Destruction
 export function warhead(){
     if (!global.civic.mad.armed && !global.race['cataclysm']){
+        reachedGoal()
+        return
         if (!global['sim']){
             save.setItem('evolveBak',LZString.compressToUTF16(JSON.stringify(global)));
         }
         clearSavedMessages();
-
+        
         tagEvent('reset',{
             'end': 'mad'
         });

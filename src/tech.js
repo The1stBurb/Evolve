@@ -24,7 +24,7 @@ const techs = {
         era: 'primitive',
         reqs: {},
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['primitive',1],
         cost: {
@@ -77,7 +77,7 @@ const techs = {
         era: 'primitive',
         reqs: { primitive: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['primitive',2],
         condition(){
@@ -105,7 +105,7 @@ const techs = {
         era: 'primitive',
         reqs: { primitive: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         condition(){ return !global.race['gravity_well'] || (global.race['gravity_well'] && global.tech['transport']) ? true : false; },
         grant: ['primitive',3],
@@ -319,7 +319,7 @@ const techs = {
         era: 'civilized',
         reqs: { primitive: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['housing',1],
         cost: {
@@ -344,7 +344,7 @@ const techs = {
         era: 'civilized',
         reqs: { housing: 1, cement: 1, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['housing',2],
         cost: {
@@ -371,7 +371,7 @@ const techs = {
         era: 'discovery',
         reqs: { housing: 2, high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['housing',3],
         cost: {
@@ -415,7 +415,7 @@ const techs = {
         era: 'discovery',
         reqs: { housing: 2, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','lone_survivor'],
         grant: ['housing_reduction',1],
@@ -518,7 +518,7 @@ const techs = {
         grant: ['reproduction',1],
         not_trait: ['artifical'],
         arch:{
-            locked:true
+            locked:false
         },
         cost: {
             Knowledge(){ return 4500; }
@@ -1171,7 +1171,7 @@ const techs = {
         era: 'civilized',
         reqs: { primitive: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         condition(){
             return (global.race['herbivore'] || (!global.race['carnivore'] && !global.race['detritivore'] && !global.race['soul_eater'])) ? true : false;
@@ -1198,7 +1198,7 @@ const techs = {
         era: 'civilized',
         reqs: { agriculture: 1, housing: 1, currency: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['farm',1],
         cost: {
@@ -1221,7 +1221,7 @@ const techs = {
         era: 'civilized',
         reqs: { agriculture: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['agriculture',2],
         cost: {
@@ -1243,7 +1243,7 @@ const techs = {
         era: 'civilized',
         reqs: { agriculture: 2, storage: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['agriculture',3],
         cost: {
@@ -1266,7 +1266,7 @@ const techs = {
         era: 'civilized',
         reqs: { agriculture: 3, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['agriculture',4],
         cost: {
@@ -1289,7 +1289,7 @@ const techs = {
         era: 'discovery',
         reqs: { agriculture: 4, high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['agriculture',5],
         cost: {
@@ -1311,7 +1311,7 @@ const techs = {
         era: 'globalized',
         reqs: { agriculture: 5, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['agriculture',6],
         cost: {
@@ -1357,7 +1357,7 @@ const techs = {
         era: 'globalized',
         reqs: { agriculture: 6, genetics: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['agriculture',7],
         cost: {
@@ -1379,7 +1379,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',1],
         cost: {
@@ -1402,7 +1402,7 @@ const techs = {
         era: 'civilized',
         reqs: { foundry: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',2],
         cost: {
@@ -1424,7 +1424,7 @@ const techs = {
         era: 'civilized',
         reqs: { foundry: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',3],
         cost: {
@@ -1446,7 +1446,7 @@ const techs = {
         era: 'civilized',
         reqs: { foundry: 3, saw: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',4],
         not_trait: ['evil'],
@@ -1491,7 +1491,7 @@ const techs = {
         wiki: global.race['evil'] ? false : true,
         reqs: { foundry: 4 },
         arch:{
-            locked:true
+            locked:false
         },  
         grant: ['foundry',5],
         not_trait: ['evil'],
@@ -1514,7 +1514,7 @@ const techs = {
         era: 'discovery',
         reqs: { foundry: 5 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',6],
         cost: {
@@ -1536,7 +1536,7 @@ const techs = {
         era: 'globalized',
         reqs: { foundry: 6, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',7],
         cost: {
@@ -1558,7 +1558,7 @@ const techs = {
         era: 'globalized',
         reqs: { foundry: 7, high_tech: 8 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['foundry',8],
         cost: {
@@ -1580,7 +1580,7 @@ const techs = {
         era: 'industrialized',
         reqs: { foundry: 1, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['v_train',1],
         cost: {
@@ -1648,7 +1648,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['factory',1],
         cost: {
@@ -1753,7 +1753,7 @@ const techs = {
         era: 'civilized',
         reqs: { housing: 1, currency: 1, cement: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['theatre',1],
         not_trait: ['joyless'],
@@ -1777,7 +1777,7 @@ const techs = {
         era: 'civilized',
         reqs: { theatre: 1, science: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['theatre',2],
         cost: {
@@ -1808,7 +1808,7 @@ const techs = {
         era: 'discovery',
         reqs: { theatre: 2, high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['theatre',3],
         cost: {
@@ -1858,7 +1858,7 @@ const techs = {
         era: 'discovery',
         reqs: { theatre: 3, high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['broadcast',1],
         cost: {
@@ -1880,7 +1880,7 @@ const techs = {
         era: 'globalized',
         reqs: { broadcast: 1, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['broadcast',2],
         cost: {
@@ -1944,7 +1944,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 4, currency: 5 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['gambling',1],
         cost: {
@@ -1968,7 +1968,7 @@ const techs = {
         era: 'globalized',
         reqs: { gambling: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['gambling',2],
         cost: {
@@ -2068,7 +2068,7 @@ const techs = {
         era: 'civilized',
         reqs: { primitive: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mining',1],
         cost: {
@@ -2094,7 +2094,7 @@ const techs = {
         era: 'civilized',
         reqs: { smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['alumina',1],
         cost: {
@@ -2141,7 +2141,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['smelting',1],
         cost: {
@@ -2201,7 +2201,7 @@ const techs = {
         era: 'discovery',
         reqs: { smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['smelting',3],
         cost: {
@@ -2230,7 +2230,7 @@ const techs = {
         era: 'discovery',
         reqs: { smelting: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['smelting',4],
         condition() {
@@ -2256,7 +2256,7 @@ const techs = {
         era: 'industrialized',
         reqs: { smelting: 4, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['smelting',5],
         condition() {
@@ -2282,7 +2282,7 @@ const techs = {
         era: 'globalized',
         reqs: { smelting: 5, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['smelting',6],
         condition() {
@@ -2379,7 +2379,7 @@ const techs = {
         era: 'industrialized',
         reqs: { smelting: 3, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['copper',1],
         cost: {
@@ -2402,7 +2402,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mining',2],
         cost: {
@@ -2425,7 +2425,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mining',3],
         cost: {
@@ -2455,7 +2455,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mining',4],
         cost: {
@@ -2482,7 +2482,7 @@ const techs = {
         era: 'civilized',
         reqs: { primitive: 3, currency: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['storage',1],
         cost: {
@@ -2505,7 +2505,7 @@ const techs = {
         era: 'civilized',
         reqs: { storage: 1, cement: 1, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['storage',2],
         cost: {
@@ -2530,7 +2530,7 @@ const techs = {
         era: 'discovery',
         reqs: { storage: 2, smelting: 2, alumina: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['storage',3],
         cost: {
@@ -2557,7 +2557,7 @@ const techs = {
         era: 'industrialized',
         reqs: { storage: 3, high_tech: 3, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['storage',4],
         cost: {
@@ -2583,7 +2583,7 @@ const techs = {
         era: 'globalized',
         reqs: { storage: 4, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['storage',5],
         cost: {
@@ -2645,7 +2645,7 @@ const techs = {
         era: 'civilized',
         reqs: { cement: 1, mining: 1, storage: 1, science: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['container',1],
         cost: {
@@ -2668,7 +2668,7 @@ const techs = {
         era: 'civilized',
         reqs: { container: 1, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['container',2],
         cost: {
@@ -2706,7 +2706,7 @@ const techs = {
         era: 'discovery',
         reqs: { container: 2, high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['container',3],
         cost: {
@@ -2730,7 +2730,7 @@ const techs = {
         era: 'globalized',
         reqs: { container: 3, titanium: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['container',4],
         cost: {
@@ -2860,7 +2860,7 @@ const techs = {
         era: 'discovery',
         reqs: { smelting: 2, container: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['steel_container',1],
         cost: {
@@ -2892,7 +2892,7 @@ const techs = {
         era: 'discovery',
         reqs: { steel_container: 1, high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['steel_container',2],
         cost: {
@@ -2915,7 +2915,7 @@ const techs = {
         era: 'industrialized',
         reqs: { steel_container: 2, storage: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['steel_container',3],
         cost: {
@@ -3089,7 +3089,7 @@ const techs = {
         wiki: global.race['terrifying'] ? false : true,
         reqs: { banking: 2, currency: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['queue',1],
         not_trait: ['terrifying'],
@@ -3120,7 +3120,7 @@ const techs = {
         era: 'industrialized',
         reqs: { queue: 1, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['queue',2],
         cost: {
@@ -3150,7 +3150,7 @@ const techs = {
         era: 'globalized',
         reqs: { queue: 2, high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['queue',3],
         cost: {
@@ -3180,7 +3180,7 @@ const techs = {
         era: 'civilized',
         reqs: { queue: 1, science: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['r_queue',1],
         cost: {
@@ -3216,7 +3216,7 @@ const techs = {
         era: 'civilized',
         reqs: { currency: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['govern',1],
         cost: {
@@ -3246,7 +3246,7 @@ const techs = {
         era: 'civilized',
         reqs: { govern: 1, theology: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['gov_theo',1],
         cost: {
@@ -3268,7 +3268,7 @@ const techs = {
         era: 'discovery',
         reqs: { govern: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         condition(){
             return (global.tech['trade'] && global.tech['trade'] >= 2) || global.race['terrifying'] ? true : false;
@@ -3293,7 +3293,7 @@ const techs = {
         era: 'discovery',
         reqs: { govern: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         condition(){
             return (global.tech['trade'] && global.tech['trade'] >= 2) || global.race['terrifying'] ? true : false;
@@ -3318,7 +3318,7 @@ const techs = {
         era: 'industrialized',
         reqs: { govern: 2, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['gov_corp',1],
         cost: {
@@ -3340,7 +3340,7 @@ const techs = {
         era: 'industrialized',
         reqs: { govern: 2, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['govern',3],
         cost: {
@@ -3432,7 +3432,7 @@ const techs = {
         era: 'civilized',
         reqs: { govern: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['spy',1],
         cost: {
@@ -3458,7 +3458,7 @@ const techs = {
         era: 'discovery',
         reqs: { spy: 1, high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['spy',2],
         cost: {
@@ -3488,7 +3488,7 @@ const techs = {
         era: 'discovery',
         reqs: { spy: 2, boot_camp: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['spy',3],
         cost: {
@@ -3510,7 +3510,7 @@ const techs = {
         era: 'discovery',
         reqs: { spy: 3, high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['spy',4],
         cost: {
@@ -3532,7 +3532,7 @@ const techs = {
         era: 'industrialized',
         reqs: { spy: 4, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['spy',5],
         cost: {
@@ -3554,7 +3554,7 @@ const techs = {
         era: 'civilized',
         reqs: { housing: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['currency',1],
         cost: {
@@ -3578,7 +3578,7 @@ const techs = {
         era: 'civilized',
         reqs: { banking: 1, govern: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['currency',2],
@@ -3606,7 +3606,7 @@ const techs = {
         era: 'civilized',
         reqs: { banking: 2, currency: 2, queue: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['currency',3],
@@ -3633,7 +3633,7 @@ const techs = {
         era: 'civilized',
         reqs: { currency: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['currency',4],
@@ -3663,7 +3663,7 @@ const techs = {
         reqs: { currency: 4, high_tech: 3 },
         not_trait: ['terrifying','noble'],
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['currency',5],
         cost: {
@@ -3685,7 +3685,7 @@ const techs = {
         era: 'globalized',
         reqs: { currency: 5, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['currency',6],
@@ -3708,7 +3708,7 @@ const techs = {
         era: 'civilized',
         reqs: { currency: 2, military: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['trade',1],
@@ -3736,7 +3736,7 @@ const techs = {
         era: 'discovery',
         reqs: { trade: 1, high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['trade',2],
@@ -3759,7 +3759,7 @@ const techs = {
         era: 'industrialized',
         reqs: { trade: 2, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['trade',3],
@@ -3787,7 +3787,7 @@ const techs = {
         era: 'industrialized',
         reqs: { trade: 1, high_tech: 3, oil: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['thalassophobia'],
         grant: ['wharf',1],
@@ -3811,7 +3811,7 @@ const techs = {
         era: 'civilized',
         reqs: { currency: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',1],
         cost: {
@@ -3834,7 +3834,7 @@ const techs = {
         era: 'civilized',
         reqs: { banking: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',2],
         cost: {
@@ -3858,7 +3858,7 @@ const techs = {
         era: 'civilized',
         reqs: { banking: 2, cement: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',3],
         cost: {
@@ -3883,7 +3883,7 @@ const techs = {
         era: 'civilized',
         reqs: { banking: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',4],
         cost: {
@@ -3906,7 +3906,7 @@ const techs = {
         era: 'civilized',
         reqs: { banking: 4, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',5],
         cost: {
@@ -3930,7 +3930,7 @@ const techs = {
         era: 'discovery',
         reqs: { banking: 5, high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',6],
         cost: {
@@ -3953,7 +3953,7 @@ const techs = {
         era: 'industrialized',
         reqs: { banking: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',7],
         cost: {
@@ -3976,7 +3976,7 @@ const techs = {
         era: 'globalized',
         reqs: { banking: 7, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',8],
         cost: {
@@ -3999,7 +3999,7 @@ const techs = {
         era: 'globalized',
         reqs: { banking: 8, high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['banking',9],
         cost: {
@@ -4215,7 +4215,7 @@ const techs = {
         era: 'discovery',
         reqs: { banking: 5 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['home_safe',1],
         cost: {
@@ -4282,7 +4282,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['monument',1],
         cost: {
@@ -4349,7 +4349,7 @@ const techs = {
         era: 'civilized',
         reqs: { housing: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',1],
         cost: {
@@ -4372,7 +4372,7 @@ const techs = {
         era: 'civilized',
         reqs: { science: 1, cement: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',2],
         cost: {
@@ -4395,7 +4395,7 @@ const techs = {
         era: 'civilized',
         reqs: { science: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',3],
         cost: {
@@ -4417,7 +4417,7 @@ const techs = {
         era: 'civilized',
         reqs: { science: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',4],
         cost: {
@@ -4439,7 +4439,7 @@ const techs = {
         era: 'industrialized',
         reqs: { science: 4, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',5],
         cost: {
@@ -4461,7 +4461,7 @@ const techs = {
         era: 'industrialized',
         reqs: { science: 5 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',6],
         cost: {
@@ -4483,7 +4483,7 @@ const techs = {
         era: 'industrialized',
         reqs: { science: 6, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',7],
         cost: {
@@ -4505,7 +4505,7 @@ const techs = {
         era: 'globalized',
         reqs: { science: 7, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['science',8],
         cost: {
@@ -4925,7 +4925,7 @@ const techs = {
         era: 'globalized',
         reqs: { science: 8 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['genetics',1],
         cost: {
@@ -4948,7 +4948,7 @@ const techs = {
         era: 'globalized',
         reqs: { genetics: 1, high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['genetics',2],
         cost: {
@@ -4985,7 +4985,7 @@ const techs = {
         era: 'globalized',
         reqs: { genetics: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['genetics',4],
         cost: {
@@ -5237,7 +5237,7 @@ const techs = {
         era: 'industrialized',
         reqs: { high_tech: 3, titanium: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',4],
         cost: {
@@ -5264,7 +5264,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 4, uranium: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',5],
         cost: {
@@ -5349,7 +5349,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 7 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',8],
         cost: {
@@ -6265,7 +6265,7 @@ const techs = {
         era: 'industrialized',
         reqs: { high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['alloy',1],
         cost: {
@@ -6352,7 +6352,7 @@ const techs = {
         era: 'globalized',
         reqs: { uranium: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['uranium',2],
         cost: {
@@ -6375,7 +6375,7 @@ const techs = {
         era: 'globalized',
         reqs: { uranium: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['uranium',3],
         cost: {
@@ -6418,7 +6418,7 @@ const techs = {
         era: 'discovery',
         reqs: { high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mine_conveyor',1],
         cost: {
@@ -6465,7 +6465,7 @@ const techs = {
         era: 'industrialized',
         reqs: { oil: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['oil',2],
         cost: {
@@ -6492,7 +6492,7 @@ const techs = {
         era: 'industrialized',
         reqs: { oil: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['oil',3],
         cost: {
@@ -6517,7 +6517,7 @@ const techs = {
         era: 'industrialized',
         reqs: { oil: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['oil',4],
         cost: {
@@ -6540,7 +6540,7 @@ const techs = {
         era: 'globalized',
         reqs: { oil: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['oil',5],
         cost: {
@@ -6563,7 +6563,7 @@ const techs = {
         era: 'globalized',
         reqs: { oil: 5, high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['oil',6],
         cost: {
@@ -6647,7 +6647,7 @@ const techs = {
         era: 'globalized',
         reqs: { genetics: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['polymer',1],
         cost: {
@@ -6677,7 +6677,7 @@ const techs = {
         era: 'globalized',
         reqs: { polymer: 1, high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['polymer',2],
         cost: {
@@ -6700,7 +6700,7 @@ const techs = {
         reqs: { polymer: 1 },
         condition(){ return global.resource.Furs.display; },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['synthetic_fur',1],
         cost: {
@@ -7070,7 +7070,7 @@ const techs = {
         category: 'lumber_gathering',
         reqs: { primitive: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         era: 'civilized',
         grant: ['axe',1],
@@ -7101,7 +7101,7 @@ const techs = {
         era: 'civilized',
         reqs: { axe: 1, mining: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['axe',2],
@@ -7125,7 +7125,7 @@ const techs = {
         era: 'civilized',
         reqs: { axe: 1, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['saw',1],
         not_trait: ['lone_survivor','warlord'],
@@ -7150,7 +7150,7 @@ const techs = {
         era: 'discovery',
         reqs: { smelting: 2, saw: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['saw',2],
         cost: {
@@ -7173,7 +7173,7 @@ const techs = {
         era: 'civilized',
         reqs: { axe: 2, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['axe',3],
@@ -7197,7 +7197,7 @@ const techs = {
         era: 'discovery',
         reqs: { axe: 3, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['axe',4],
@@ -7221,7 +7221,7 @@ const techs = {
         era: 'industrialized',
         reqs: { axe: 4, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['axe',5],
@@ -7245,7 +7245,7 @@ const techs = {
         era: 'interstellar',
         reqs: { axe: 5, alpha: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['axe',6],
@@ -7271,7 +7271,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','sappy','living_tool'],
         grant: ['hammer',1],
@@ -7295,7 +7295,7 @@ const techs = {
         era: 'civilized',
         reqs: { hammer: 1, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','sappy','living_tool'],
         grant: ['hammer',2],
@@ -7319,7 +7319,7 @@ const techs = {
         era: 'discovery',
         reqs: { hammer: 2, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','sappy','living_tool'],
         grant: ['hammer',3],
@@ -7343,7 +7343,7 @@ const techs = {
         era: 'industrialized',
         reqs: { hammer: 3, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','sappy','living_tool'],
         grant: ['hammer',4],
@@ -7367,7 +7367,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','living_tool','tusk'],
         grant: ['pickaxe',1],
@@ -7391,7 +7391,7 @@ const techs = {
         era: 'civilized',
         reqs: { pickaxe: 1, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','living_tool','tusk'],
         grant: ['pickaxe',2],
@@ -7415,7 +7415,7 @@ const techs = {
         era: 'discovery',
         reqs: { pickaxe: 2, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool','tusk'],
         grant: ['pickaxe',3],
@@ -7439,7 +7439,7 @@ const techs = {
         era: 'discovery',
         reqs: { pickaxe: 3, high_tech: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool','tusk'],
         grant: ['pickaxe',4],
@@ -7463,7 +7463,7 @@ const techs = {
         era: 'globalized',
         reqs: { pickaxe: 4, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool','tusk'],
         grant: ['pickaxe',5],
@@ -7531,7 +7531,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 2, agriculture: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','living_tool'],
         grant: ['hoe',1],
@@ -7555,7 +7555,7 @@ const techs = {
         era: 'civilized',
         reqs: { hoe: 1, mining: 3, agriculture: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['hoe',2],
@@ -7579,7 +7579,7 @@ const techs = {
         era: 'discovery',
         reqs: { hoe: 2, smelting: 2, agriculture: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['hoe',3],
@@ -7603,7 +7603,7 @@ const techs = {
         era: 'industrialized',
         reqs: { hoe: 3, high_tech: 3, agriculture: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['living_tool'],
         grant: ['hoe',4],
@@ -7778,7 +7778,7 @@ const techs = {
         era: 'civilized',
         reqs: { science: 1, housing: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['military',1],
         cost: {
@@ -7801,7 +7801,7 @@ const techs = {
         era: 'civilized',
         reqs: { military: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mercs',1],
         not_trait: ['lone_survivor'],
@@ -7829,7 +7829,7 @@ const techs = {
         era: 'industrialized',
         reqs: { mercs: 1, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['mercs',2],
         cost: {
@@ -7852,7 +7852,7 @@ const techs = {
         era: 'civilized',
         reqs: { military: 1, alumina: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['medic',1],
         not_trait: ['artifical'],
@@ -7896,7 +7896,7 @@ const techs = {
         era: 'discovery',
         reqs: { high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['boot_camp',1],
         cost: {
@@ -7940,7 +7940,7 @@ const techs = {
         era: 'civilized',
         reqs: { military: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['military',2],
         cost: {
@@ -7967,7 +7967,7 @@ const techs = {
         era: 'civilized',
         reqs: { military: 2, explosives: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['military',3],
         cost: {
@@ -7995,7 +7995,7 @@ const techs = {
         era: 'industrialized',
         reqs: { military: 3, oil: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['military',4],
         cost: {
@@ -8023,7 +8023,7 @@ const techs = {
         era: 'globalized',
         reqs: { military: 4, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['military',5],
         cost: {
@@ -8284,7 +8284,7 @@ const techs = {
         era: 'civilized',
         reqs: { military: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['apex_predator'],
         grant: ['armor',1],
@@ -8309,7 +8309,7 @@ const techs = {
         era: 'civilized',
         reqs: { armor: 1, mining: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['armor',2],
         cost: {
@@ -8332,7 +8332,7 @@ const techs = {
         era: 'globalized',
         reqs: { armor: 2, polymer: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['armor',3],
         cost: {
@@ -8424,7 +8424,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['explosives',1],
         cost: {
@@ -8449,7 +8449,7 @@ const techs = {
         era: 'civilized',
         reqs: { explosives: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['explosives',2],
         cost: {
@@ -8472,7 +8472,7 @@ const techs = {
         era: 'industrialized',
         reqs: { explosives: 2, oil: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['explosives',3],
         cost: {
@@ -8552,7 +8552,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 1, storage: 1, science: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['flier'],
         grant: ['cement',1],
@@ -8576,7 +8576,7 @@ const techs = {
         era: 'civilized',
         reqs: { mining: 3, cement: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['flier'],
         grant: ['cement',2],
@@ -8600,7 +8600,7 @@ const techs = {
         era: 'civilized',
         reqs: { smelting: 2, cement: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['flier'],
         grant: ['cement',3],
@@ -8624,7 +8624,7 @@ const techs = {
         era: 'industrialized',
         reqs: { cement: 3, high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['flier'],
         grant: ['cement',4],
@@ -8647,7 +8647,7 @@ const techs = {
         era: 'globalized',
         reqs: { cement: 4, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['flier'],
         grant: ['cement',5],
@@ -8713,7 +8713,7 @@ const techs = {
         era: 'industrialized',
         reqs: { high_tech: 3, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['titanium',1],
         cost: {
@@ -8737,7 +8737,7 @@ const techs = {
         era: 'globalized',
         reqs: { titanium: 1, high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['titanium',2],
         cost: {
@@ -8860,7 +8860,7 @@ const techs = {
         era: 'civilized',
         reqs: { theology: 1, housing: 1, cement: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['theology',2],
         cost: {
@@ -8890,7 +8890,7 @@ const techs = {
         wiki: global.genes['transcendence'] ? false : true,
         reqs: { theology: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['theology',3],
         not_gene: ['transcendence'],
@@ -9126,7 +9126,7 @@ const techs = {
         era: 'civilized',
         reqs: { fanaticism: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['fanaticism',2],
         cost: {
@@ -9154,7 +9154,7 @@ const techs = {
         era: 'discovery',
         reqs: { fanaticism: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['terrifying'],
         grant: ['fanaticism',3],
@@ -9177,7 +9177,7 @@ const techs = {
         era: 'discovery',
         reqs: { fanaticism: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['fanaticism',4],
         cost: {
@@ -9200,7 +9200,7 @@ const techs = {
         wiki: global.genes['transcendence'] ? false : true,
         reqs: { theology: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['theology',3],
         not_gene: ['transcendence'],
@@ -9249,7 +9249,7 @@ const techs = {
         era: 'civilized',
         reqs: { anthropology: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['anthropology',2],
         cost: {
@@ -9271,7 +9271,7 @@ const techs = {
         era: 'discovery',
         reqs: { anthropology: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['anthropology',3],
         cost: {
@@ -9293,7 +9293,7 @@ const techs = {
         era: 'discovery',
         reqs: { anthropology: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['anthropology',4],
         cost: {

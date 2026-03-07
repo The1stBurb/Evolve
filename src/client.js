@@ -4,58 +4,208 @@
 import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
 import { messageQueue } from "./functions.js";
 import { actions } from "./actions.js"
-
-// Using the node readline module, create an interface for intercepting any user input.
-// const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
-
-
-
-// Add an event listener for when a "line" is entered into the standard input (e.g., the console/terminal window).
-// rl.on("line", async (line) => {
-//     // Send the input!
-//     await client.messages.say(line)
-// });
-
-// Login to the server. Replace `archipelago.gg:XXXXX` and `Phar` with the address/url and slot name for your room.
-// If no game is provided, client will connect in "TextOnly" mode, which is fine for this example.
+import { eventList, events } from './events.js'
+import { global, seededRandom } from './vars.js'
+import { incrementStruct } from './space.js'
 
 const client = new Client();
 var connectInfo=null;
-// const regexConstructor = new RegExp(dynamicPattern, 'gi'); 
+
 export function login(user,port,pass){
+    global.settings.pause=true
     // localStorage.setItem("port")
     connectInfo={
-        port: port?"archipelago.gg:"+port :"localhost:38281",//"archipelago.gg:38281", // Default hostname
-        game: "",//"Evolve", // Replace with the game name for this player.
-        user: user || "Player1", // Default player name
-        pass: pass,
+        port: port?"archipelago.gg:"+port :"localhost:38281" || localStorage.getItem("port") || Error,//"archipelago.gg:38281", // Default hostname
+        game: "Evolve",//"Evolve", // Replace with the game name for this player.
+        user: user || localStorage.getItem("user") || "Player1", // Default player name
+        pass: pass || localStorage.getItem("pass") || "",
         items_handling: 0b111,
     };
     connectToServer();
-    // client.messages.on("message", (content) => {
-    //     console.log(content);
-    // });
-    
-    
-    // client.socket.on("connected", connectedListener);
-    // console.log()
+    window.addEventListener("beforeunload", () => {
+        client.socket.disconnect();
+    });
 }
+
+function foundEventManager(item){
+    if(item){
+        var foundEvents=foundEventManager();
+        localStorage.setItem(JSON.stringify(foundEvents+[item]))
+    }
+    else{
+        return JSON.parse(localStorage.getItem("foundEvent")) || [];
+
+    }
+}
+
+function triggerMajorEvent(item){
+    return
+    console.log(window.connected)
+    var usedEvents=foundEventManager()
+    var itemId=window.itemTable["item-filler:"+item];
+    if(usedEvents && usedEvents.includes(itemId)){return}
+    foundEventManager(itemId)
+    let event_pool = eventList('major');
+    if (event_pool.length > 0){
+        let event = event_pool[Math.floor(seededRandom(0,event_pool.length))];
+        let msg = events[event].effect();
+        messageQueue(msg,'caution',false,['events','major_events']);
+        global.event.l = event;
+    }
+
+}
+function triggerMinorEvent(item){
+    return
+    console.log(window.connected)
+    // var usedEvents=foundEventManager()
+    // var itemId=window.itemTable["item-filler:"+item];
+    // if(usedEvents && usedEvents.includes(itemId)){return}
+    // foundEventManager(itemId)
+    if(!window.connected){}
+    let event_pool = eventList('minor');
+    if (event_pool.length > 0){
+        let event = event_pool[Math.floor(seededRandom(0,event_pool.length))];
+        let msg = events[event].effect();
+        messageQueue(msg,'caution',false,['events','minor_events']);
+        global.event.l = event;
+    }
+}
+
+function randChoice(arr) {
+    if (!arr.length) return null;
+    return arr[Math.floor(seededRandom(0,arr.length))];
+}
+
+function triggerBuilding(){
+    var builds=Object.keys(global.city);
+    builds=builds.slice(builds.indexOf("power_total")+1)
+    console.log(builds);
+    var attempts=0;
+    while(attempts<20){
+        attempts+=1;
+        var bld=randChoice(builds);
+        if(global.city[bld].count>0){
+            incrementStruct(bld,'city');
+            console.log(bld)
+            var title=actions.city[bld].title
+            if(typeof title==="function"){title=title()}
+            messageQueue(`You have gained another ${title}!`,"arch",false,["all"]);
+            attempts=200
+        }
+    }
+    
+}
+function triggerResources(){}
+function triggerPlasmid(count){}
+function triggerPhage(count){}
+function triggerAPlasmid(count){}
+
 function updateItems(item,indx){
-    if(!actions.tech.hasOwnProperty(item)){
-        console.error("WOW THIS ITEM NO EXSIT: "+item);
-        return
+    console.log(item,typeof item)
+    item=item.split(":")
+    var ids=item[0].slice(5),item=item[1];
+    switch(ids){
+        case "filler":
+            switch(item){
+                case "major_event":
+                    triggerMajorEvent(item)
+                break
+                case "minor_event":
+                    triggerMinorEvent(item)
+                break
+                case "building":
+                    triggerBuilding()
+                break
+                case "resources":
+                    triggerResources()
+                break
+                case "plasmid_1"||"plasmid_2"||"plasmid_3"||"plasmid_4":
+                    triggerPlasmid(item[8])
+                break
+                case "phage_1"||"phage_2"||"phage_3":
+                    triggerPhage(item[6])
+                break
+                case "antiplasmid_1"||"antiplasmid_2":
+                    triggerAPlasmid(item[12])
+                break
+                default:
+                    console.log("Woops something went wrong!",ids,item)
+
+            }
+        break;
+        case "tech":
+            if(!actions.tech.hasOwnProperty(item)){
+                console.error("WOW THIS ITEM NO EXSIT: "+item);
+                return
+            }
+            if(!actions.tech[item].hasOwnProperty("arch")){
+                console.error("OH DEAR item "+item+" hasnt been configured properly!");
+                return
+            }
+            actions.tech[item].arch.locked=false;
+            console.log(item+" is now availible! "+actions.tech[item].arch.locked)
+        break;
+        default:
+            console.log("Uh Oh! Invalid item!",ids,item)        
     }
-    if(!actions.tech[item].hasOwnProperty("arch")){
-        console.error("OH DEAR item "+item+" hasnt been configured properly!");
-        return
-    }
-    actions.tech[item].arch.locked=false;
-    console.log(item+" is now availible! "+actions.tech[item].arch.locked   )
+    
 }
+window.addedListeners=false;
+window.connected=false;
+window.itemTable={}
+window.locTable={}
+window.ritemTable={}
+window.rlocTable={}
+var data={}
+var itemsTotal=0;
 function connectToServer(){
+
+    // console.log(connectInfo);
+    // console.log(localStorage.getItem("user"),localStorage.getItem("user"))
+
     client.login(connectInfo.port, connectInfo.user,connectInfo.game,{password:connectInfo.pass})
-    .then(() => console.log("Connected to the Archipelago server!"))
-    .catch(console.error);
+    .then(() => {
+        console.log("Connected to the Archipelago server!")
+        data=client.package.findPackage("Evolve");
+        window.connected=true;
+        localStorage.setItem("port",connectInfo.port);
+        localStorage.setItem("user",connectInfo.user);
+        localStorage.setItem("game",connectInfo.game);
+        localStorage.setItem("pass",connectInfo.pass);
+        console.log(data);
+        window.itemTable=data.itemTable
+        window.locTable=data.locationTable
+        window.ritemTable=data.reverseItemTable
+        window.rlocTable=data.reverseLocationTable
+        global.settings.pause=false
+        for(var i=0; i<offlineLocs.length; i++){
+            reachedLocation(offlineLocs[i][0],offlineLocs[i][1],true)
+        }
+        // client.storage.prepare("recievedItems",[]).replace([]).commit()
+        // client.package.fetchPackage();
+
+    })
+    .catch((error)=>{
+        // window.addedListeners=false;
+        console.log("Failed to connect", error);
+        let txt = (error && error.message) ? error.message : String(error);
+        if (txt.includes("InvalidGame")){
+            messageQueue("Game is incorrect or something!","archError",false,["all"])
+            return;
+        }else{
+            messageQueue(`ERROR: ${txt}`,"archError",false,["all"]);
+            messageQueue("Try refreshing the game and logging in agian!","archError",false,["all"]);
+        }
+        window.connected=false;
+        // return
+    });
+    // if(window.connected){
+        
+    // }
+
+    
+
+
     const connectedListener = (packet) => {
         console.log("Connected to server: ", packet);
         const packetTeamName = packet.team;
@@ -83,9 +233,12 @@ function connectToServer(){
 
 
     };
+
     const disconnectedListener = (packet) => {
         console.log("DISCONNECTED!");
-        connectedstatus = false;
+        window.connected = false;
+        global.settings.pause=true;
+        messageQueue("WARNING: You are disconnected! Trying to reconnect...","archError",false,["all"])
         // checkConnection();
     }
     
@@ -99,13 +252,27 @@ function connectToServer(){
 
 
     const receiveditemsListener = (items, index) => {
-        console.log(`Receiveditemslistener(${items},${index})`);
-        // connectionOK();
-        for(var i=0; i<items.length; i++){
-            updateItems(items[i],i);
-            // jsonListener(items[i]);
-            messageQueue(`You recieved '${items[i]}'!`);
-        }
+        client.storage.fetch("recievedItems").then(itemsAlreadyRecieved=>{
+            console.log(itemsAlreadyRecieved);
+            console.log(`Receiveditemslistener(${items},${index})`);
+            // connectionOK();
+            var newItems=[]
+            console.log(items.length,itemsAlreadyRecieved.length)
+            for(var i=0; i<items.length; i++){
+                if(i+itemsTotal<itemsAlreadyRecieved.length){//||itemsAlreadyRecieved[i+itemsTotal]==items[i].name){
+                    // console.log(i+itemsTotal,itemsAlreadyRecieved.length,itemsAlreadyRecieved[i+itemsTotal],items[i].name)
+                    continue
+                }
+                console.log(items[i])
+                updateItems(items[i].name,i);
+                newItems.push(items[i].name)
+                // jsonListener(items[i]);
+                messageQueue(`You recieved '${items[i]}'!`);
+            }
+            itemsTotal+=items.length;
+            client.storage.prepare("recievedItems",[]).add(newItems).commit()
+        })
+        // 
         // updateItems(items,index);
         // updateMissingLocations(packet);
         // updateRequiresValue(packet);
@@ -114,161 +281,53 @@ function connectToServer(){
     };
     function jsonListener(text, nodes) {
         console.log(`jsonlistener(${text},EEEEE, ${nodes.toString()})`);
-        // console.log(typeof text);
-        // for(const node of nodes){
-        //     console.log(node);
-        // }
-        // console.log
-        // const texts=text.split("\n");
+        
         var msgText=[];
         for(const node of nodes){
             var nodeTxt=node.text
-            console.log(node.type);
-            if(node.type=="player"){
-                if(node.player.slot==client.players.self.slot){
-                    nodeTxt=`<b>${nodeTxt}</b>`;
-                }
-                else{
-                    nodeTxt=`<i>${nodeTxt}</i>`;
-                }
-            }
-            else if(node.type=="item"){
-                nodeTxt=`<u>${nodeTxt}</u>`;
-            }
-            console.log(nodeTxt);
+            // console.log(node.type);
+            // if(node.type=="player"){
+            //     if(node.player.slot==client.players.self.slot){
+            //         nodeTxt=`<b>${nodeTxt}</b>`;
+            //     }
+            //     else{
+            //         nodeTxt=`<i>${nodeTxt}</i>`;
+            //     }
+            // }
+            // else if(node.type=="item"){
+            //     nodeTxt=`<u>${nodeTxt}</u>`;
+            // }
+            // console.log(nodeTxt);
             msgText.push(nodeTxt);
         }
         // messageQueue()
         msgText=msgText.join(" ").split("\n");
         for(const txt of msgText){
-            messageQueue(txt,"archipeligo",false,["all"]);
+            messageQueue(txt.toString(),"arch",false,["all"]);
         }
         
-                // Plaintext to console, because why not?
                 
-                
-
-                // const messageElement = document.createElement("div");
-
-                // if (document.getElementById("showTimestamp").checked || document.getElementById("showLinenumber").checked) {
-                //     const nodeElement = document.createElement("span");
-
-                //     if (document.getElementById("showTimestamp").checked) {
-                //         nodeElement.innerText  += "[" + new Date().toLocaleTimeString('en-US', { hour12: false }) + "] ";
-                //     }
-                //     if (document.getElementById("showLinenumber").checked) {
-                //         nodeElement.innerText  += "[" + messageCount + "] ";
-                //     }
-
-                //     messageElement.appendChild(nodeElement);
-                // }
-                
-
-
-                // let is_relevant = false;
-                // let contains_player = false;
-
-                
-                
-
-                // for (const node of nodes) {
-                //     const nodeElement = document.createElement("span");
-                //     nodeElement.innerText = node.text;
-
-                //     switch (node.type) {
-                //         case "entrance":
-                //             nodeElement.style.color = "#6495ED";
-                //             break;
-
-                //         case "location":
-                //             nodeElement.style.color = "#00FF7F";
-                //             break;
-
-                //         case "color":
-                //             // not really correct, but technically the only color nodes the server returns is "green" or "red"
-                //             // so it's fine enough for an example.
-                //             nodeElement.style.color = node.color;
-                //             break;
-
-                //         case "player":
-                //             contains_player = true;
-                //             nodeElement.style.fontWeight = "bold";
-                //             if (node.player.slot === client.players.self.slot) {
-                //                 // It's us!
-                //                 nodeElement.style.color = "#EE00EE";
-                //                 is_relevant = true;
-                //             } else {
-                //                 // It's them!
-                //                 nodeElement.style.color = "#FAFAD2";
-                //             }
-                //             nodeElement.innerText = node.player.alias;
-                //             nodeElement.title = "Game: " + node.player.game;
-
-                //             if (saveYDDInformation) {
-                //                 // Add a click event listener to the span
-                //                 nodeElement.addEventListener('click', function() {
-                //                     // Form the URL dynamically
-                //                     // Get the full URL of the current page
-                //                     const fullUrl = window.location.href;
-
-                //                     // Create a new URL object
-                //                     const url = new URL(fullUrl);
-
-                //                     // Get the base URL without query parameters
-                //                     const baseUrl = `${url.protocol}//${url.hostname}${url.port ? ':' + url.port : ''}${url.pathname}`;
-
-                //                     const url_full = baseUrl+"?db=y&p=AP&go=y&hostport="+connectionInfo.hostport+"&name="+node.player.name;
-
-                //                     window.location.href = url_full;
-                //                 });
-
-                //                 // Optionally, change the cursor to pointer to indicate it's clickable
-                //                 nodeElement.style.cursor = 'pointer';
-                //             }
-
-
-                //             break;
-
-                //         case "item": {
-                //             nodeElement.style.fontWeight = "bold";
-                //             let typenumber = node.item.progression + 2 * node.item.useful + 4 * node.item.trap
-                //             nodeElement.style.color = classaddcolor[typenumber];
-                //             nodeElement.title = classadddesc[typenumber];     
-                //             if(document.getElementById("showItemClassification").checked){  
-                //                 nodeElement.innerText += classaddtext[typenumber]; 
-                //             } 
-                //         }
-
-                //         // no special coloring needed
-                //         case "text":
-                //         default:
-                //             break;
-                //     }
-                //     messageElement.appendChild(nodeElement);
-                // }
-
-                // if(!document.getElementById('only_relevant_messages').checked || !contains_player || is_relevant){
-                //     var logTextarea = document.getElementById("log");
-
-                //     var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
-                //     logTextarea.appendChild(messageElement);
-                //     messageCount += 1;
-                    
-                //     cleanLog();
-
-                //     if (isScrolledToBottom) {
-                //         logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
-                //     }
-                // }
     }
-    client.socket.on("connected", connectedListener);
-    client.socket.on("disconnected", disconnectedListener);
-    client.room.on("roomUpdate", roomupdateListener);
-    client.items.on("itemsReceived", receiveditemsListener);
-    client.messages.on("message", jsonListener);
-    client.messages.on("itemSent", itemSentListener);
-    client.room.on("locationsChecked", locationsCheckedListener);
+    if(!window.addedListeners){
+        console.log("listeners created oop")
+        client.socket.on("connected", connectedListener);
+        client.socket.on("disconnected", disconnectedListener);
+        client.room.on("roomUpdate", roomupdateListener);
+        client.items.on("itemsReceived", receiveditemsListener);
+        client.messages.on("message", jsonListener);
+        client.messages.on("itemSent", itemSentListener);
+        client.room.on("locationsChecked", locationsCheckedListener);
+        window.addedListeners=true;
+    }
+
+    // if(window.connected){
+    //     client.package.fetchPackage()
+    // }
+    
+    // importGame(devSaveFile);
+    // console.log("importedGame")
 }
+
 var saveYDDInformation=1;
 function itemSentListener(text, item, nodes){
     if(saveYDDInformation == 1){
@@ -280,9 +339,10 @@ function itemSentListener(text, item, nodes){
         }
     }
 }
+
 var missingLocations=[];
 function locationsCheckedListener(locations){
-            
+    console.log(locations)
     for (let item of locations) {
         if (missingLocations.includes(item)) {
             missingLocations.splice(missingLocations.indexOf(item), 1);
@@ -291,10 +351,12 @@ function locationsCheckedListener(locations){
     // updateHighscoreAndGoal();
     
 }
+
 var logined=false;   
 function sendCommand(text){
     if(text.slice(0,6)=="!login"){
         text=text.split(" ");
+        if(window.connected){return}
         login(text[1],text[2],text.length>3 ? text[3]:null);
         logined=true;
         return
@@ -306,6 +368,7 @@ function sendCommand(text){
     else if(text.slice(0,5)=="!send"){
         console.log("sending "+text.split(" ").slice(1).join(" "));
         client.scout([parseInt(text.split(" ").slice(1).join(" "))],1);
+        // client.check();
         // client.messages.say();
         // sendMsg({"cmd": 'LocationChecks', "locations": text.split(" ").slice(1).join(" ")})
         return
@@ -318,6 +381,7 @@ function sendMsg(msg){
     console.log("sending: "+msg.toString());
     client.socket.send(msg)
 }
+
 export function initChatModule(){
     document.getElementById("commandInpForm").addEventListener("submit", function (event) {
       event.preventDefault(); // prevent page reload
@@ -326,4 +390,43 @@ export function initChatModule(){
       this.reset();
     });
 }
-// fanaticism (Player 1), mythology (Player 1), oil_well (Player 1), iron_saw (Player 1), mining (Player 1), warehouse (Player 1), large_trades (Player 1), mercs (Player 1), stock_market (Player 1), iron_pickaxe (Player 1), iron_sledgehammer (Player 1), steel_saw (Player 1), eebonds (Player 1), tax_rates (Player 1), windmill (Player 1), electricity (Player 1), barns (Player 1), kroll_process (Player 1), freight (Player 1), playwright (Player 1), storage (Player 1), espionage (Player 1), rocketry (Player 1), carpentry (Player 1), uranium (Player 1), apartment (Player 1), mine_conveyor (Player 1), copper_hoe (Player 1), corpocracy (Player 1), alloy_drills (Player 1), steel_sledgehammer (Player 1), copper_pickaxe (Player 1), titanium_sledgehammer (Player 1), blast_furnace (Player 1), robotics (Player 1), dazzle (Player 1), hunter_process (Player 1), silo (Player 1), iron_mining (Player 1), trade (Player 1), investing (Player 1), library (Player 1), reinforced_crates (Player 1), flintlock_rifle (Player 1), arpa (Player 1), smelting (Player 1), indoctrination (Player 1), swiss_banking (Player 1), monument (Player 1), republic (Player 1), genetics (Player 1), steel_hoe (Player 1), plate_armor (Player 1), chainsaws (Player 1), diplomacy (Player 1), bayer_process (Player 1), alloy_containers (Player 1), technocracy (Player 1), assembly_line (Player 1), industrialization (Player 1), signing_bonus (Player 1), oil_depot (Player 1), casino (Player 1), containerization (Player 1), brickworks (Player 1), vocational_training (Player 1), currency (Player 1), irrigation (Player 1), bows (Player 1), research_grant (Player 1), theology (Player 1), corruption (Player 1), boot_camp (Player 1), coal_mining (Player 1), uranium_storage (Player 1), bonds (Player 1), iron_hoe (Player 1), market (Player 1), steel (Player 1), machinery (Player 1), safety_deposit (Player 1), foundry (Player 1), steel_vault (Player 1), mad (Player 1), sundial (Player 1), housing (Player 1), stone_axe (Player 1), club (Player 1), bessemer_process (Player 1), socialist (Player 1), steel_pickaxe (Player 1), code_breakers (Player 1), mill (Player 1), cement (Player 1), farm_house (Player 1), kevlar (Player 1), wharf (Player 1), gmfood (Player 1), government (Player 1), reinforced_shed (Player 1), cameras (Player 1), jackhammer (Player 1), copper_sledgehammer (Player 1), assistant (Player 1), fission (Player 1), radio (Player 1), copper_axes (Player 1), massive_trades (Player 1), steel_axes (Player 1), mad_science (Player 1), adjunct_professor (Player 1), thesis (Player 1), spy_training (Player 1), vault (Player 1), garrison (Player 1), screw_conveyor (Player 1), tv (Player 1), theocracy (Player 1), missionary (Player 1), archaeology (Player 1), banking (Player 1), synthetic_fur (Player 1), anfo (Player 1), agriculture (Player 1), titanium_drills (Player 1), steel_containers (Player 1), wooden_tools (Player 1), portland_cement (Player 1), windturbine (Player 1), thermomechanics (Player 1), iron_axes (Player 1), bioscience (Player 1), fracking (Player 1), titanium_axes (Player 1), cnc_machine (Player 1), rebar (Player 1), aphrodisiac (Player 1), steel_rebar (Player 1), titanium_crates (Player 1), artisans (Player 1), metal_working (Player 1), black_powder (Player 1), internet (Player 1), armor (Player 1), machine_gun (Player 1), oxygen_converter (Player 1), oil_power (Player 1), theatre (Player 1), dynamite (Player 1), scientific_journal (Player 1), home_safe (Player 1), hospital (Player 1), merchandising (Player 1), gantry_crane (Player 1), zoning_permits (Player 1), zealotry (Player 1), urbanization (Player 1), fluidized_bed_reactor (Player 1), bunk_beds (Player 1), apprentices (Player 1), titanium_hoe (Player 1), steel_beams (Player 1), electronics (Player 1), cottage (Player 1), spy_gadgets (Player 1), anthropology (Player 1), science (Player 1), cranes (Player 1), master_craftsman (Player 1), polymer (Player 1), spy (Player 1), jackhammer_mk2 (Player 1), rotary_kiln (Player 1), tesla_coil (Player 1), electric_arc_furnace (Player 1), urban_planning (Player 1), crispr (Player 1)
+var offlineLocs=[]
+export function reachedLocation(type,loc){
+    console.log(type,loc)
+    // var locIds=[]
+    // var typeId=type=="tech"?"loc-tech":"loc-invalid:"
+    // for(var i=0; i<loc)
+    if(!window.connected){offlineLocs.psuh([type,loc])}
+    else{client.check(window.locTable[`loc-${type}:${loc}`])}
+}
+
+export function reachedGoal(){
+    messageQueue("You did it! Congratulations!","arch",false,["all"])
+    client.goal();
+}
+
+const devSaveFile="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"
+
+
+// game sent RoomInfo
+// client GetDataPackage games:[yachtDice]
+// server GetDataPackage data:{games:{yachtdice:{checksum?,item_name_to_id,location_name_to_id}}}
+// client connect
+// serevr connected checkedLoc, missing loc
+//     recieveditems items[{itemid,locationid,playerid,flags,class}]
+// client Set?
+// client setNotify
+// client Get read client status
+// server printJson joined
+// server printJson help message
+// server retrieved (from get)
+// serer retrieved (from get)
+// server retrieved from get
+// client locationScout locatonID
+// server locationInfo locations:[itemID,locationID from scout,player,flags,class]
+// client locationChecks locid from locscout
+// sevre printJson found item
+// server recievedItems itemfoundid locid from locscout
+// server roomupdate locid form locscout
+// client locscout locid
+// server locinfo itemid locid from locscout

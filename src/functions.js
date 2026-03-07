@@ -213,8 +213,11 @@ window.exportGame = function exportGame(){
 }
 
 window.importGame = function importGame(data,utf16){
+    // console.log("hey guys whats going on");
     let saveState = JSON.parse(utf16 ? LZString.decompressFromUTF16(data) : LZString.decompressFromBase64(data));
+    // console.log(saveState, 'evolution' in saveState, 'settings' in saveState, 'stats' in saveState, 'plasmid' in saveState.stats)
     if (saveState && 'evolution' in saveState && 'settings' in saveState && 'stats' in saveState && 'plasmid' in saveState.stats){
+        // consoel.log("we have access lol")
         if (webWorker.w){
             webWorker.w.terminate();
         }

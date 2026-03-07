@@ -13,6 +13,7 @@ import { defineGovernor, govActive } from './governor.js';
 import { ascend, terraform, apotheosis } from './resets.js';
 import { loadTab } from './index.js';
 import { loc } from './locale.js';
+import { reachedLocation } from './client.js'
 
 const spaceProjects = {
     spc_home: {
@@ -6714,6 +6715,9 @@ export function incrementStruct(c_action,sector){
     }
     if (global.race['living_materials'] || global[sector][struct]['l_m']){
         global[sector][struct]['l_m'] = 0;
+    }
+    if(global[sector][struct].count==0){
+        reachedLocation("build",struct)
     }
     global[sector][struct].count++;
 }

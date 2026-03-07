@@ -13,7 +13,9 @@ export var global = {
     tauceti: {},
     civic: {},
     race: {},
-    genes: {},
+    genes: {
+        "ancients": 2,
+    },
     blood: {},
     stats: {
         start: Date.now(),

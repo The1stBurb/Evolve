@@ -2,6 +2,9 @@
 .commandInput{width:100%;}
 .ArchapeligoInput{width:100%;}
 
-.has-text-archipeligo{
+.has-text-arch{
     color:#06c258;
+}
+.has-text-archError{
+    color:#f00;
 }

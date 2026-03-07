@@ -2430,6 +2430,8 @@ function defineMad(){
             data: global.civic['mad'],
             methods: {
                 launch(){
+                    warhead();
+                    return
                     if (!global.civic.mad.armed && !global.race['cataclysm']){
                         $('body').addClass('nuke');
                         let nuke = $('<div class="nuke"></div>');

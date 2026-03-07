@@ -17,6 +17,7 @@ import { techList, techPath } from './tech.js';
 import { defineGovernor, govActive, removeTask, gov_tasks } from './governor.js';
 import { bioseed } from './resets.js';
 import { loadTab } from './index.js';
+import { reachedLocation } from './client.js'
 
 export const actions = {
     evolution: {
@@ -6010,6 +6011,7 @@ function registerTech(action){
 export function gainTech(action){
     let tech = actions.tech[action].grant[0];
     global.tech[tech] = actions.tech[action].grant[1];
+    reachedLocation("tech",action);
     drawCity();
     drawTech();
     renderSpace();
