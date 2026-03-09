@@ -11639,5 +11639,20 @@
   "wiki_achievements_incomplete": "Incomplete",
   "wiki_achievements_completed": "Completed",
   "wiki_search_placeholder": "No results found.",
-  "wiki_search_regex_support": "RegEx Supported"
+  "wiki_search_regex_support": "RegEx Supported",
+
+  "city_ap_power_bonus":"AP Power Station",
+  "city_ap_power_bonus_desc":"Gain free power from people finding items!",
+  "city_ap_power_malus":"AP Power Trap",
+  "city_ap_power_malus_desc":"Lose power from people finding traps!",
+
+  "city_ap_prod_bonus":"AP Bonus",
+  "city_ap_prod_bonus_desc":"Adds a %0% production bonus from people finding items!",
+  "city_ap_prod_malus":"AP Malus",
+  "city_ap_prod_malus_desc":"Adds a %0% production malus from people finding traps!",
+
+  "city_dist_ap_bonus_desc":"Some items wind up here!",
+  "city_dist_ap_bonus":"Archipeligo Bonus Items",
+  "city_dist_ap_malus_desc":"Traps wind up here!",
+  "city_dist_ap_malus":"Archipeligo Malus Items"
 }

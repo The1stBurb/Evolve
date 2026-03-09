@@ -8821,6 +8821,9 @@ const techs = {
         path: ['standard'],
         reqs: { particles: 2, supercollider: 2 },
         grant: ['particles',3],
+        arch:{
+            locked:!false
+        },
         cost: {
             Knowledge(){ return 125000; }
         },
@@ -8922,6 +8925,9 @@ const techs = {
         era: 'civilized',
         wiki: global.genes['transcendence'] ? true : false,
         reqs: { theology: 2 },
+        arch:{
+            locked:false
+        },
         grant: ['fanaticism',1],
         gene: ['transcendence'],
         cost: {
@@ -9225,6 +9231,9 @@ const techs = {
         era: 'civilized',
         wiki: global.genes['transcendence'] ? true : false,
         reqs: { theology: 2 },
+        arch:{
+            locked:false
+        },
         grant: ['anthropology',1],
         gene: ['transcendence'],
         cost: {
@@ -12722,6 +12731,9 @@ const techs = {
         path: ['truepath'],
         reqs: { supercollider: 2 },
         grant: ['tp_particles',1],
+        arch:{
+            locked:!false
+        },
         cost: {
             Knowledge(){ return 125000; }
         },

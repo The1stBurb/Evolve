@@ -898,6 +898,8 @@ function fastLoop(){
     var global_multiplier = 1;
     let applyPlasmid = false;
     let pBonus = plasmidBonus('raw');
+    breakdown.p['Global'][loc("ap_bonus")]=(global.city.ap_prod_bonus.count*5)+'%'
+    breakdown.p['Global'][loc("ap_malus")]=(-global.city.ap_prod_malus.count*2)+'%'
     if (global.prestige.Plasmid.count > 0 && ((global.race.universe !== 'antimatter') || (global.genes['bleed'] && global.race.universe === 'antimatter'))){
         breakdown.p['Global'][loc('resource_Plasmid_name')] = (pBonus[1] * 100) + '%';
         applyPlasmid = true;
@@ -918,6 +920,7 @@ function fastLoop(){
         if (faithTempleCount()){
             let faith = faithBonus();
             breakdown.p['Global'][loc('faith')] = (faith * 100) + '%';
+            // breakdown.p['Global'][loc('faith')] = (faith * 100) + '%';
             global_multiplier *= (1 + faith);
         }
     }
@@ -1197,6 +1200,8 @@ function fastLoop(){
         breakdown.p['Global'][loc('arpa_syphon_damage')] = `-${entropy}%`;
         global_multiplier *= 1 - (entropy / 100);
     }
+    
+    global_multiplier*=1+(global.city.ap_prod_bonus.count*5-global.city.ap_prod_malus.count*2)/100
 
     let resList = [
         'Money','Knowledge','Omniscience','Food','Lumber','Stone','Chrysotile','Crystal','Furs','Copper','Iron',
@@ -1863,7 +1868,7 @@ function fastLoop(){
 
         [
             {r:'city',s:'coal_power'},{r:'city',s:'oil_power'},{r:'city',s:'fission_power'},{r:'spc_hell',s:'geothermal'},{r:'spc_dwarf',s:'e_reactor'},
-            {r:'int_alpha',s:'fusion'},{r:'tau_home',s:'fusion_generator'},{r:'tau_gas2',s:'alien_space_station'}
+            {r:'int_alpha',s:'fusion'},{r:'tau_home',s:'fusion_generator'},{r:'tau_gas2',s:'alien_space_station'},{r:'city',s:'ap_power_bonus'}
         ].forEach(function(generator){
             let space = convertSpaceSector(generator.r);
             let region = generator.r === 'city' ? generator.r : space;

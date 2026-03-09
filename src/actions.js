@@ -928,6 +928,123 @@ export const actions = {
         },
     },
     city: {
+        ap_power_bonus:{
+            id: 'city-ap_power_bonus',
+            title: loc('city_ap_power_bonus'),
+            desc(){ return `<div>${loc('city_ap_power_bonus_desc')}</div><div class="has-text-special">Archipelago Item</div>`; },
+            category: 'ap_bonus',
+            reqs: { },//high_tech: 5 },
+            // not_trait: ['cataclysm','lone_survivor'],
+            power_reqs: { false: 1 },
+            cost: {},
+            effect(){
+                let consume = 0.1;
+                return `<span>+${-($(this)[0].powered())}MW.</span>`;
+            },
+            powered(){ return -5; },
+            // p_fuel(){ return {}; },
+            action(args){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                    incrementStruct('ap_power_bonus','city');
+                    global.city.ap_power_bonus.on++;
+                    global.city.power -= $(this)[0].powered();
+                    return true;
+                }
+                return false;
+            },
+            struct(){
+                return {
+                    d: { count: 0, on: 0 },
+                    p: ['ap_power_bonus','city']
+                };
+            },
+            
+        },
+        ap_prod_bonus:{
+            id: 'city-ap_prod_bonus',
+            title: loc('city_ap_prod_bonus'),
+            desc(){ return `<div>${loc('city_ap_prod_bonus_desc',[5])}</div><div class="has-text-special">Archipelago Item</div>`; },
+            category: 'ap_bonus',
+            reqs: { },
+            cost: {},
+            effect(){
+                // let consume = 0.1;
+                // return `<span>-${($(this)[0].powered())}MW.</span>`;
+            },
+            action(args){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                    incrementStruct('ap_prod_bonus','city');
+                    return true;
+                }
+                return false;
+            },
+            struct(){
+                return {
+                    d: { count: 0,},
+                    p: ['ap_prod_bonus','city']
+                };
+            },
+            // switchable(){return false}
+        },
+        // ap_pop_bonus:{},
+        ap_power_malus:{
+            id: 'city-ap_power_malus',
+            title: loc('city_ap_power_malus'),
+            desc(){ return `<div>${loc('city_ap_power_malus_desc')}</div><div class="has-text-special">Archipelago Item</div>`; },
+            category: 'ap_malus',
+            reqs: { },
+            cost: {},
+            alwaysPower:true,
+            effect(){
+                // let consume = 0.1;
+                return `<span>-${($(this)[0].powered())}MW.</span>`;
+            },
+            powered(){ return 1; },
+            // p_fuel(){ return {}; },
+            action(args){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                    incrementStruct('ap_power_malus','city');
+                    // global.city.ap_power_malus.on++;
+                    // global.city.power -= $(this)[0].powered();
+                    if(powerOnNewStruct($(this)[0])){}
+                    return true;
+                }
+                return false;
+            },
+            struct(){
+                return {
+                    d: { count: 0, on: 0 },
+                    p: ['ap_power_malus','city']
+                };
+            },
+            switchable(){return false}
+            // l_m:0,
+        },
+        ap_prod_malus:{
+            id: 'city-ap_prod_malus',
+            title: loc('city_ap_prod_malus'),
+            desc(){ return `<div>${loc('city_ap_prod_malus_desc',[5])}</div><div class="has-text-special">Archipelago Item</div>`; },
+            category: 'ap_malus',
+            reqs: { },
+            cost: {},
+            effect(){
+                // let consume = 0.1;
+                // return `<span>-${($(this)[0].powered())}MW.</span>`;
+            },
+            action(args){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                    incrementStruct('ap_prod_malus','city');
+                    return true;
+                }
+                return false;
+            },
+            struct(){
+                return {
+                    d: { count: 0,},
+                    p: ['ap_prod_malus','city']
+                };
+            },
+        },
         gift: {
             id: 'city-gift',
             title: loc('city_gift'),
@@ -4386,6 +4503,7 @@ export const actions = {
     portal: fortressTech(),
     tauceti: tauCetiTech(),
     eden: edenicTech(),
+    ap_init:false,
 };
 
 export function setChallengeScreen(){
@@ -5852,6 +5970,7 @@ export function checkCityRequirements(action){
         return false;
     }
     var isMet = true;
+    // console.log(actions.city[action],action)
     Object.keys(actions.city[action].reqs).forEach(function (req){
         if (!global.tech[req] || global.tech[req] < actions.city[action].reqs[req]){
             isMet = false;
@@ -5904,10 +6023,7 @@ export function checkTechRequirements(tech,predList){
             }
         });
     }
-    if(actions.tech[tech].hasOwnProperty('arch') && actions.tech[tech].arch.locked){
-        // console.log(tech,isMet?"ok":"precog")
-        return false;
-    }
+    
     if ((isMet || precog) && (!global.tech[actions.tech[tech].grant[0]] || global.tech[actions.tech[tech].grant[0]] < actions.tech[tech].grant[1])){
         // if(tech=="club"){console.log("returning "+isMet);return "precog"}
         return isMet ? 'ok' : 'precog';
@@ -6031,17 +6147,18 @@ export function drawCity(){
     let city_buildings = {};
     Object.keys(actions.city).forEach(function (city_name) {
         removeAction(actions.city[city_name].id);
+        
 
         if(!checkCityRequirements(city_name))
             return;
 
         let action = actions.city[city_name];
         let category = 'category' in action ? action.category : 'utility';
-
+        
         if(!(category in city_buildings)) {
             city_buildings[category] = [];
         }
-
+        
         if (global.settings['cLabels']){
             city_buildings[category].push(city_name);
         }
@@ -6058,7 +6175,9 @@ export function drawCity(){
         'military',
         'trade',
         'industrial',
-        'utility'
+        'utility',
+        "ap_bonus",
+        "ap_malus"
     ];
 
     city_categories.forEach(function(category){
@@ -6072,6 +6191,7 @@ export function drawCity(){
                 .append(`<div><h3 class="name has-text-warning">${loc(`city_dist_${category}`)}</h3></div>`);
 
             city_buildings[category].forEach(function(city_name) {
+                if(city_name=="ap_power"){console.log("and here")}
                 addAction('city', city_name);
             });
 
@@ -6342,7 +6462,7 @@ export function setAction(c_action,action,type,old,prediction){
     let modal = {
         template: '<div id="modalBox" class="modalBox"></div>'
     };
-
+    // console.log("building",c_action,action,type)
     vBind({
         el: '#'+id,
         data: {
@@ -7016,6 +7136,7 @@ export function powerOnNewStruct(c_action){
             power += global.race.replicator.pow;
         }
         can_p = c_action.powered() <= power;
+        // console.log(parts,can_p,power)
     }
 
     // Support: production is positive, consumption is negative
@@ -7028,7 +7149,8 @@ export function powerOnNewStruct(c_action){
         can_s = global[s_r][s_rs].support - c_action.support() <= global[s_r][s_rs].s_max;
     }
 
-    if (can_p && can_s || global.settings.alwaysPower){
+    if (can_p && can_s || global.settings.alwaysPower||(actions[parts[0]][parts[1]].hasOwnProperty("alwaysPower")&&actions[parts[0]][parts[1]].alwaysPower)){
+        
         global[parts[0]][parts[1]].on++;
         if (need_p){
             global.city.power -= c_action.powered();
@@ -7036,6 +7158,7 @@ export function powerOnNewStruct(c_action){
                 gov_tasks.replicate.task();
             }
         }
+        // console.log(parts,global.city.power)
         if (c_action['postPower']){
             callback_queue.set([c_action, 'postPower'], [true]);
         }
@@ -7070,6 +7193,7 @@ export function getStructNumActive(c_action,wiki){
         else {
             num_on = 0;
         }
+        console.log(parts,num_on)
     }
 
     // Support: production is positive, consumption is negative
@@ -7091,6 +7215,7 @@ export function getStructNumActive(c_action,wiki){
             found_support = true;
             num_on = Math.min(num_on, spire_on[parts[1]]);
         }
+        // console.log(parts,found_support)
 
         // The support_on structs are empty in the wiki view and right when the page has been reloaded
         // This means that the wiki can be wrong, but we can at least check "max" support
@@ -7433,6 +7558,17 @@ export function actionDesc(parent,c_action,obj,old,action,a_type,bres){
                 }
             }
         });
+        if(c_action.hasOwnProperty("arch")){
+            let color='has-text-dark',aria="";
+            let label="AP Unlocked"
+            if(c_action.arch.locked){
+                color="has-text-danger"
+                aria='<span class="is-sr-only">(blocking resource)</span>'
+                label="AP Locked"
+            }
+            cost.append($(`<div class="${color} res-${c_action.id}" data-archipeligo_item="${c_action.arch.locked}">${label}${aria}</div>`))
+        }
+        // console.log(parent,c_action,obj,old,action,a_type,bres)
         if (!empty){
             parent.append(cost);
         }
@@ -7541,7 +7677,8 @@ export function updateDesc(c_action,category,action){
 
 export function payCosts(c_action, costs){
     costs = costs || adjustCosts(c_action);
-    if (checkCosts(costs)){
+    // console.log(c_action,techList()[c_action])
+    if (checkCosts(costs)&&((c_action.hasOwnProperty("arch")&&!c_action.arch.locked)||!c_action.hasOwnProperty("arch"))){
         Object.keys(costs).forEach(function (res){
             if (global.prestige.hasOwnProperty(res)){
                 let cost = costs[res]();

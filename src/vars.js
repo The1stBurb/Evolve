@@ -29,7 +29,9 @@ export var global = {
     m_event: {
         t: 499,
         l: false
-    }
+    },
+    ap_init:false,
+    itemcount:0,
 };
 export var tmp_vars = {};
 export var breakdown = {

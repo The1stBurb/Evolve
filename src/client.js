@@ -3,21 +3,74 @@
 // import { Client } from "archipelago.js";
 import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
 import { messageQueue } from "./functions.js";
-import { actions } from "./actions.js"
+import { actions, initStruct } from "./actions.js"
 import { eventList, events } from './events.js'
 import { global, seededRandom } from './vars.js'
 import { incrementStruct } from './space.js'
 
 const client = new Client();
 var connectInfo=null;
+var gameSeed=0;
+window.addedListeners=false;
+window.connected=false;
+window.itemTable={}
+window.locTable={}
+window.ritemTable={}
+window.rlocTable={}
+var data={}
 
+const items={
+    filler:{
+        "building":triggerBuilding,
+        "resources":triggerResourceBonus,
+        "plasmid":{
+            "1":triggerPlasmid1,
+            "2":triggerPlasmid2,
+            "3":triggerPlasmid3,
+            "4":triggerPlasmid4,
+        },
+        "phage":{
+            "1":triggerPhage1,
+            "2":triggerPhage2,
+            "3":triggerPhage3,
+        },
+        "antiplasmid":{
+            "1":triggerAntip1,
+            "2":triggerAntip2,
+        },
+        "power_bonus":triggerPowerBonus,
+        "prod_bonus":triggerProdBonus,
+        "pop_bonus":triggerPopBonus,
+    },
+    trap:{
+        "resources":triggerResourceMalus,
+        "power_malus":triggerPowerMalus,
+        "prod_malus":triggerProdMalus,
+        "attack":triggerAttack,
+    },
+    crispr:triggerCrispr,
+}
+
+
+//special seeded random based on index for replication!
+function apRandom(min, max, indexSeed) {
+    max = max || 1;
+    min = min || 0;
+
+    let seed = (gameSeed||0)+indexSeed
+    let newSeed = (seed * 9301 + 49297) % 233280;
+    let rnd = newSeed / 233280;
+    return min + rnd * (max - min);
+}
+
+//login!
 export function login(user,port,pass){
     global.settings.pause=true
-    // localStorage.setItem("port")
+
     connectInfo={
-        port: port?"archipelago.gg:"+port :"localhost:38281" || localStorage.getItem("port") || Error,//"archipelago.gg:38281", // Default hostname
-        game: "Evolve",//"Evolve", // Replace with the game name for this player.
-        user: user || localStorage.getItem("user") || "Player1", // Default player name
+        port: port || localStorage.getItem("port") || Error,//"archipelago.gg:38281", // Default hostname
+        game: "Evolve",
+        user: user || localStorage.getItem("user") || "Player1",
         pass: pass || localStorage.getItem("pass") || "",
         items_handling: 0b111,
     };
@@ -27,6 +80,7 @@ export function login(user,port,pass){
     });
 }
 
+//dont need!
 function foundEventManager(item){
     if(item){
         var foundEvents=foundEventManager();
@@ -38,102 +92,33 @@ function foundEventManager(item){
     }
 }
 
-function triggerMajorEvent(item){
-    return
-    console.log(window.connected)
-    var usedEvents=foundEventManager()
-    var itemId=window.itemTable["item-filler:"+item];
-    if(usedEvents && usedEvents.includes(itemId)){return}
-    foundEventManager(itemId)
-    let event_pool = eventList('major');
-    if (event_pool.length > 0){
-        let event = event_pool[Math.floor(seededRandom(0,event_pool.length))];
-        let msg = events[event].effect();
-        messageQueue(msg,'caution',false,['events','major_events']);
-        global.event.l = event;
-    }
 
-}
-function triggerMinorEvent(item){
-    return
-    console.log(window.connected)
-    // var usedEvents=foundEventManager()
-    // var itemId=window.itemTable["item-filler:"+item];
-    // if(usedEvents && usedEvents.includes(itemId)){return}
-    // foundEventManager(itemId)
-    if(!window.connected){}
-    let event_pool = eventList('minor');
-    if (event_pool.length > 0){
-        let event = event_pool[Math.floor(seededRandom(0,event_pool.length))];
-        let msg = events[event].effect();
-        messageQueue(msg,'caution',false,['events','minor_events']);
-        global.event.l = event;
-    }
-}
-
-function randChoice(arr) {
+function randChoice(arr,index) {
     if (!arr.length) return null;
-    return arr[Math.floor(seededRandom(0,arr.length))];
+    return arr[Math.floor(apRandom(0,arr.length,index))];
 }
 
-function triggerBuilding(){
-    var builds=Object.keys(global.city);
-    builds=builds.slice(builds.indexOf("power_total")+1)
-    console.log(builds);
-    var attempts=0;
-    while(attempts<20){
-        attempts+=1;
-        var bld=randChoice(builds);
-        if(global.city[bld].count>0){
-            incrementStruct(bld,'city');
-            console.log(bld)
-            var title=actions.city[bld].title
-            if(typeof title==="function"){title=title()}
-            messageQueue(`You have gained another ${title}!`,"arch",false,["all"]);
-            attempts=200
-        }
-    }
-    
-}
-function triggerResources(){}
-function triggerPlasmid(count){}
-function triggerPhage(count){}
-function triggerAPlasmid(count){}
-
-function updateItems(item,indx){
+function updateItems(item,index){
     console.log(item,typeof item)
     item=item.split(":")
-    var ids=item[0].slice(5),item=item[1];
-    switch(ids){
+    item=[item[0].split("-"),item[1].split("_")]
+    var ids=item[0]
+    var item=item[1]
+    // item[1]=item[1].split("_")
+    // var ids=item[0].slice(5),item=item[1];
+    switch(ids[1]){
         case "filler":
-            switch(item){
-                case "major_event":
-                    triggerMajorEvent(item)
-                break
-                case "minor_event":
-                    triggerMinorEvent(item)
-                break
-                case "building":
-                    triggerBuilding()
-                break
-                case "resources":
-                    triggerResources()
-                break
-                case "plasmid_1"||"plasmid_2"||"plasmid_3"||"plasmid_4":
-                    triggerPlasmid(item[8])
-                break
-                case "phage_1"||"phage_2"||"phage_3":
-                    triggerPhage(item[6])
-                break
-                case "antiplasmid_1"||"antiplasmid_2":
-                    triggerAPlasmid(item[12])
-                break
-                default:
-                    console.log("Woops something went wrong!",ids,item)
-
-            }
+            if(item[0]in ["plasmid","phage","antiplasmid"]){items.filler[item[0]][item[1]](index)}
+            else{items.filler[item[0]](index)}
         break;
+        case "trap":
+            items.trap[item[0]](index)
+        break
+        case "cripsr":
+            items.crispr(index,item[0])
+        break
         case "tech":
+            item=item.join("_")
             if(!actions.tech.hasOwnProperty(item)){
                 console.error("WOW THIS ITEM NO EXSIT: "+item);
                 return
@@ -150,43 +135,115 @@ function updateItems(item,indx){
     }
     
 }
-window.addedListeners=false;
-window.connected=false;
-window.itemTable={}
-window.locTable={}
-window.ritemTable={}
-window.rlocTable={}
-var data={}
-var itemsTotal=0;
+
+function triggerBuilding(index){
+    var builds=Object.keys(global.city);
+    builds=builds.slice(builds.indexOf("power_total")+1)
+    console.log(builds);
+    var attempts=0;
+    while(attempts<20){
+        attempts+=1;
+        var bld=randChoice(builds,index);
+        if(!bld.includes("ap_")&&global.city[bld].count>0){
+            incrementStruct(bld,'city');
+            console.log(bld)
+            var title=actions.city[bld].title
+            if(typeof title==="function"){title=title()}
+            messageQueue(`You have gained another ${title}!`,"arch",false,["all"]);
+            attempts=200
+        }
+    }
+    
+}
+function triggerResourceBonus(index){}
+function triggerPlasmid1(index){
+    var amnt=Math.round(apRandom(1,10,index))
+    global.prestige.Plasmid.count += amnt;
+    global.stats.plasmid += amnt;
+}
+function triggerPlasmid2(index){
+    var amnt=Math.round(apRandom(10,25,index))
+    global.prestige.Plasmid.count += amnt;
+    global.stats.plasmid += amnt;
+}
+function triggerPlasmid3(index){
+    var amnt=Math.round(apRandom(25,50,index))
+    global.prestige.Plasmid.count += amnt;
+    global.stats.plasmid += amnt;
+}
+function triggerPlasmid4(index){
+    var amnt=Math.round(apRandom(50,100,index))
+    global.prestige.Plasmid.count += amnt;
+    global.stats.plasmid += amnt;
+}
+function triggerPhage1(index){
+    var amnt=Math.round(apRandom(1,10,index))
+    global.prestige.Phage.count += amnt;
+    global.stats.phage += amnt;
+}
+function triggerPhage2(index){
+    var amnt=Math.round(apRandom(10,25,index))
+    global.prestige.Phage.count += amnt;
+    global.stats.phage += amnt;
+}
+function triggerPhage3(index){
+    var amnt=Math.round(apRandom(25,50,index))
+    global.prestige.Phage.count += amnt;
+    global.stats.phage += amnt;
+}
+function triggerAntip1(index){
+    var amnt=Math.round(apRandom(1,10,index))
+    global.prestige.AntiPlasmid.count += amnt;
+    global.stats.antiplasmid += amnt;
+}
+function triggerAntip2(index){
+    var amnt=Math.round(apRandom(10,25,index))
+    global.prestige.AntiPlasmid.count += amnt;
+    global.stats.antiplasmid += amnt;
+}
+function triggerCrispr(index,type){
+    if(global.genes.hasOwnProperty(type)){
+        global.genes[type]+=1;
+    }
+    else{
+        global.genes[type]=1;
+    }
+}
+function triggerPowerBonus(index){
+    incrementStruct("ap_power_bonus","city")
+}
+function triggerProdBonus(index){
+    incrementStruct("ap_prod_bonus","city")
+}
+function triggerPopBonus(index){
+    incrementStruct("ap_pop_bonus","city")
+}
+
+function triggerResourceMalus(index){}
+function triggerPowerMalus(index){
+    incrementStruct("ap_power_malus","city")
+}
+function triggerProdMalus(index){
+    incrementStruct("ap_prod_bonus","city")
+}
+function triggerAttack(index){
+    if(Math.floor(apRandom(0,2,index))==0){events.siege.effect()}
+    else{events.raid.effect()}
+}
+
+//update any new items!
+
+
+//connect to the server
 function connectToServer(){
-
-    // console.log(connectInfo);
-    // console.log(localStorage.getItem("user"),localStorage.getItem("user"))
-
+    //login obviously
     client.login(connectInfo.port, connectInfo.user,connectInfo.game,{password:connectInfo.pass})
     .then(() => {
         console.log("Connected to the Archipelago server!")
-        data=client.package.findPackage("Evolve");
-        window.connected=true;
-        localStorage.setItem("port",connectInfo.port);
-        localStorage.setItem("user",connectInfo.user);
-        localStorage.setItem("game",connectInfo.game);
-        localStorage.setItem("pass",connectInfo.pass);
-        console.log(data);
-        window.itemTable=data.itemTable
-        window.locTable=data.locationTable
-        window.ritemTable=data.reverseItemTable
-        window.rlocTable=data.reverseLocationTable
-        global.settings.pause=false
-        for(var i=0; i<offlineLocs.length; i++){
-            reachedLocation(offlineLocs[i][0],offlineLocs[i][1],true)
-        }
-        // client.storage.prepare("recievedItems",[]).replace([]).commit()
-        // client.package.fetchPackage();
+        onConnected()
 
     })
     .catch((error)=>{
-        // window.addedListeners=false;
         console.log("Failed to connect", error);
         let txt = (error && error.message) ? error.message : String(error);
         if (txt.includes("InvalidGame")){
@@ -197,51 +254,26 @@ function connectToServer(){
             messageQueue("Try refreshing the game and logging in agian!","archError",false,["all"]);
         }
         window.connected=false;
-        // return
     });
-    // if(window.connected){
-        
-    // }
 
     
 
-
+    //From spineraks Yacht Dice
     const connectedListener = (packet) => {
         console.log("Connected to server: ", packet);
         const packetTeamName = packet.team;
         const packetSlotName = packet.slot;
-
-        // checkWin();
-        
         console.log("_read_client_status_"+packetTeamName+"_"+packetSlotName)
-        // client.storage.notify(["_read_client_status_"+packetTeamName+"_"+packetSlotName], (key, value, oldValue) => {
-        //     console.log("New client status -> ", value)
-        //     if(value == 30){
-        //         sendWin();
-        //     }
-        // });
-        // checkYDDD();
-        
-
-        // nextgoal = 0;
-        // // console.log(packet.missing_locations)
-        // updateMissingLocations(packet);
-        // updateSettings(packet);
-        // updateRequiresValue(packet);
-        // updateHighscoreAndGoal();
-        // submitScore();
-
-
     };
 
+    //from spineraks Yacht Dice
     const disconnectedListener = (packet) => {
         console.log("DISCONNECTED!");
         window.connected = false;
         global.settings.pause=true;
         messageQueue("WARNING: You are disconnected! Trying to reconnect...","archError",false,["all"])
-        // checkConnection();
     }
-    
+    //from spineraks Yacht Dice, but disabled bcause its not needed
     const roomupdateListener = (packet) => {
         // updateMissingLocations(packet);
         // updateRequiresValue(packet);
@@ -250,41 +282,26 @@ function connectToServer(){
     };
 
 
+    //from spineracks Yacht Dice, but modified
+    const receiveditemsListener = (items, index,override) => {
+        
+        console.log(`Receiveditemslistener(${items},${index})`);
 
-    const receiveditemsListener = (items, index) => {
-        client.storage.fetch("recievedItems").then(itemsAlreadyRecieved=>{
-            console.log(itemsAlreadyRecieved);
-            console.log(`Receiveditemslistener(${items},${index})`);
-            // connectionOK();
-            var newItems=[]
-            console.log(items.length,itemsAlreadyRecieved.length)
-            for(var i=0; i<items.length; i++){
-                if(i+itemsTotal<itemsAlreadyRecieved.length){//||itemsAlreadyRecieved[i+itemsTotal]==items[i].name){
-                    // console.log(i+itemsTotal,itemsAlreadyRecieved.length,itemsAlreadyRecieved[i+itemsTotal],items[i].name)
-                    continue
-                }
-                console.log(items[i])
-                updateItems(items[i].name,i);
-                newItems.push(items[i].name)
-                // jsonListener(items[i]);
-                messageQueue(`You recieved '${items[i]}'!`);
-            }
-            itemsTotal+=items.length;
-            client.storage.prepare("recievedItems",[]).add(newItems).commit()
-        })
-        // 
-        // updateItems(items,index);
-        // updateMissingLocations(packet);
-        // updateRequiresValue(packet);
-        
-        // newItems(items, index); //update highscore and goal in here, when new items.
+        for(var i=global.itemcount-index; i<items.length; i++){
+            if(i<0){continue}
+            updateItems(items[i].name,i+global.itemcount);
+            messageQueue(`You recieved '${items[i]}'!`);
+        }
+        global.itemcount+=items.length;
     };
+
+    
     function jsonListener(text, nodes) {
-        console.log(`jsonlistener(${text},EEEEE, ${nodes.toString()})`);
-        
-        var msgText=[];
+        var msgText=""
+        //convert nodes to text
         for(const node of nodes){
             var nodeTxt=node.text
+            //this bit of code doesnt work because of evolve code. Imma see if i can fix that but later
             // console.log(node.type);
             // if(node.type=="player"){
             //     if(node.player.slot==client.players.self.slot){
@@ -298,16 +315,17 @@ function connectToServer(){
             //     nodeTxt=`<u>${nodeTxt}</u>`;
             // }
             // console.log(nodeTxt);
-            msgText.push(nodeTxt);
+            msgText+=" "+nodeTxt;
         }
-        // messageQueue()
-        msgText=msgText.join(" ").split("\n");
+        //make sure newlines are handled properly
+        msgText=msgText.split("\n");
         for(const txt of msgText){
             messageQueue(txt.toString(),"arch",false,["all"]);
         }
         
                 
     }
+    //only add the listenres if they have been added!
     if(!window.addedListeners){
         console.log("listeners created oop")
         client.socket.on("connected", connectedListener);
@@ -319,16 +337,50 @@ function connectToServer(){
         client.room.on("locationsChecked", locationsCheckedListener);
         window.addedListeners=true;
     }
+}
 
-    // if(window.connected){
-    //     client.package.fetchPackage()
-    // }
+function onConnected(){
+    //set user info
+    window.connected=true;
+    localStorage.setItem("port",connectInfo.port);
+    localStorage.setItem("user",connectInfo.user);
+    localStorage.setItem("game",connectInfo.game);
+    localStorage.setItem("pass",connectInfo.pass);
     
-    // importGame(devSaveFile);
-    // console.log("importedGame")
+    //get any necesary data fot items and such
+    data=client.package.findPackage("Evolve");
+    window.itemTable=data.itemTable
+    window.locTable=data.locationTable
+    window.ritemTable=data.reverseItemTable
+    window.rlocTable=data.reverseLocationTable
+    // global.settings.pause=false
+
+    //handle any locations reached while offline
+    for(var i=0; i<offlineLocs.length; i++){
+        reachedLocation(offlineLocs[i][0],offlineLocs[i][1],true)
+    }
+
+    //fetch the game seed
+    client.storage.fetch("gameSeed").then(fgameSeed=>{
+        if(fgameSeed){//if it exsist, cool
+            console.log("Fetched game seed"+fgameSeed)
+            gameSeed=fgameSeed;
+        }
+        else{//otherwise set it to be the evolve seed
+            console.log("no game seed found, using evolve seed"+global.seed)
+            client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
+            gameSeed=global.seed
+        }
+    })
+    .catch((error)=>{//same as above
+        console.log("Somehting went wrong with fetching the game seed! defaulting to evolve seed!")
+        client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
+        gameSeed=global.seed
+    })
 }
 
 var saveYDDInformation=1;
+//dont think i need this!, from spineraks Yacht Dice
 function itemSentListener(text, item, nodes){
     if(saveYDDInformation == 1){
         let sender = item.sender;
@@ -340,6 +392,7 @@ function itemSentListener(text, item, nodes){
     }
 }
 
+//dont think i need this! from spineraks Yacht Dice
 var missingLocations=[];
 function locationsCheckedListener(locations){
     console.log(locations)
@@ -352,7 +405,8 @@ function locationsCheckedListener(locations){
     
 }
 
-var logined=false;   
+var logined=false;
+//this is silly, but dont worry
 function sendCommand(text){
     if(text.slice(0,6)=="!login"){
         text=text.split(" ");
@@ -367,21 +421,16 @@ function sendCommand(text){
     }
     else if(text.slice(0,5)=="!send"){
         console.log("sending "+text.split(" ").slice(1).join(" "));
+
         client.scout([parseInt(text.split(" ").slice(1).join(" "))],1);
-        // client.check();
-        // client.messages.say();
-        // sendMsg({"cmd": 'LocationChecks', "locations": text.split(" ").slice(1).join(" ")})
         return
     }
     console.log("sending command:"+text);
     client.messages.say(text);
     
 }
-function sendMsg(msg){
-    console.log("sending: "+msg.toString());
-    client.socket.send(msg)
-}
 
+//initialize anything needed, mostly an added structures and the chat part
 export function initChatModule(){
     document.getElementById("commandInpForm").addEventListener("submit", function (event) {
       event.preventDefault(); // prevent page reload
@@ -389,17 +438,29 @@ export function initChatModule(){
     //   console.log(document.getElementById("commandInput").value);
       this.reset();
     });
+    //make any added structures work!
+    if(!global.ap_init||true){
+        // console.log("initialize")
+        // console.log(global.city)
+        let special_locs=["ap_power_bonus","ap_power_malus","ap_prod_bonus","ap_prod_malus"]//"ap_pop_bonus",]
+        special_locs.forEach(function(buildName){
+            initStruct(actions.city[buildName])
+        })
+        // initStruct(actions.city.ap_power)
+
+        global.ap_init=true
+    }
 }
 var offlineLocs=[]
+//manages locations when reached
 export function reachedLocation(type,loc){
     console.log(type,loc)
-    // var locIds=[]
-    // var typeId=type=="tech"?"loc-tech":"loc-invalid:"
-    // for(var i=0; i<loc)
-    if(!window.connected){offlineLocs.psuh([type,loc])}
+    //if not connected send it to the offline handler, otherwise the client can handle it
+    if(!window.connected){offlineLocs.push([type,loc])}
     else{client.check(window.locTable[`loc-${type}:${loc}`])}
 }
 
+//have we reached out goal?
 export function reachedGoal(){
     messageQueue("You did it! Congratulations!","arch",false,["all"])
     client.goal();

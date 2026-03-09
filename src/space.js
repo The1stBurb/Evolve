@@ -6713,7 +6713,7 @@ export function incrementStruct(c_action,sector){
     if (!global[sector][struct]){
         global[sector][struct] = typeof c_action === 'object' ? c_action.struct().d : structDefinitions[struct];
     }
-    if (global.race['living_materials'] || global[sector][struct]['l_m']){
+    if (global.race['living_materials'] || (global[sector][struct].hasOwnProperty('l_m')&&global[sector[struct]["l_m"]])){
         global[sector][struct]['l_m'] = 0;
     }
     if(global[sector][struct].count==0){
