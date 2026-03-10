@@ -11642,14 +11642,21 @@
   "wiki_search_regex_support": "RegEx Supported",
 
   "city_ap_power_bonus":"AP Power Station",
-  "city_ap_power_bonus_desc":"Gain free power from people finding items!",
+  "city_ap_power_bonus_desc":"Gain 5MW from people finding items!",
   "city_ap_power_malus":"AP Power Trap",
-  "city_ap_power_malus_desc":"Lose power from people finding traps!",
+  "city_ap_power_malus_desc":"Lose 1MW from people finding traps!",
 
   "city_ap_prod_bonus":"AP Bonus",
   "city_ap_prod_bonus_desc":"Adds a %0% production bonus from people finding items!",
+  "ap_bonus":"AP Bonus",
   "city_ap_prod_malus":"AP Malus",
   "city_ap_prod_malus_desc":"Adds a %0% production malus from people finding traps!",
+  "ap_malus":"AP Malus",
+  
+  "city_ap_pop_bonus":"AP Housing",
+  "city-ap_pop_bonus":"AP Housing",
+  "city_ap_pop_bonus_desc":"+%0 Max Citizen",
+  "city_ap_pop_bonus_desc_plural":"+%0 Max Citizens",
 
   "city_dist_ap_bonus_desc":"Some items wind up here!",
   "city_dist_ap_bonus":"Archipeligo Bonus Items",

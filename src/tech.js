@@ -2170,7 +2170,7 @@ const techs = {
         era: 'civilized',
         reqs: { smelting: 1, mining: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['smelting',2],
         condition() {
@@ -5102,7 +5102,7 @@ const techs = {
         era: 'discovery',
         reqs: { science: 2, smelting: 2 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',1],
         cost: {
@@ -5137,7 +5137,7 @@ const techs = {
         era: 'discovery',
         reqs: { high_tech: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',2],
         cost: {
@@ -5210,7 +5210,7 @@ const techs = {
         era: 'industrialized',
         reqs: { high_tech: 2, cement: 2, steel_container: 1 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',3],
         cost: {
@@ -5289,7 +5289,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 5 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',6],
         cost: {
@@ -5319,7 +5319,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 6 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['high_tech',7],
         cost: {
@@ -6326,7 +6326,7 @@ const techs = {
         era: 'globalized',
         reqs: { high_tech: 4 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['uranium',1],
         cost: {
@@ -6442,7 +6442,7 @@ const techs = {
         era: 'industrialized',
         reqs: { high_tech: 3 },
         arch:{
-            locked:true
+            locked:false
         },
         grant: ['oil',1],
         cost: {
@@ -8516,7 +8516,7 @@ const techs = {
         era: 'globalized',
         reqs: { uranium: 1, explosives: 3, high_tech: 7 },
         arch:{
-            locked:true
+            locked:false
         },
         not_trait: ['cataclysm','lone_survivor','warlord'],
         grant: ['mad',1],

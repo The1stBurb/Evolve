@@ -970,6 +970,7 @@ export const actions = {
             effect(){
                 // let consume = 0.1;
                 // return `<span>-${($(this)[0].powered())}MW.</span>`;
+                return '<span>+5% Production</span>'
             },
             action(args){
                 if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
@@ -986,7 +987,44 @@ export const actions = {
             },
             // switchable(){return false}
         },
-        // ap_pop_bonus:{},
+        ap_pop_bonus:{
+            id: 'city-ap_pop_bonus',
+            title:loc('city_ap_pop_bonus'),
+            desc(){
+                return ($(this)[0].citizens()>1?loc('city_ap_pop_bonus_desc_plural',[$(this)[0].citizens()]):loc('city_ap_pop_bonus_desc',[$(this)[0].citizens()]))+'<div class="has-text-special">Archipelago Item</div>';
+            },
+            category: 'ap_bonus',
+            reqs: {},
+            // not_trait: ['cataclysm','lone_survivor'],
+            cost: {},
+            effect(){
+                let pop = $(this)[0].citizens();
+                return loc('plus_max_resource',[pop,loc('citizen')]);
+            },
+            action(args){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                    global['resource'][global.race.species].display = true;
+                    global['resource'][global.race.species].max += $(this)[0].citizens();
+                    incrementStruct($(this)[0]);
+                    global.settings.showCivic = true;
+                    return true;
+                }
+                return false;
+            },
+            struct(){
+                return {
+                    d: { count: 0 },
+                    p: ['ap_pop_bonus','city']
+                };
+            },
+            citizens(){
+                let pop = 1;
+                if (global.race['high_pop']){
+                    pop *= traits.high_pop.vars()[0];
+                }
+                return pop;
+            }
+        },
         ap_power_malus:{
             id: 'city-ap_power_malus',
             title: loc('city_ap_power_malus'),
@@ -1023,12 +1061,13 @@ export const actions = {
         ap_prod_malus:{
             id: 'city-ap_prod_malus',
             title: loc('city_ap_prod_malus'),
-            desc(){ return `<div>${loc('city_ap_prod_malus_desc',[5])}</div><div class="has-text-special">Archipelago Item</div>`; },
+            desc(){ return `<div>${loc('city_ap_prod_malus_desc',[2])}</div><div class="has-text-special">Archipelago Item</div>`; },
             category: 'ap_malus',
             reqs: { },
             cost: {},
             effect(){
                 // let consume = 0.1;
+                return '<span>-2% Production</span>'
                 // return `<span>-${($(this)[0].powered())}MW.</span>`;
             },
             action(args){
@@ -4504,6 +4543,14 @@ export const actions = {
     tauceti: tauCetiTech(),
     eden: edenicTech(),
     ap_init:false,
+    itemcount:0,
+    setupComplete:false,
+    opts:{
+        deathlink:false,
+        deathamn:1,
+    },
+    gameSeed:0,
+    offlineLocs:[],
 };
 
 export function setChallengeScreen(){
@@ -6780,7 +6827,7 @@ export function postBuild(c_action,action,type){
     updateDesc(c_action,action,type);
 }
 
-export function setPlanet(opt){
+export function setPlanet(opt,isAP){
     var biome = 'grassland';
     let trait = [];
     var orbit = 365;
@@ -6804,7 +6851,7 @@ export function setPlanet(opt){
         }
     }
     if (!custom){
-        biome = buildPlanet('biome',opt);
+        biome = opt.hasOwnProperty("biome")?opt.biome:buildPlanet('biome',opt);
         trait = buildPlanet('trait',opt,{biome: biome});
         trait.sort();
 
@@ -6899,8 +6946,7 @@ export function setPlanet(opt){
     },{
         classes: `has-background-light has-text-dark`
     });
-
-    $('#'+id).on('click',function(){
+    function setEffect(){
         if (global.stats.achieve['lamentis'] && global.stats.achieve.lamentis.l >= 5 && global.race.hasOwnProperty('geck') && global.race.geck > 0){
             Object.keys(geology).forEach(function (g){
                 geology[g] += Math.floor(seededRandom(0,7)) / 100;
@@ -6958,7 +7004,11 @@ export function setPlanet(opt){
             clearPopper();
             drawEvolution();
         }
-    });
+    }
+    if(isAP){setEffect()}
+    else{
+        $('#'+id).on('click',setEffect);
+    }
 
     return custom ? custom : (biome === 'eden' ? 'hellscape' : biome);
 }

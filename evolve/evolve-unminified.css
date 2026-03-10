@@ -10341,9 +10341,18 @@ div.bigbang.burn.c::before {
 .commandInput {
   width: 100%;
 }
+.ArchapeligoInput {
+  width: 100%;
+}
 .has-text-arch {
   color: #06c258;
 }
 .has-text-archError {
   color: #f00;
+}
+.has-text-archItem {
+  color: #21a600;
+}
+.has-text-archTrap {
+  color: #d42300;
 }

@@ -14,7 +14,7 @@ export var global = {
     civic: {},
     race: {},
     genes: {
-        "ancients": 2,
+        
     },
     blood: {},
     stats: {
@@ -32,6 +32,14 @@ export var global = {
     },
     ap_init:false,
     itemcount:0,
+    setupComplete:false,
+    opts:{
+        deathlink:false,
+        deathamn:1,
+    },
+    gameSeed:0,
+    offlineLocs:[],
+    
 };
 export var tmp_vars = {};
 export var breakdown = {

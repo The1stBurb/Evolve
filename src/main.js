@@ -898,8 +898,10 @@ function fastLoop(){
     var global_multiplier = 1;
     let applyPlasmid = false;
     let pBonus = plasmidBonus('raw');
-    breakdown.p['Global'][loc("ap_bonus")]=(global.city.ap_prod_bonus.count*5)+'%'
-    breakdown.p['Global'][loc("ap_malus")]=(-global.city.ap_prod_malus.count*2)+'%'
+    if(global.ap_init){
+        breakdown.p['Global'][loc("ap_bonus")]=(global.city.ap_prod_bonus.count*5)+'%'
+        breakdown.p['Global'][loc("ap_malus")]=(-global.city.ap_prod_malus.count*2)+'%'
+    }
     if (global.prestige.Plasmid.count > 0 && ((global.race.universe !== 'antimatter') || (global.genes['bleed'] && global.race.universe === 'antimatter'))){
         breakdown.p['Global'][loc('resource_Plasmid_name')] = (pBonus[1] * 100) + '%';
         applyPlasmid = true;
@@ -1201,7 +1203,7 @@ function fastLoop(){
         global_multiplier *= 1 - (entropy / 100);
     }
     
-    global_multiplier*=1+(global.city.ap_prod_bonus.count*5-global.city.ap_prod_malus.count*2)/100
+    if(global.ap_init){global_multiplier*=1+(global.city.ap_prod_bonus.count*5-global.city.ap_prod_malus.count*2)/100}
 
     let resList = [
         'Money','Knowledge','Omniscience','Food','Lumber','Stone','Chrysotile','Crystal','Furs','Copper','Iron',
@@ -8830,6 +8832,11 @@ function midLoop(){
                 caps['Money'] += gain;
                 breakdown.c.Money[housingLabel('large')] = gain+'v';
             }
+        }
+        if (global.city['ap_pop_bonus']){
+            let pop = global.city.ap_pop_bonus.count * actions.city.ap_pop_bonus.citizens();
+            caps[global.race.species] += pop;
+            breakdown.c[global.race.species][loc('city-ap_pop_bonus')] = pop + 'v';
         }
         if (global.eden['rectory']){
             let pop = p_on['rectory'] * actions.eden.eden_asphodel.rectory.citizens();

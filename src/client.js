@@ -3,10 +3,11 @@
 // import { Client } from "archipelago.js";
 import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
 import { messageQueue } from "./functions.js";
-import { actions, initStruct } from "./actions.js"
+import { actions, initStruct, setPlanet } from "./actions.js"
 import { eventList, events } from './events.js'
-import { global, seededRandom } from './vars.js'
+import { global, seededRandom, atrack } from './vars.js'
 import { incrementStruct } from './space.js'
+import { loc } from './locale.js'
 
 const client = new Client();
 var connectInfo=null;
@@ -38,14 +39,14 @@ const items={
             "1":triggerAntip1,
             "2":triggerAntip2,
         },
-        "power_bonus":triggerPowerBonus,
-        "prod_bonus":triggerProdBonus,
-        "pop_bonus":triggerPopBonus,
+        "power":triggerPowerBonus,
+        "prod":triggerProdBonus,
+        "pop":triggerPopBonus,
     },
     trap:{
         "resources":triggerResourceMalus,
-        "power_malus":triggerPowerMalus,
-        "prod_malus":triggerProdMalus,
+        "power":triggerPowerMalus,
+        "prod":triggerProdMalus,
         "attack":triggerAttack,
     },
     crispr:triggerCrispr,
@@ -57,15 +58,16 @@ function apRandom(min, max, indexSeed) {
     max = max || 1;
     min = min || 0;
 
-    let seed = (gameSeed||0)+indexSeed
+    let seed = (global.gameSeed||0)+indexSeed
     let newSeed = (seed * 9301 + 49297) % 233280;
+    global.gameSeed=newSeed;
     let rnd = newSeed / 233280;
     return min + rnd * (max - min);
 }
 
 //login!
 export function login(user,port,pass){
-    global.settings.pause=true
+    // global.settings.pause=true
 
     connectInfo={
         port: port || localStorage.getItem("port") || Error,//"archipelago.gg:38281", // Default hostname
@@ -91,7 +93,17 @@ function foundEventManager(item){
 
     }
 }
-
+//helper functions
+function prestigeMod(type,amnt,setTo){
+    if(setTo){
+        global.prestige[type].count=amnt;
+        global.stats[type.toLowerCase()]=amnt;
+    }
+    else{
+        global.prestige[type].count+=amnt;
+        global.stats[type.toLowerCase()]+=amnt;
+    }
+}
 
 function randChoice(arr,index) {
     if (!arr.length) return null;
@@ -99,7 +111,7 @@ function randChoice(arr,index) {
 }
 
 function updateItems(item,index){
-    console.log(item,typeof item)
+    // console.log(item,typeof item)
     item=item.split(":")
     item=[item[0].split("-"),item[1].split("_")]
     var ids=item[0]
@@ -108,13 +120,13 @@ function updateItems(item,index){
     // var ids=item[0].slice(5),item=item[1];
     switch(ids[1]){
         case "filler":
-            if(item[0]in ["plasmid","phage","antiplasmid"]){items.filler[item[0]][item[1]](index)}
+            if(item[0]=="plasmid"||item[0]=="phage"||item[0]=="antiplasmid"){items.filler[item[0]][item[1]](index)}
             else{items.filler[item[0]](index)}
         break;
         case "trap":
             items.trap[item[0]](index)
         break
-        case "cripsr":
+        case "crispr":
             items.crispr(index,item[0])
         break
         case "tech":
@@ -128,7 +140,7 @@ function updateItems(item,index){
                 return
             }
             actions.tech[item].arch.locked=false;
-            console.log(item+" is now availible! "+actions.tech[item].arch.locked)
+            // console.log(item+" is now availible! "+actions.tech[item].arch.locked)
         break;
         default:
             console.log("Uh Oh! Invalid item!",ids,item)        
@@ -139,67 +151,97 @@ function updateItems(item,index){
 function triggerBuilding(index){
     var builds=Object.keys(global.city);
     builds=builds.slice(builds.indexOf("power_total")+1)
-    console.log(builds);
+    // console.log(builds);
     var attempts=0;
     while(attempts<20){
         attempts+=1;
         var bld=randChoice(builds,index);
         if(!bld.includes("ap_")&&global.city[bld].count>0){
             incrementStruct(bld,'city');
-            console.log(bld)
+            // console.log(bld)
             var title=actions.city[bld].title
             if(typeof title==="function"){title=title()}
-            messageQueue(`You have gained another ${title}!`,"arch",false,["all"]);
+            messageQueue(`You have gained another ${title}${getPlayer()}!`,"archItem",false,["all"]);
             attempts=200
         }
     }
     
 }
-function triggerResourceBonus(index){}
+function getPlayer(){
+    return players.length>0?` from ${players.pop()}`:""
+}
+
+var resForItem=["DNA","RNA","Money","Knowledge","Food","Lumber","Stone","Furs","Copper","Iron","Aluminium","Cement","Coal","Oil","Uranium","Steel","Titanium","Alloy","Polymer","Plywood","Brick","Wrought_Iron","Sheet_Metal",]
+function triggerResourceBonus(index){//right now special kind are       
+    // var res=Object.keys(global.resource);
+    var attempts=0;
+    // var totalAmnt=apRandom(0,20000)
+    while(attempts<50){
+        attempts+=1;
+        var chosRes=randChoice(resForItem,index+attempts*resForItem.length)
+        // console.log(chosRes)
+        if(global.resource[chosRes].display){
+            var amnt=100;
+            if(global.resource[chosRes].max==-1){amnt=Math.floor(apRandom(0,1000))}
+            else{amnt=Math.floor(apRandom(0,global.resource[chosRes].max-global.resource[chosRes].amount,index))}
+            // console.log(0,global.resource[chosRes].max-global.resource[chosRes].amount)
+            global.resource[chosRes].amount+=amnt;
+            attempts=120;
+            messageQueue(`You gained ${amnt} ${chosRes}${getPlayer()}.`,"archItem")
+        }
+    }
+    // console.log("finished",attempts)
+}
 function triggerPlasmid1(index){
     var amnt=Math.round(apRandom(1,10,index))
-    global.prestige.Plasmid.count += amnt;
-    global.stats.plasmid += amnt;
+    prestigeMod("Plasmid",amnt);
+    messageQueue(`You gained ${amnt} Plasmids!${getPlayer()}`,"archItem");
 }
 function triggerPlasmid2(index){
     var amnt=Math.round(apRandom(10,25,index))
-    global.prestige.Plasmid.count += amnt;
-    global.stats.plasmid += amnt;
+    prestigeMod("Plasmid",amnt);
+    messageQueue(`You gained ${amnt} Plasmids!${getPlayer()}`,"archItem");
 }
 function triggerPlasmid3(index){
     var amnt=Math.round(apRandom(25,50,index))
-    global.prestige.Plasmid.count += amnt;
-    global.stats.plasmid += amnt;
+    prestigeMod("Plasmid",amnt);
+    messageQueue(`You gained ${amnt} Plasmids!${getPlayer()}`,"archItem");
 }
 function triggerPlasmid4(index){
     var amnt=Math.round(apRandom(50,100,index))
-    global.prestige.Plasmid.count += amnt;
-    global.stats.plasmid += amnt;
+    prestigeMod("Plasmid",amnt);
+    messageQueue(`You gained ${amnt} Plasmids!${getPlayer()}`,"archItem");
+    // global.prestige.Plasmid.count += amnt;
+    // global.stats.plasmid += amnt;
 }
 function triggerPhage1(index){
     var amnt=Math.round(apRandom(1,10,index))
-    global.prestige.Phage.count += amnt;
-    global.stats.phage += amnt;
+    prestigeMod("Phage",amnt);
+    messageQueue(`You gained ${amnt} Phage${getPlayer()}!`,"archItem");
+    // global.prestige.Phage.count += amnt;
+    // global.stats.phage += amnt;
 }
 function triggerPhage2(index){
     var amnt=Math.round(apRandom(10,25,index))
-    global.prestige.Phage.count += amnt;
-    global.stats.phage += amnt;
+    prestigeMod("Phage",amnt);
+    messageQueue(`You gained ${amnt} Phage${getPlayer()}!`,"archItem");
 }
 function triggerPhage3(index){
     var amnt=Math.round(apRandom(25,50,index))
-    global.prestige.Phage.count += amnt;
-    global.stats.phage += amnt;
+    prestigeMod("Phage",amnt);
+    messageQueue(`You gained ${amnt} Phage${getPlayer()}!`,"archItem");
 }
 function triggerAntip1(index){
     var amnt=Math.round(apRandom(1,10,index))
-    global.prestige.AntiPlasmid.count += amnt;
-    global.stats.antiplasmid += amnt;
+    // global.prestige.AntiPlasmid.count += amnt;
+    // global.stats.antiplasmid += amnt;
+    prestigeMod("AntiPlasmid",amnt);
+    messageQueue(`You gained ${amnt} Anti-Plasmids${getPlayer()}!`,"archItem");
 }
 function triggerAntip2(index){
     var amnt=Math.round(apRandom(10,25,index))
-    global.prestige.AntiPlasmid.count += amnt;
-    global.stats.antiplasmid += amnt;
+    prestigeMod("AntiPlasmid",amnt);
+    messageQueue(`You gained ${amnt} Anti-Plasmids${getPlayer()}!`,"archItem");
 }
 function triggerCrispr(index,type){
     if(global.genes.hasOwnProperty(type)){
@@ -208,32 +250,59 @@ function triggerCrispr(index,type){
     else{
         global.genes[type]=1;
     }
+    messageQueue(`The CRISPR gene ${type} has been upgraded to level ${global.genes[type]}${getPlayer()}!`,"archItem")
 }
 function triggerPowerBonus(index){
     incrementStruct("ap_power_bonus","city")
+    messageQueue(`You get +5MW${getPlayer()}!`,"archItem")
 }
 function triggerProdBonus(index){
     incrementStruct("ap_prod_bonus","city")
+    messageQueue(`You get +5% to production${getPlayer()}!`,"archItem")
 }
 function triggerPopBonus(index){
     incrementStruct("ap_pop_bonus","city")
+    messageQueue(`You get +1 to population${getPlayer()}!`,"archItem")
 }
 
-function triggerResourceMalus(index){}
+function triggerResourceMalus(index){
+    // var res=Object.keys(global.resource);
+    var attempts=0;
+    // var totalAmnt=apRandom(0,20000)
+    while(attempts<50){
+        attempts+=1;
+        var chosRes=randChoice(resForItem,index+attempts*resForItem.length)
+        // console.log(chosRes)
+        if(global.resource[chosRes].display){
+            var amnt=Math.floor(apRandom(1,global.resource[chosRes].amount/2,index))
+            // console.log(0,global.resource[chosRes].max-global.resource[chosRes].amount)
+            global.resource[chosRes].amount-=amnt;
+            // console.log(attempts)
+            attempts=120;
+            messageQueue(`You lose ${amnt} ${chosRes}${getPlayer()} due to a trap.`,"archTrap")
+        }
+    }
+    // console.log("finished",attempts)
+}
 function triggerPowerMalus(index){
     incrementStruct("ap_power_malus","city")
+    messageQueue(`You get -1MW${getPlayer()} due to a trap!`,"archTrap")
 }
-function triggerProdMalus(index){
-    incrementStruct("ap_prod_bonus","city")
+function triggerProdMalus(index){x
+    incrementStruct("ap_prod_malus","city")
+    messageQueue(`You get -2% to production${getPlayer()} due to a trap!`,"archTrap")
 }
 function triggerAttack(index){
-    if(Math.floor(apRandom(0,2,index))==0){events.siege.effect()}
-    else{events.raid.effect()}
+    var happen="error!"
+    if(Math.floor(apRandom(0,2,index))==0){happen=events.siege.effect()}
+    else{happen=events.raid.effect()}
+    messageQueue(happen,"caution",false,["events","major_events"])
+    messageQueue(`You got attacked${getPlayer()} due to a trap!`,"archTrap")
 }
 
 //update any new items!
 
-
+var players=[];
 //connect to the server
 function connectToServer(){
     //login obviously
@@ -241,6 +310,7 @@ function connectToServer(){
     .then(() => {
         console.log("Connected to the Archipelago server!")
         onConnected()
+        // global.genes["governor"]=true
 
     })
     .catch((error)=>{
@@ -264,13 +334,42 @@ function connectToServer(){
         const packetTeamName = packet.team;
         const packetSlotName = packet.slot;
         console.log("_read_client_status_"+packetTeamName+"_"+packetSlotName)
+        console.log(packet)
+        if(!global.setupComplete){
+            var opt=packet.slot_data;
+            prestigeMod("Plasmid",opt.plasmid,true);
+            prestigeMod("Phage",opt.phage,true);
+            prestigeMod("AntiPlasmid",opt.antip,true);
+            global.opts.deathlink=opt.deathlink==1?true:false;
+            global.opts.deathamn=opt.deathamn;
+            if(opt.relig){
+                global.genes["ancients"]=2;
+                global.tech["theology"]=1
+            }
+            if(opt.govnr)global.genes["governor"]=0;
+            let opts={hell:false};
+            var biomes=["grassland","oceanic","forest","desert","volcanic","tundra","savanna","swamp","ashland","taiga"]
+            if(opt.planet){
+                opts.biome=biomes[opt.biome-1];
+            }
+            else{
+                opts.biome=randChoice(biomes,opt.planet+Math.random()*100)
+            }
+            setPlanet(opts,true);
+            global.settings.at=opt.speed*60*60/2.5
+            atrack.t = global.settings.at;
+            if(opt.prerace){
+                global.race.gods=["error","Human", "elf", "orc", "kobold", "goblin", "gnome", "ogre", "cyclops", "troll", "tortoisan", "gecko", "sliheryn", "cacti", "pinguicula", "sporgar", "shroomi", "moldling", "mantis", "scorpid", "antid", "sharkin", "octigoran", "dryad", "satyr", "phoenix", "salamander", "yeti", "wendigo", "tuskin", "kamel", "balrog", "imp", "seraph", "unicorn", "synth", "nano", "ghast", "shoggoth", "dwarf", "lichen", "wyvern", "eye-spector", "djinn", "narwhalus", "bombardier", "nephilim", "hellspawn", "cath", "wolven", "vulpine", "centaur", "rhinotaur", "capybara", "araak", "pterodacti", "dracnid", "ent", "racconar", "dwarf", "racconar"][opt.prerace]
+            }
+            global.setupComplete=true;
+        }
     };
 
     //from spineraks Yacht Dice
     const disconnectedListener = (packet) => {
         console.log("DISCONNECTED!");
         window.connected = false;
-        global.settings.pause=true;
+        // global.settings.pause=true;
         messageQueue("WARNING: You are disconnected! Trying to reconnect...","archError",false,["all"])
     }
     //from spineraks Yacht Dice, but disabled bcause its not needed
@@ -284,23 +383,43 @@ function connectToServer(){
 
     //from spineracks Yacht Dice, but modified
     const receiveditemsListener = (items, index,override) => {
-        
+        // console.log()
         console.log(`Receiveditemslistener(${items},${index})`);
-
+        console.log(global.itemcount,"itemcount1")
+        var newItems=0
         for(var i=global.itemcount-index; i<items.length; i++){
             if(i<0){continue}
-            updateItems(items[i].name,i+global.itemcount);
-            messageQueue(`You recieved '${items[i]}'!`);
+            newItems+=1
+            try{updateItems(items[i].name,i+global.itemcount);}
+            catch(e){
+                console.log("SOMETHING WENT WRONG WITH"+items[i].name,e)
+            }
+            // messageQueue(`You recieved '${items[i]}'!`);
         }
-        global.itemcount+=items.length;
+        global.itemcount+=newItems;
+        console.log(global.itemcount,"itemcount2")
     };
 
-    
     function jsonListener(text, nodes) {
         var msgText=""
+        var hasItem=false
+        var player=""
+        console.log(nodes)
+        var stop=false
         //convert nodes to text
         for(const node of nodes){
             var nodeTxt=node.text
+            if(node.type=="item"||node.type=="location"){
+                nodeTxt=itemLocText(node.text)
+                if(nodeTxt=="stop")stop=true
+                if(node.type=="item"){hasItem=true}
+            }
+            if(node.type=="player"){
+                // if(node.player.slot==client.players.self.slot){
+                    player=node.text;
+                // }
+            }
+            // if(node.type=="item")hasItem=true;
             //this bit of code doesnt work because of evolve code. Imma see if i can fix that but later
             // console.log(node.type);
             // if(node.type=="player"){
@@ -317,6 +436,10 @@ function connectToServer(){
             // console.log(nodeTxt);
             msgText+=" "+nodeTxt;
         }
+        if(hasItem&&player){
+            players.push(player)
+        }
+        if(stop)return
         //make sure newlines are handled properly
         msgText=msgText.split("\n");
         for(const txt of msgText){
@@ -338,7 +461,39 @@ function connectToServer(){
         window.addedListeners=true;
     }
 }
+function itemLocText(item){
+    // console.log(item,typeof item)
+    item=item.split(":")
+    if(item.length==1){
+        return item[0]
+    }
+    else{
+        item=[item[0].split("-"),item[1].split("_")]
+        var ids=item[0]
+        var item=item[1]
+        // console.log(ids)
+        if(ids[0]=="item"){
+            if(ids[1]=="build"){
+                return loc("city_"+item.join("_"))
+            }
+            // if(ids[1]=="tech"){
 
+            // }
+            // else if(ids[1]=="filler"){
+            //     return "stop"
+            // }
+            return "stop"//ids.join("-")+":"+item.join("_")
+        }
+        else if(ids[0]=="loc"){
+            if(ids[1]=="build"){
+                return loc("city_"+item.join("_"))
+            }
+            else{
+                return loc("tech_"+item.join("_"))
+            }
+        }
+    }
+}
 function onConnected(){
     //set user info
     window.connected=true;
@@ -356,26 +511,29 @@ function onConnected(){
     // global.settings.pause=false
 
     //handle any locations reached while offline
+    var offlineLocs=global.offlineLocs;
+    console.log(offlineLocs,"hey");
     for(var i=0; i<offlineLocs.length; i++){
         reachedLocation(offlineLocs[i][0],offlineLocs[i][1],true)
     }
+    global.offlineLocs=[]
 
     //fetch the game seed
     client.storage.fetch("gameSeed").then(fgameSeed=>{
         if(fgameSeed){//if it exsist, cool
             console.log("Fetched game seed"+fgameSeed)
-            gameSeed=fgameSeed;
+            global.gameSeed=fgameSeed;
         }
         else{//otherwise set it to be the evolve seed
             console.log("no game seed found, using evolve seed"+global.seed)
             client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
-            gameSeed=global.seed
+            global.gameSeed=global.seed
         }
     })
     .catch((error)=>{//same as above
         console.log("Somehting went wrong with fetching the game seed! defaulting to evolve seed!")
         client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
-        gameSeed=global.seed
+        global.gameSeed=global.seed
     })
 }
 
@@ -395,12 +553,12 @@ function itemSentListener(text, item, nodes){
 //dont think i need this! from spineraks Yacht Dice
 var missingLocations=[];
 function locationsCheckedListener(locations){
-    console.log(locations)
-    for (let item of locations) {
-        if (missingLocations.includes(item)) {
-            missingLocations.splice(missingLocations.indexOf(item), 1);
-        }
-    } 
+    // console.log(locations)
+    // for (let item of locations) {
+    //     if (missingLocations.includes(item)) {
+    //         missingLocations.splice(missingLocations.indexOf(item), 1);
+    //     }
+    // } 
     // updateHighscoreAndGoal();
     
 }
@@ -425,6 +583,10 @@ function sendCommand(text){
         client.scout([parseInt(text.split(" ").slice(1).join(" "))],1);
         return
     }
+    else if(text.slice(0,8)=="!trigger"){
+        updateItems(text.split(" ")[1],10+Math.random()*1000)
+        return
+    }
     console.log("sending command:"+text);
     client.messages.say(text);
     
@@ -432,8 +594,10 @@ function sendCommand(text){
 
 //initialize anything needed, mostly an added structures and the chat part
 export function initChatModule(){
+    global.offlineLocs=[];
     document.getElementById("commandInpForm").addEventListener("submit", function (event) {
       event.preventDefault(); // prevent page reload
+      console.log("sending:",document.getElementById("commandInput").value)
       sendCommand(document.getElementById("commandInput").value);
     //   console.log(document.getElementById("commandInput").value);
       this.reset();
@@ -442,21 +606,25 @@ export function initChatModule(){
     if(!global.ap_init||true){
         // console.log("initialize")
         // console.log(global.city)
-        let special_locs=["ap_power_bonus","ap_power_malus","ap_prod_bonus","ap_prod_malus"]//"ap_pop_bonus",]
+        let special_locs=["ap_power_bonus","ap_power_malus","ap_prod_bonus","ap_prod_malus","ap_pop_bonus"]
         special_locs.forEach(function(buildName){
             initStruct(actions.city[buildName])
         })
         // initStruct(actions.city.ap_power)
-
+        // global.tech["theology"]=1
         global.ap_init=true
     }
+    
 }
-var offlineLocs=[]
+// var offlineLocs=[]
 //manages locations when reached
 export function reachedLocation(type,loc){
     console.log(type,loc)
     //if not connected send it to the offline handler, otherwise the client can handle it
-    if(!window.connected){offlineLocs.push([type,loc])}
+    if(!window.connected){
+        console.log(global)
+        global.offlineLocs.push([type,loc])
+    }
     else{client.check(window.locTable[`loc-${type}:${loc}`])}
 }
 
@@ -491,3 +659,8 @@ const devSaveFile="N4IgzgphAmIFwEYAsCAMA2BAaEB3AhgE6QzwCsG6OhEYA9gK6EDGE8oASgHIC
 // server roomupdate locid form locscout
 // client locscout locid
 // server locinfo itemid locid from locscout
+
+//  Could not access required locations for accessibility check. Missing: [loc-tech:steel, loc-tech:mad_science, loc-tech:electricity, loc-tech:industrialization, loc-tech:oil_well, loc-tech:uranium, loc-tech:arpa, loc-tech:rocketry, loc-tech:mad]
+// All Placements:
+// [(loc-tech:club, item-filler:prod_bonus), (loc-tech:wooden_tools, item-filler:prod_bonus), (loc-tech:sundial, item-filler:plasmid_1), (loc-tech:housing, item-filler:antiplasmid_1), (loc-tech:agriculture, item-trap:prod_malus), (loc-tech:mining, item-filler:resources), (loc-tech:stone_axe, item-filler:plasmid_1), (loc-tech:currency, item-filler:resources), (loc-tech:irrigation, item-filler:phage_1), (loc-tech:science, item-trap:attack), (loc-tech:metal_working, item-filler:resources), (loc-tech:storage, item-crispr:birth_1), (loc-tech:garrison, item-filler:resources), (loc-tech:banking, item-filler:plasmid_3), (loc-tech:farm_house, item-crispr:ancients_3), (loc-tech:copper_axes, item-crispr:ancients_5), (loc-tech:copper_sledgehammer, item-filler:antiplasmid_1), (loc-tech:foundry, item-filler:power_bonus), (loc-tech:copper_pickaxe, item-filler:resources), (loc-tech:copper_hoe, item-trap:prod_malus), (loc-tech:government, item-filler:resources), (loc-tech:iron_mining, item-filler:pop_bonus), (loc-tech:silo, item-crispr:ancients_6), (loc-tech:bows, item-filler:resources), (loc-tech:armor, item-trap:prod_malus), (loc-tech:cement, item-filler:building), (loc-tech:loc-tech:investing, item-filler:prod_bonus), (loc-tech:spy, item-trap:attack), (loc-tech:artisans, item-crispr:crafty_3), (loc-tech:market, item-filler:building), (loc-tech:iron_axes, item-crispr:creep_3), (loc-tech:iron_sledgehammer, item-filler:resources), (loc-tech:iron_pickaxe, item-filler:resources), (loc-tech:iron_saw, item-filler:pop_bonus), (loc-tech:iron_hoe, item-filler:power_bonus), (loc-tech:smelting, item-filler:pop_bonus), (loc-tech:coal_mining, item-filler:phage_3), (loc-tech:mercs, item-filler:building), (loc-tech:republic, item-filler:resources), (loc-tech:socialist, item-trap:attack), (loc-tech:library, item-filler:plasmid_2), (loc-tech:theatre, item-filler:resources), (loc-tech:theology, item-crispr:store_4), (loc-tech:urban_planning, item-filler:prod_bonus), (loc-tech:reinforced_shed, item-filler:prod_bonus), (loc-tech:containerization, item-filler:prod_bonus), (loc-tech:apprentices, item-filler:resources), (loc-tech:rebar, item-filler:power_bonus), (loc-tech:plate_armor, item-filler:building), (loc-tech:cottage, item-filler:building), (loc-tech:vault, item-filler:power_bonus), (loc-tech:trade, item-filler:phage_3), (loc-tech:black_powder, item-trap:resources), (loc-tech:steel, item-filler:building), (loc-tech:mill, item-filler:power_bonus), (loc-tech:playwright, item-filler:resources), (loc-tech:thesis, item-filler:plasmid_3), (loc-tech:theocracy, item-crispr:enhance_1), (loc-tech:anthropology, item-trap:attack), (loc-tech:tax_rates, item-trap:resources), (loc-tech:aphrodisiac, item-filler:plasmid_1), (loc-tech:bayer_process, item-filler:building), (loc-tech:dynamite, item-filler:phage_1), (loc-tech:bonds, item-filler:power_bonus), (loc-tech:carpentry, item-filler:plasmid_4), (loc-tech:flintlock_rifle, item-filler:building), (loc-tech:reinforced_crates, item-filler:resources), (loc-tech:steel_rebar, item-crispr:store_1), (loc-tech:mad_science, item-trap:attack), (loc-tech:steel_sledgehammer, item-trap:resources), (loc-tech:steel_containers, item-filler:pop_bonus), (loc-tech:steel_axes, item-filler:antiplasmid_2), (loc-tech:steel_pickaxe, item-filler:phage_2), (loc-tech:steel_saw, item-filler:resources), (loc-tech:steel_beams, item-filler:antiplasmid_2), (loc-tech:steel_hoe, item-trap:resources), (loc-tech:blast_furnace, item-filler:resources), (loc-tech:research_grant, item-filler:antiplasmid_1), (loc-tech:hospital, item-filler:resources), (loc-tech:mythology, item-filler:building), (loc-tech:large_trades, item-filler:resources), (loc-tech:steel_vault, item-filler:power_bonus), (loc-tech:espionage, item-trap:resources), (loc-tech:magic, item-filler:antiplasmid_1), (loc-tech:boot_camp, item-filler:resources), (loc-tech:master_crafter, item-filler:plasmid_1), (loc-tech:electricity, item-trap:prod_malus), (loc-tech:barns, item-filler:plasmid_2), (loc-tech:diplomacy, item-filler:plasmid_2), (loc-tech:bessemer_process, item-filler:phage_1), (loc-tech:home_safe, item-filler:resources), (loc-tech:spy_training, item-filler:resources), (loc-tech:archaeology, item-filler:power_bonus), (loc-tech:apartment, item-filler:building), (loc-tech:radio, item-crispr:trader_2), (loc-tech:mine_conveyor, item-filler:phage_1), (loc-tech:cranes, item-crispr:store_2), (loc-tech:eebonds, item-filler:prod_bonus), (loc-tech:brickworks, item-filler:phage_2), (loc-tech:gantry_cranes, item-filler:plasmid_2), (loc-tech:jackhammer, item-trap:attack), (loc-tech:industrialization, item-filler:prod_bonus), (loc-tech:spy_gadgets, item-filler:resources), (loc-tech:merchandising, item-filler:building), (loc-tech:corpocracy, item-filler:resources), (loc-tech:technocracy, item-crispr:crafty_1), (loc-tech:scientific_journal, item-filler:resources), (loc-tech:oil_well, item-filler:power_bonus), (loc-tech:zoning_permits, item-filler:resources), (loc-tech:vocational_training, item-crispr:governor_1), (loc-tech:signing_bonus, item-filler:resources), (loc-tech:portland_cement, item-filler:building), (loc-tech:corruption, item-filler:pop_bonus), (loc-tech:freight, item-crispr:creep_4), (loc-tech:titanium_axes, item-filler:power_bonus), (loc-tech:titanium_sledgehammer, item-filler:resources), (loc-tech:warehouse, item-trap:resources), (loc-tech:titanium_hoe, item-filler:building), (loc-tech:swiss_banking, item-trap:power_malus), (loc-tech:hunter_process, item-filler:pop_bonus), (loc-tech:oxygen_converter, item-filler:building), (loc-tech:rotary_kiln, item-filler:resources), (loc-tech:oil_depot, item-filler:pop_bonus), (loc-tech:machine_gun, item-filler:building), (loc-tech:adjunct_professor, item-filler:resources), (loc-tech:anfo, item-trap:attack), (loc-tech:wharf, item-filler:resources), (loc-tech:alloy_containers, item-filler:resources), (loc-tech:electronics, item-filler:plasmid_2), (loc-tech:titanium_crates, item-filler:building), (loc-tech:oil_power, item-filler:resources), (loc-tech:tesla_coil, item-filler:phage_2), (loc-tech:code_breakers, item-filler:plasmid_4), (loc-tech:thermomechanics, item-filler:building), (loc-tech:cameras, item-filler:resources), (loc-tech:machinery, item-filler:pop_bonus), (loc-tech:tv, item-filler:prod_bonus), (loc-tech:safety_deposit, item-crispr:trader_1), (loc-tech:jackhammer_mk2, item-filler:building), (loc-tech:assembly_line, item-filler:antiplasmid_1), (loc-tech:uranium, item-filler:prod_bonus), (loc-tech:screw_conveyor, item-filler:building), (loc-tech:bunk_beds, item-filler:resources), (loc-tech:kroll_process, item-filler:power_bonus), (loc-tech:electric_arc_furnace, item-filler:phage_3), (loc-tech:casino, item-filler:building), (loc-tech:massive_trades, item-crispr:ancients_4), (loc-tech:titanium_drills, item-filler:pop_bonus), (loc-tech:internet, item-filler:power_bonus), (loc-tech:wind_turbine, item-filler:prod_bonus), (loc-tech:uranium_storage, item-filler:power_bonus), (loc-tech:fission, item-filler:resources), (loc-tech:dazzle, item-filler:plasmid_1), (loc-tech:bioscience, item-trap:prod_malus), (loc-tech:alloy_drills, item-filler:phage_2), (loc-tech:arpa, item-filler:building), (loc-tech:uranium_ash, item-filler:prod_bonus), (loc-tech:polymer, item-filler:building), (loc-tech:gmfood, item-filler:resources), (loc-tech:urbanization, item-filler:resources), (loc-tech:stock_market, item-trap:resources), (loc-tech:genetics, item-crispr:creep_2), (loc-tech:rocketry, item-filler:building), (loc-tech:monument, item-filler:building), (loc-tech:fracking, item-filler:plasmid_1), (loc-tech:kevlar, item-filler:resources), (loc-tech:fluidized_bed_reactor, item-filler:prod_bonus), (loc-tech:synthetic_fur, item-filler:building), (loc-tech:mad, item-filler:antiplasmid_2), (loc-tech:robotics, item-filler:antiplasmid_1), (loc-tech:cnc_machine, item-crispr:governor_2), (loc-build:basic_housing, item-trap:resources), (loc-build:cottage, item-filler:building), (loc-build:apartment, item-filler:prod_bonus), (loc-build:farm, item-filler:power_bonus), (loc-build:mill, item-filler:building), (loc-build:windmill, item-filler:plasmid_1), (loc-build:silo, item-filler:prod_bonus), (loc-build:garrison, item-filler:building), (loc-build:hospital, item-filler:phage_1), (loc-build:boot_camp, item-filler:resources), (loc-build:shed, item-filler:phage_3), (loc-build:storage_yard, item-filler:resources), (loc-build:warehouse, item-filler:building), (loc-build:bank, item-filler:building), (loc-build:lumber_yard, item-filler:resources), (loc-build:sawmill, item-filler:resources), (loc-build:rock_quarry, item-filler:pop_bonus), (loc-build:cement_plant, item-filler:antiplasmid_2), (loc-build:foundry, item-filler:building), (loc-build:factory, item-crispr:creep_5), (loc-build:smelter, item-crispr:store_3), (loc-build:metal_refinery, item-filler:pop_bonus), (loc-build:mine, item-crispr:creep_1), (loc-build:coal_mine, item-filler:resources), (loc-build:oil_well, item-filler:pop_bonus), (loc-build:oil_depot, item-filler:resources), (loc-build:trade, item-crispr:governor_3), (loc-build:wharf, item-filler:power_bonus), (loc-build:amphitheatre, item-trap:resources), (loc-build:casino, item-crispr:queue_2), (loc-build:temple, item-filler:resources), (loc-build:university, item-filler:plasmid_2), (loc-build:library, item-filler:resources), (loc-build:wardenclyffe, item-filler:resources), (loc-build:biolab, item-filler:prod_bonus), (loc-build:coal_power, item-crispr:transcendence_1), (loc-build:oil_power, item-filler:phage_1), (loc-build:fission_power, item-filler:building), (loc-build:stock_exchange, item-filler:building), (loc-build:launch_facility, item-filler:resources), (loc-build:monument, item-crispr:crafty_2), (loc-build:railway, item-filler:resources), (loc-build:lhc, item-trap:power_malus), (Missles Launched, Victory)]
+// Press enter to close.
