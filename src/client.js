@@ -1,7 +1,7 @@
 // import readline from "node:readline";
 
-// import { Client } from "archipelago.js";
-import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
+import { Client } from "./archipelago.js";
+// import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
 import { messageQueue } from "./functions.js";
 import { actions, initStruct, setPlanet } from "./actions.js"
 import { eventList, events } from './events.js'
