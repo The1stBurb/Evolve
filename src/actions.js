@@ -944,7 +944,7 @@ export const actions = {
             powered(){ return -5; },
             // p_fuel(){ return {}; },
             action(args){
-                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
                     incrementStruct('ap_power_bonus','city');
                     global.city.ap_power_bonus.on++;
                     global.city.power -= $(this)[0].powered();
@@ -973,7 +973,7 @@ export const actions = {
                 return '<span>+5% Production</span>'
             },
             action(args){
-                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
                     incrementStruct('ap_prod_bonus','city');
                     return true;
                 }
@@ -1002,7 +1002,7 @@ export const actions = {
                 return loc('plus_max_resource',[pop,loc('citizen')]);
             },
             action(args){
-                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
                     global['resource'][global.race.species].display = true;
                     global['resource'][global.race.species].max += $(this)[0].citizens();
                     incrementStruct($(this)[0]);
@@ -1040,7 +1040,7 @@ export const actions = {
             powered(){ return 1; },
             // p_fuel(){ return {}; },
             action(args){
-                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
                     incrementStruct('ap_power_malus','city');
                     // global.city.ap_power_malus.on++;
                     // global.city.power -= $(this)[0].powered();
@@ -1071,7 +1071,7 @@ export const actions = {
                 // return `<span>-${($(this)[0].powered())}MW.</span>`;
             },
             action(args){
-                if (payCosts($(this)[0])){//&&args&&args=="itemFound")){
+                if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
                     incrementStruct('ap_prod_malus','city');
                     return true;
                 }

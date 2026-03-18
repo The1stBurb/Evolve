@@ -253,15 +253,15 @@ function triggerCrispr(index,type){
     messageQueue(`The CRISPR gene ${type} has been upgraded to level ${global.genes[type]}${getPlayer()}!`,"archItem")
 }
 function triggerPowerBonus(index){
-    incrementStruct("ap_power_bonus","city")
+    incrementStruct("ap_power_bonus","city","itemTrigger")
     messageQueue(`You get +5MW${getPlayer()}!`,"archItem")
 }
 function triggerProdBonus(index){
-    incrementStruct("ap_prod_bonus","city")
+    incrementStruct("ap_prod_bonus","city","itemTrigger")
     messageQueue(`You get +5% to production${getPlayer()}!`,"archItem")
 }
 function triggerPopBonus(index){
-    incrementStruct("ap_pop_bonus","city")
+    incrementStruct("ap_pop_bonus","city","itemTrigger")
     messageQueue(`You get +1 to population${getPlayer()}!`,"archItem")
 }
 
@@ -285,11 +285,11 @@ function triggerResourceMalus(index){
     // console.log("finished",attempts)
 }
 function triggerPowerMalus(index){
-    incrementStruct("ap_power_malus","city")
+    incrementStruct("ap_power_malus","city","itemTrigger")
     messageQueue(`You get -1MW${getPlayer()} due to a trap!`,"archTrap")
 }
 function triggerProdMalus(index){x
-    incrementStruct("ap_prod_malus","city")
+    incrementStruct("ap_prod_malus","city","itemTrigger")
     messageQueue(`You get -2% to production${getPlayer()} due to a trap!`,"archTrap")
 }
 function triggerAttack(index){
