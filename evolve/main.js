@@ -478,6 +478,8 @@ ${v}`)},projectName(){return typeof $t[a].title=="string"?$t[a].title:$t[a].titl
             <span class="right">
                 <h2 class="is-sr-only">External Links</h2>
                 <ul class="external-links">
+                    <li><a href="https://github.com/The1stBurb/EvolveAPWorld/blob/main/evolve/docs/setup_en.md" target="_blank">Setup</a></li>
+                    <li><a href="https://github.com/The1stBurb/EvolveAPWorld/blob/main/evolve/docs/en_Evolve.md" target="_blank">AP Info</a></li>
                     <li><a href="wiki.html" target="_blank">Wiki</a></li>
                     <li><a href="https://www.reddit.com/r/EvolveIdle/" target="_blank">Reddit</a></li>
                     <li><a href="https://discord.gg/dcwdQEr" target="_blank">Discord</a></li>
