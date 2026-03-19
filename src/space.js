@@ -6719,15 +6719,15 @@ export function incrementStruct(c_action,sector,args){
     if(global[sector][struct].count==0){
         reachedLocation("build",struct)
     }
-    if(struct.includes("ap")){
-        if(args=="itemTrigger"){
-            global[sector][struct].count++;
-        }
-    }
-    else{
+    // if(struct.includes("ap")){
+    //     if(args=="itemTrigger"){
+    //         global[sector][struct].count++;
+    //     }
+    // }
+    // else{
         console.log(struct)
         global[sector][struct].count++;
-    }
+    // }
 }
 
 export function spaceTech(r,k){
