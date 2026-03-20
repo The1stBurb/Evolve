@@ -78,6 +78,9 @@ export function login(user,port,pass){
         pass: pass || localStorage.getItem("pass") || "",
         items_handling: 0b111,
     };
+    var msg=`Logging in as '${connectInfo.user}' to port '${connectInfo.port}' from the game '${connectInfo.game}' with the password '${(connectInfo.pass==""?"No Password Was Used!":"*".repeat(connectInfo.pass))}'`
+    console.log(msg)
+    messageQueue(msg,"arch",false,["all"])
     connectToServer();
     window.addEventListener("beforeunload", () => {
         client.socket.disconnect();
@@ -323,7 +326,7 @@ function connectToServer(){
             return;
         }else{
             messageQueue(`ERROR: ${txt}`,"archError",false,["all"]);
-            messageQueue("Try refreshing the game and logging in agian!","archError",false,["all"]);
+            messageQueue("Try refreshing the game and logging in again!","archError",false,["all"]);
         }
         window.connected=false;
     });
@@ -366,6 +369,11 @@ function connectToServer(){
                 global.race.gods=["error","Human", "elf", "orc", "kobold", "goblin", "gnome", "ogre", "cyclops", "troll", "tortoisan", "gecko", "sliheryn", "cacti", "pinguicula", "sporgar", "shroomi", "moldling", "mantis", "scorpid", "antid", "sharkin", "octigoran", "dryad", "satyr", "phoenix", "salamander", "yeti", "wendigo", "tuskin", "kamel", "balrog", "imp", "seraph", "unicorn", "synth", "nano", "ghast", "shoggoth", "dwarf", "lichen", "wyvern", "eye-spector", "djinn", "narwhalus", "bombardier", "nephilim", "hellspawn", "cath", "wolven", "vulpine", "centaur", "rhinotaur", "capybara", "araak", "pterodacti", "dracnid", "ent", "racconar", "dwarf", "racconar"][opt.prerace]
             }
             global.setupComplete=true;
+        }
+        else{
+            var opt=packet.slot_data;
+            global.opts.deathlink=opt.deathlink==1?true:false;
+            global.opts.deathamn=opt.deathamn;
         }
         // console.log(global.opts.deathlink)
         
@@ -456,6 +464,17 @@ function connectToServer(){
     }
 
     function deathlinkListener(source,time,cause,msg){
+        // console.log(global.opts.deaths,global.opts.deathamn,global.opts);
+        global.opts.deaths++;
+        if(global.opts.deaths>=global.opts.deathamn){
+            // console.log("You ran out of luck!")
+            global.opts.deaths=0;
+        }
+        else{
+            // console.log("your good")
+            sendMsg(`${cause} However, too few deaths have happened for Death Link to trigger! (${global.opts.deaths}/${global.opts.deathamn})`,"archItem")
+            return
+        }
         // console.log("deathlink_occured",source,time,cause)
         var jobs=["unemployed","hunter","forager","farmer","lumberjack","quarry_worker","scavenger","teamster","miner","coal_miner","craftsman","cement_worker","entertainer","priest","professor","scientist","banker","garrison"]
         var tot=0;
@@ -463,12 +482,14 @@ function connectToServer(){
             if(global.civic.hasOwnProperty(title)){
                 tot+=global.civic[title].workers
                 global.civic[title].workers=0;
-                console.log(global.civic[title].workers,title)
+                // console.log(global.civic[title].workers,title)
             }
         })
         global['resource'][global.race.species].amount=1;
-        messageQueue(`${cause} A total of ${tot-1} citizens died in result.`,"archTrap",false,["all"])
-        global.civic[(global.race['carnivore'] || global.race['soul_eater'] || global.race['unfathomable'])?"hunter":(global.race['forager']?"forager":"farmer")].workers=1
+        messageQueue(`${cause} A total of ${tot-1} citizens died in result of Death Link.`,"archTrap",false,["all"])
+        var d_job=(global.race['carnivore'] || global.race['soul_eater'] || global.race['unfathomable'])?"hunter":(global.race['forager']?"forager":"farmer")
+        global.civic[d_job].workers=1
+        global.civic["d_job"]=d_job
     }
     //only add the listenres if they have been added!
     if(!window.addedListeners){
@@ -554,13 +575,13 @@ function onConnected(){
         }
     })
     .catch((error)=>{//same as above
-        console.log("Somehting went wrong with fetching the game seed! defaulting to evolve seed!")
+        console.log("Something went wrong with fetching the game seed! defaulting to evolve seed!")
         client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
         global.gameSeed=global.seed
     })
     if(global.opts.deathlink){
         client.deathLink.enableDeathLink();
-        console.log(client.deathLink)
+        // console.log(client.deathLink)
     }
 }
 
@@ -592,23 +613,26 @@ function locationsCheckedListener(locations){
 
 var logined=false;
 //this is silly, but dont worry
+function commandCheck(text,command){
+    return text.toLowerCase().slice(0,command.length)==command
+}
+
+function sendMsg(msg,typ){
+    messageQueue(msg,typ??"arch",false,["all"])
+}
+var evolveCommands=[["!e help","Lists commands and their functions."],["!login","Login to the game. Formatted: '!login name archipelago.gg:[port num] optional_password' If your name includes spaces, SURROUND IT WITH QUOTATION MARKS(\")!!!"]]
 function sendCommand(text){
-    console.log(text.slice(0,6)+"|")
-    if(text.slice(0,6)=="!login"){
+    // console.log(text.slice(0,6)+"|")
+    // console.log(commandCheck(text,"!login"),0,"!login".length+1)
+    if(commandCheck(text,"!login")){
         if(text.includes('"')){
             var starti=text.indexOf('"')
             var endi=text.lastIndexOf('"')
             var user=text.slice(starti+1,endi);
             text=text.slice(0,starti)+text.slice(endi+2)
-            console.log(user,text)
         }
-        console.log(text,"includes")
         text=text.split(" ");
         if(window.connected){return}
-        //format !login port user name
-        //format !login port pass user name
-        // if(text.length)
-        //user port password
         if(user){
             login(user,text[1],text.length>2?text[2]:null);
         }
@@ -618,17 +642,29 @@ function sendCommand(text){
         logined=true;
         return
     }
-    else if(text.slice(0,5)=="!give"){
+    else if(commandCheck(text,"!e help")){
+        for(var i=0; i<evolveCommands.length; i++){
+            var comd=evolveCommands[i];
+            sendMsg("-- "+comd[0]+" -> "+comd[1]);
+        }
+        sendMsg("Here is a list of all the Evolve commands:")
+        return
+    }
+    else if(commandCheck(text,"!help")){
+        sendMsg("If you wish to use the Evolve command help, use '!e help'")
+        return
+    }
+    else if(commandCheck(text,"!give")){
         updateItems(text.split(" ")[1],-1);
         return
     }   
-    else if(text.slice(0,5)=="!send"){
+    else if(commandCheck(text,"!send")){
         console.log("sending "+text.split(" ").slice(1).join(" "));
 
         client.scout([parseInt(text.split(" ").slice(1).join(" "))],1);
         return
     }
-    else if(text.slice(0,8)=="!trigger"){
+    else if(commandCheck(text,"!trigger")){
         var cause=text.split(" ")[1]
         var count=1;
         var dloc=["city1","city2","city3","a rival city","rival cities"];
@@ -639,12 +675,7 @@ function sendCommand(text){
         // updateItems(text.split(" ")[1],10+Math.random()*1000)
         return
     }
-    else if(text.slice(0,10)=="!deathlink"){
-        console.log("deathlinker")
-        // client.deathLink.sendDeathLink(client.players.self.slot,`${client.players.self.alias} triggered deathlink via commands`);
-        return
-    }
-    console.log("sending command:"+text,text.slice(0,6),"eepy");
+    console.log("sending command:"+text,);
     client.messages.say(text);
     
 }

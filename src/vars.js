@@ -36,6 +36,7 @@ export var global = {
     opts:{
         deathlink:false,
         deathamn:1,
+        deaths:0,
     },
     gameSeed:0,
     offlineLocs:[],
@@ -2278,6 +2279,8 @@ window.soft_reset = function reset(source){
     global.warseed = Math.rand(0,10000);
 
     global.stats['current'] = Date.now();
+    global.setupComplete=false;
+
     save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
     window.location.reload();
 }

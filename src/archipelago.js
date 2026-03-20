@@ -524,12 +524,12 @@ class DeathLinkManager extends EventBasedManager {
     super();
     this.#client = client;
     this.#client.socket.on("bounced", (packet) => {
-      console.log("hey we got it too",packet)
+      // console.log("hey we got it too",packet)
       if (packet.tags?.includes("DeathLink") && packet.data.time && packet.data.source) {
         const deathLink = packet.data;
         const wasLastDeath=deathLink.time === this.#lastDeath;
         if (deathLink.time === this.#lastDeath) {
-          console.log("is this why?",deathLink.time,this.#lastDeath)
+          // console.log("is this why?",deathLink.time,this.#lastDeath)
           // return;
         }
         this.#lastDeath = deathLink.time;
@@ -546,7 +546,7 @@ class DeathLinkManager extends EventBasedManager {
       return;
     }
     this.#client.updateTags([...this.#client.arguments.tags, "DeathLink"]);
-    console.log("enabling")
+    console.log("enabling deathlink")
   }
   disableDeathLink() {
     if (!this.#client.arguments.tags.includes("DeathLink")) {
@@ -562,7 +562,7 @@ class DeathLinkManager extends EventBasedManager {
       console.log("not enabled!")
       return;
     }
-    console.log("sending!")
+    // console.log("sending!")
     this.#lastDeath = Math.ceil(Date.now() / 1000);
     const deathLink = {
       source,

@@ -4553,6 +4553,7 @@ export const actions = {
     opts:{
         deathlink:false,
         deathamn:1,
+        deaths:0,
     },
     gameSeed:0,
     offlineLocs:[],
