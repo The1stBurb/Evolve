@@ -558,7 +558,7 @@ function onConnected(){
         client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
         global.gameSeed=global.seed
     })
-    if(global.opts.deathlink||true){
+    if(global.opts.deathlink){
         client.deathLink.enableDeathLink();
         console.log(client.deathLink)
     }
@@ -593,13 +593,28 @@ function locationsCheckedListener(locations){
 var logined=false;
 //this is silly, but dont worry
 function sendCommand(text){
+    console.log(text.slice(0,6)+"|")
     if(text.slice(0,6)=="!login"){
-        text=text.split(" ");
+        if(text.includes('"')){
+            var starti=text.indexOf('"')
+            var endi=text.lastIndexOf('"')
+            var user=text.slice(starti+1,endi);
+            text=text.slice(0,starti)+text.slice(endi+2)
+            console.log(user,text)
+        }
+        console.log(text.includes('"'),"includes")
+        // text=text.split(" ");
         if(window.connected){return}
         //format !login port user name
         //format !login port pass user name
+        // if(text.length)
         //user port password
-        login(text[1],text[2],text.length>3 ? text[3]:null);
+        if(user){
+            login(user,text[1],text.length>2?text[2]:null);
+        }
+        else{
+            login(text[1],text[2],text.length>3 ? text[3]:null);
+        }
         logined=true;
         return
     }
@@ -629,7 +644,7 @@ function sendCommand(text){
         // client.deathLink.sendDeathLink(client.players.self.slot,`${client.players.self.alias} triggered deathlink via commands`);
         return
     }
-    console.log("sending command:"+text);
+    console.log("sending command:"+text,text.slice(0,6),"eepy");
     client.messages.say(text);
     
 }
