@@ -602,8 +602,8 @@ function sendCommand(text){
             text=text.slice(0,starti)+text.slice(endi+2)
             console.log(user,text)
         }
-        console.log(text.includes('"'),"includes")
-        // text=text.split(" ");
+        console.log(text,"includes")
+        text=text.split(" ");
         if(window.connected){return}
         //format !login port user name
         //format !login port pass user name

@@ -468,7 +468,7 @@ class DataStorageManager {
 class ArchipelagoEventEmitter {
   #events = {};
   addEventListener(event, callback, once = false) {
-    console.log(event,callback,once)
+    // console.log(event,callback,once)
     this.#events[event] ??= [];
     this.#events[event].push([callback, once]);
   }
