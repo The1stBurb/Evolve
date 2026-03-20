@@ -468,6 +468,7 @@ class DataStorageManager {
 class ArchipelagoEventEmitter {
   #events = {};
   addEventListener(event, callback, once = false) {
+    console.log(event,callback,once)
     this.#events[event] ??= [];
     this.#events[event].push([callback, once]);
   }
@@ -523,24 +524,29 @@ class DeathLinkManager extends EventBasedManager {
     super();
     this.#client = client;
     this.#client.socket.on("bounced", (packet) => {
+      console.log("hey we got it too",packet)
       if (packet.tags?.includes("DeathLink") && packet.data.time && packet.data.source) {
         const deathLink = packet.data;
+        const wasLastDeath=deathLink.time === this.#lastDeath;
         if (deathLink.time === this.#lastDeath) {
-          return;
+          console.log("is this why?",deathLink.time,this.#lastDeath)
+          // return;
         }
         this.#lastDeath = deathLink.time;
-        this.emit("deathReceived", [deathLink.source, deathLink.time * 1000, deathLink.cause]);
+        this.emit("deathReceived", [deathLink.source, deathLink.time * 1000, deathLink.cause,wasLastDeath]);
       }
-    });
+    });//.on("deathReceived",(packet)=>{console.log("deathLinkRecieved")});
   }
   get enabled() {
     return this.#client.arguments.tags.includes("DeathLink");
   }
   enableDeathLink() {
     if (this.#client.arguments.tags.includes("DeathLink")) {
+      console.log("already enabled?")
       return;
     }
     this.#client.updateTags([...this.#client.arguments.tags, "DeathLink"]);
+    console.log("enabling")
   }
   disableDeathLink() {
     if (!this.#client.arguments.tags.includes("DeathLink")) {
@@ -553,8 +559,10 @@ class DeathLinkManager extends EventBasedManager {
       throw new UnauthenticatedError("Cannot send death links before connecting and authenticating.");
     }
     if (!this.enabled) {
+      console.log("not enabled!")
       return;
     }
+    console.log("sending!")
     this.#lastDeath = Math.ceil(Date.now() / 1000);
     const deathLink = {
       source,
@@ -1229,6 +1237,10 @@ class SocketManager extends EventBasedManager {
           this.emit("connectionRefused", [packet]);
           break;
         case "Bounced":
+          // console.log("Hey we got it!",packet)
+          // var npack=packet;
+
+          // npack.data.source=67;
           this.emit("bounced", [packet, packet.data]);
           break;
         case "Connected":
@@ -1260,6 +1272,9 @@ class SocketManager extends EventBasedManager {
           break;
         case "SetReply":
           this.emit("setReply", [packet]);
+          break;
+        case "DeathLink":
+          this.emit("deathRecieved",[packet]);
           break;
       }
       this.emit("receivedPacket", [packet]);

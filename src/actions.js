@@ -6421,7 +6421,7 @@ export function setAction(c_action,action,type,old,prediction){
     }
     let element;
     if (old){
-        console.log("title")
+        // console.log("title")
         element = $('<span class="oldTech is-dark"><span class="aTitle">{{ title }}</span></span>');
     }
     else {
@@ -6445,7 +6445,7 @@ export function setAction(c_action,action,type,old,prediction){
         else if (c_action['aura'] && c_action.aura()){ clss = ` ${c_action.aura()}`; }
         // console.log(actibve)
         let active = c_action['highlight'] ? (c_action.highlight() ? `<span class="is-sr-only">${loc('active')}</span>` : `<span class="is-sr-only">${loc('not_active')}</span>`) : '';
-        console.log(active,"eepy",c_action)
+        // console.log(active,"eepy",c_action)
         element = $(`<a class="button is-dark${cst}${clss}"${data} v-on:click="action" role="link"><span class="aTitle" v-html="$options.filters.title(title)"></span>${active}</a><a role="button" v-on:click="describe" class="is-sr-only">{{ title }} description</a>`);
     }
     parent.append(element);
@@ -6723,13 +6723,13 @@ function runAction(c_action,action,type){
                     let grant = false;
                     let add_queue = false;
                     let loopNum = global.settings.qKey && keyMap.q ? 1 : keyMult;
-                    console.log(loopNum,type)
+                    // console.log(loopNum,type)
                     for (let i=0; i<loopNum; i++){
                         let res = false;
-                        console.log("after-1 "+i)
+                        // console.log("after-1 "+i)
                         if ((global.settings.qKey && keyMap.q) || (!(res = c_action.action({isQueue: false})))){
                             if(res==-1){continue}
-                            console.log("after0")
+                            // console.log("after0")
                             if (res !== 0 && global.tech['queue'] && (keyMult === 1 || (global.settings.qKey && keyMap.q))){
                                 let used = 0;
                                 let buid_max = c_action['queue_complete'] ? c_action.queue_complete() : Number.MAX_SAFE_INTEGER;
@@ -6762,16 +6762,16 @@ function runAction(c_action,action,type){
                                             buid_max -= q_size;
                                         }
                                     }
-                                    console.log("after5")
+                                    // console.log("after5")
                                     add_queue = true;
                                 }
                             }
                             break;
                         }
                         else {
-                            console.log("is here")
+                            // console.log("is here")
                             if (global.race['inflation'] && global.tech['primitive']){
-                                console.log("here?")
+                                // console.log("here?")
                                 if (!c_action.hasOwnProperty('inflation') || c_action.inflation){
                                     global.race.inflation++;
                                 }
@@ -6780,7 +6780,7 @@ function runAction(c_action,action,type){
                         grant = true;
                     }
                     if (grant){
-                        console.log("is in post build!")
+                        // console.log("is in post build!")
                         postBuild(c_action,action,type);
                         if (global.tech['queue'] && c_action['queue_complete']) {
                             let buid_max = c_action.queue_complete();
@@ -6948,7 +6948,7 @@ export function setPlanet(opt,isAP){
 
     let title = `${traits}${biomes[biome].label} ${num}`;
     var parent = $(`<div id="${id}" class="action"></div>`);
-    console.log(title)
+    // console.log(title)
     var element = $(`<a class="button is-dark" v-on:click="action" role="link"><span class="aTitle">${title}</span></a>`);
     parent.append(element);
 

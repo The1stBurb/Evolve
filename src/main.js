@@ -23,7 +23,7 @@ import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { enableDebug, updateDebugData } from './debug.js';
 
-import { login, initChatModule } from './client.js';
+import { login, initChatModule, triggerDeathLink } from './client.js';
 
 {
     $(document).ready(function() {
@@ -3870,11 +3870,13 @@ function fastLoop(){
                                 global.resource[global.race.species].amount -= starved;
                                 global.stats.starved += starved;
                                 blubberFill(starved);
+                                triggerDeathLink({cause:"starve",count:starved});
                             }
                             else if (generated < consume / threshold){
                                 global['resource'][global.race.species].amount--;
                                 global.stats.starved++;
                                 blubberFill(1);
+                                triggerDeathLink({cause:"starve",count:1});
                             }
                         }
                     }
@@ -12986,6 +12988,9 @@ function spyCaught(i){
         }
     }
     else {
+        if(!escape){
+            triggerDeathLink({cause:"spy",count:1,"loc":govTitle(i)})
+        }
         messageQueue(loc(escape ? 'event_spy_fail' : 'event_spy',[govTitle(i)]),'danger',false,['spy']);
     }
 }

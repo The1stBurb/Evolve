@@ -10,6 +10,8 @@ import { incrementStruct } from './space.js'
 import { loc } from './locale.js'
 
 const client = new Client();
+// client.deathLink.enableDeathlink();
+
 var connectInfo=null;
 var gameSeed=0;
 window.addedListeners=false;
@@ -335,12 +337,14 @@ function connectToServer(){
         const packetSlotName = packet.slot;
         console.log("_read_client_status_"+packetTeamName+"_"+packetSlotName)
         console.log(packet)
+        
         if(!global.setupComplete){
             var opt=packet.slot_data;
             prestigeMod("Plasmid",opt.plasmid,true);
             prestigeMod("Phage",opt.phage,true);
             prestigeMod("AntiPlasmid",opt.antip,true);
             global.opts.deathlink=opt.deathlink==1?true:false;
+            
             global.opts.deathamn=opt.deathamn;
             if(opt.relig){
                 global.genes["ancients"]=2;
@@ -363,6 +367,8 @@ function connectToServer(){
             }
             global.setupComplete=true;
         }
+        // console.log(global.opts.deathlink)
+        
     };
 
     //from spineraks Yacht Dice
@@ -404,7 +410,7 @@ function connectToServer(){
         var msgText=""
         var hasItem=false
         var player=""
-        console.log(nodes)
+        // console.log(nodes)
         var stop=false
         //convert nodes to text
         for(const node of nodes){
@@ -448,6 +454,22 @@ function connectToServer(){
         
                 
     }
+
+    function deathlinkListener(source,time,cause,msg){
+        // console.log("deathlink_occured",source,time,cause)
+        var jobs=["unemployed","hunter","forager","farmer","lumberjack","quarry_worker","scavenger","teamster","miner","coal_miner","craftsman","cement_worker","entertainer","priest","professor","scientist","banker","garrison"]
+        var tot=0;
+        jobs.forEach(function(title){
+            if(global.civic.hasOwnProperty(title)){
+                tot+=global.civic[title].workers
+                global.civic[title].workers=0;
+                console.log(global.civic[title].workers,title)
+            }
+        })
+        global['resource'][global.race.species].amount=1;
+        messageQueue(`${cause} A total of ${tot-1} citizens died in result.`,"archTrap",false,["all"])
+        global.civic[(global.race['carnivore'] || global.race['soul_eater'] || global.race['unfathomable'])?"hunter":(global.race['forager']?"forager":"farmer")].workers=1
+    }
     //only add the listenres if they have been added!
     if(!window.addedListeners){
         console.log("listeners created oop")
@@ -458,6 +480,7 @@ function connectToServer(){
         client.messages.on("message", jsonListener);
         client.messages.on("itemSent", itemSentListener);
         client.room.on("locationsChecked", locationsCheckedListener);
+        client.deathLink.on("deathReceived",deathlinkListener)
         window.addedListeners=true;
     }
 }
@@ -535,6 +558,10 @@ function onConnected(){
         client.storage.prepare("gameSeed",[]).replace(global.seed).commit()
         global.gameSeed=global.seed
     })
+    if(global.opts.deathlink||true){
+        client.deathLink.enableDeathLink();
+        console.log(client.deathLink)
+    }
 }
 
 var saveYDDInformation=1;
@@ -569,6 +596,9 @@ function sendCommand(text){
     if(text.slice(0,6)=="!login"){
         text=text.split(" ");
         if(window.connected){return}
+        //format !login port user name
+        //format !login port pass user name
+        //user port password
         login(text[1],text[2],text.length>3 ? text[3]:null);
         logined=true;
         return
@@ -576,7 +606,7 @@ function sendCommand(text){
     else if(text.slice(0,5)=="!give"){
         updateItems(text.split(" ")[1],-1);
         return
-    }
+    }   
     else if(text.slice(0,5)=="!send"){
         console.log("sending "+text.split(" ").slice(1).join(" "));
 
@@ -584,12 +614,80 @@ function sendCommand(text){
         return
     }
     else if(text.slice(0,8)=="!trigger"){
-        updateItems(text.split(" ")[1],10+Math.random()*1000)
+        var cause=text.split(" ")[1]
+        var count=1;
+        var dloc=["city1","city2","city3","a rival city","rival cities"];
+        if(Math.round(Math.random())==0){
+            count=Math.round(Math.random()*100)
+        }
+        triggerDeathLink({"cause":cause,"count":count,"loc":dloc[Math.floor(Math.random()*dloc.length)]})
+        // updateItems(text.split(" ")[1],10+Math.random()*1000)
+        return
+    }
+    else if(text.slice(0,10)=="!deathlink"){
+        console.log("deathlinker")
+        // client.deathLink.sendDeathLink(client.players.self.slot,`${client.players.self.alias} triggered deathlink via commands`);
         return
     }
     console.log("sending command:"+text);
     client.messages.say(text);
     
+}
+
+export function triggerDeathLink(args){
+    var cause="";
+    var player=client.players.self.alias
+    switch(args.cause){
+        case "starve":
+            if(args.count==1){
+                cause=`${player} let a citizen starve!`;
+            }
+            else{
+                cause=`${player} let ${args.count} citizens starve!`;
+            }
+        break;
+        case "attacked":
+            if(args.count==1){
+                cause=`One of ${player}'s soldiers died while attacking ${args.location}!`
+            }
+            else{
+                cause=`${args.count} of ${player}'s soldiers died while attacking ${args.location}!`
+            }
+        break;
+        case "attackedBy":
+            if(args.count==1){
+                cause=`One soldier died while defending ${player}'s town from an attack by ${args.location}!`
+            }
+            else{
+                cause=`${args.count} soldiers died while defending ${player}'s town from an attack by ${args.location}!`
+            }
+        break
+        case "fight":
+            if(args.count==1){
+                cause=`One of ${player}'s soldiers died!`
+            }
+            else{
+                cause=`${args.count} of ${player}'s soldiers died!`
+            }
+        break;
+        case "spy":
+            cause=`A spy for ${player} was caught in the ${args.loc}!`;
+        break;
+        case "brawl":
+            if(args.count==1){
+                cause=`After a brawl, one of ${player}'s citizens were found dead!`
+            }
+            else{
+                cause=`After a brawl, ${args.count} of ${player}'s citizens were found dead!`
+            }
+        break
+        default:
+            console.error("Tried to trigger death link but ",args,"is unknown")
+            cause="unknown!"
+    }
+    // deathLinkListener()
+    client.deathLink.sendDeathLink(client.players.self.slot,cause);
+
 }
 
 //initialize anything needed, mostly an added structures and the chat part

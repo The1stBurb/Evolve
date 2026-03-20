@@ -10,6 +10,8 @@ import { govActive } from './governor.js';
 import { unlockAchieve } from './achieve.js';
 import { jobScale } from './jobs.js';
 
+import { triggerDeathLink } from './client.js';
+
 export const events = {
     dna_replication: {
         reqs: {
@@ -155,6 +157,7 @@ export const events = {
                 wounded = Math.round(wounded / 2);
             }
             soldierDeath(killed);
+            triggerDeathLink({cause:"attackBy",count:killed,"loc":"a rival city"})
             global.civic.garrison.wounded += wounded;
             if (global.civic.garrison.wounded > global.civic.garrison.workers){
                 global.civic.garrison.wounded = global.civic.garrison.workers;
@@ -210,6 +213,7 @@ export const events = {
                 wounded = Math.round(wounded / 2);
             }
             soldierDeath(killed);
+            triggerDeathLink({cause:"attackBy",count:killed,"loc":"rival cities"})
             global.civic.garrison.wounded += wounded;
             if (global.civic.garrison.wounded > global.civic.garrison.workers){
                 global.civic.garrison.wounded = global.civic.garrison.workers;
@@ -522,7 +526,7 @@ export const events = {
                 global.civic.foreign[`gov${gov}`].act = 'none';
                 global.civic.foreign[`gov${gov}`].sab = 0;
             }
-            
+            triggerDeathLink({cause:"spy",count:1,"loc":govTitle(gov)});
             return loc('event_spy',[govTitle(gov)]);
         }
     },
@@ -620,6 +624,7 @@ export const events = {
         effect(){
             let dead = Math.floor(seededRandom(1,jobScale(traits.aggressive.vars()[0] + 1)));
             if (dead > global.civic.garrison.workers){ dead = global.civic.garrison.workers; }
+            triggerDeathLink({cause:"brawl",count:dead})
             soldierDeath(dead);
             return loc('event_brawl_s',[loc(`event_brawl${Math.floor(seededRandom(0,10))}`),dead]);
         }
@@ -1080,6 +1085,8 @@ function pillaged(gov,serious){
     }
 
     let enemy_name = gov === 'witchhunt' ? loc(`witch_hunter_crusade`) : loc(`civics_gov${global.civic.foreign[gov].name.s0}`,[global.civic.foreign[gov].name.s1]);
+
+    triggerDeathLink({cause:"attackedBy",count:killed,"loc":enemy_name});
 
     if (army > enemy){
         return loc('event_pillaged1',[enemy_name,killed.toLocaleString(),wounded.toLocaleString()]);

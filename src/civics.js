@@ -10,7 +10,7 @@ import { jobScale } from './jobs.js';
 import { templeCount } from './actions.js';
 import { astrologySign, astroVal } from './seasons.js';
 import { warhead } from './resets.js';
-
+import { triggerDeathLink } from './client.js';
 // Sets up government in civics tab
 export function defineGovernment(define){
     if (!global.civic['taxes']){
@@ -2007,6 +2007,7 @@ function war_campaign(gov){
             messageQueue(loc('civics_garrison_defeat',[death]),'danger',false,['combat']);
         }
     }
+    triggerDeathLink({cause:"attacked",count:death,"loc":govTitle(gov)})
     if (global.civic.garrison.wounded > global.civic.garrison.workers - global.civic.garrison.crew){
         global.civic.garrison.wounded = global.civic.garrison.workers - global.civic.garrison.crew;
     }
@@ -2134,6 +2135,7 @@ export function soldierDeath(v){
     }
     global.civic.garrison.workers -= killed;
     global.stats.died += killed;
+    // triggerDeathLink({cause:"fight",count:killed});
     blubberFill(killed);
 }
 
