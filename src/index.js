@@ -2,7 +2,7 @@ import { global, tmp_vars, save, message_logs, message_filters, webWorker } from
 import { loc, locales } from './locale.js';
 import { setupStats, alevel } from './achieve.js';
 import { vBind, initMessageQueue, clearElement, flib, tagEvent, gameLoop, popover, clearPopper, powerGrid, easterEgg, trickOrTreat, drawIcon } from './functions.js';
-import { initResourceTabs, drawResourceTab, tradeSummery } from './resources.js';
+import { initResourceTabs, drawResourceTab, tradeSummary } from './resources.js';
 import { defineJobs, } from './jobs.js';
 import { clearSpyopDrag } from './governor.js';
 import { defineIndustry, setPowerGrid, gridDefs, clearGrids } from './industry.js';
@@ -657,7 +657,7 @@ export function loadTab(tab){
                 });
 
                 initResourceTabs();
-                tradeSummery();
+                tradeSummary();
             }
             break;
         case 5:

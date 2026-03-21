@@ -691,7 +691,7 @@ export function drawResourceTab(tab) {
 
     // update trade summary
     if (tab === 'market' || tab === 'storage') {
-        tradeSummery();
+        tradeSummary();
     }
 }
 
@@ -785,7 +785,7 @@ export function defineResources(wiki){
     loadSpecialResource('AICore');
 }
 
-export function tradeSummery(){
+export function tradeSummary(){
     if (global.race.species !== 'protoplasm'){
         loadRouteCounter();
         initGalaxyTrade();
