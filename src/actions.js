@@ -5,7 +5,7 @@ import { unlockAchieve, challengeIcon, alevel, universeAffix, checkAdept } from 
 import { races, traits, genus_def, neg_roll_traits, randomMinorTrait, cleanAddTrait, combineTraits, biomes, planetTraits, setJType, altRace, setTraitRank, setImitation, shapeShift, basicRace, fathomCheck, traitCostMod, renderSupernatural, blubberFill, traitRank } from './races.js';
 import { defineResources, unlockCrates, unlockContainers, crateValue, containerValue, galacticTrade, spatialReasoning, resource_values, initResourceTabs, marketItem, containerItem, tradeSummery, faithBonus, templePlasmidBonus, faithTempleCount } from './resources.js';
 import { loadFoundry, defineJobs, jobScale, workerScale, job_desc } from './jobs.js';
-import { loadIndustry, defineIndustry, nf_resources, gridDefs, addSmelter, cancelRituals } from './industry.js';
+import { loadIndustry, defineIndustry, nf_resources, gridDefs, addSmelter, cancelRituals, setPowerGrid } from './industry.js';
 import { defineGovernment, defineGarrison, buildGarrison, commisionGarrison, foreignGov, armyRating, garrisonSize, govEffect } from './civics.js';
 import { spaceTech, interstellarTech, galaxyTech, incrementStruct, universe_affixes, renderSpace, piracy, fuel_adjust, isStargateOn } from './space.js';
 import { renderFortress, fortressTech, warlordSetup } from './portal.js';
@@ -943,7 +943,19 @@ export const actions = {
             },
             powered(){ return -5; },
             // p_fuel(){ return {}; },
+            apInc(){
+                incrementStruct('ap_power_bonus','city');
+                global.city.ap_power_bonus.on++;
+                global.city.power -= $(this)[0].powered();
+            },
             action(args){
+                if(!global.settings.showPowerGrid){
+                    global.city['power'] = 0;
+                    global.city['powered'] = true;
+                    global.settings.showPowerGrid = true;
+                    setPowerGrid();
+                }
+                // console.log(global.settings.showPowerGrid,global.city["power"],global.city["powered"])
                 return -1;
                 if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
                     incrementStruct('ap_power_bonus','city');
@@ -959,6 +971,7 @@ export const actions = {
                     p: ['ap_power_bonus','city']
                 };
             },
+            switchable(){return "only_on"}
             
         },
         ap_prod_bonus:{
@@ -1042,7 +1055,18 @@ export const actions = {
             },
             powered(){ return 1; },
             // p_fuel(){ return {}; },
+            apInc(){
+                incrementStruct('ap_power_malus','city');
+                global.city.ap_power_malus.on++;
+                global.city.power -= $(this)[0].powered();
+            },
             action(args){
+                if(!global.settings.showPowerGrid){
+                    global.city['power'] = 0;
+                    global.city['powered'] = true;
+                    global.settings.showPowerGrid = true;
+                    setPowerGrid();
+                }
                 return -1;
                 return false;
                 if (payCosts($(this)[0])){//&&args&&args=="itemFound"){
@@ -1059,7 +1083,7 @@ export const actions = {
                     p: ['ap_power_malus','city']
                 };
             },
-            switchable(){return false}
+            switchable(){return "only_on"}
             // l_m:0,
         },
         ap_prod_malus:{
@@ -6478,8 +6502,16 @@ export function setAction(c_action,action,type,old,prediction){
         if (switchable){
             let powerOn = $(`<span role="button" :aria-label="on_label()" class="on" @click="power_on" title="ON" v-html="$options.filters.p_on(act.on,'${c_action.id}')"></span>`);
             let powerOff = $(`<span role="button" :aria-label="off_label()" class="off" @click="power_off" title="OFF" v-html="$options.filters.p_off(act.on,'${c_action.id}')"></span>`);
-            parent.append(powerOn);
-            parent.append(powerOff);
+            console.log(switchable)
+            if(switchable=="only_on"){
+                parent.append(powerOn);
+                // parent.append(powerOff);
+            }
+            else{
+                parent.append(powerOn);
+                parent.append(powerOff);
+            }
+            
         }
     }
     if (c_action['count']){
@@ -6531,6 +6563,7 @@ export function setAction(c_action,action,type,old,prediction){
                     return;
                 }
                 else {
+                    console.log(c_action,action,type)
                     runAction(c_action,action,type);
                 }
             },
@@ -6669,7 +6702,7 @@ export function setAction(c_action,action,type,old,prediction){
     });
 }
 
-function runAction(c_action,action,type){
+export function runAction(c_action,action,type){
     if (c_action.id === 'spcdock-launch_ship'){
         c_action.action({isQueue: false});
     }
@@ -6729,7 +6762,12 @@ function runAction(c_action,action,type){
                         let res = false;
                         // console.log("after-1 "+i)
                         if ((global.settings.qKey && keyMap.q) || (!(res = c_action.action({isQueue: false})))){
-                            if(res==-1){continue}
+                            // console.log("inside",res)
+                            if(res==-1){
+                                grant=true;
+                                // console.log(res,grant)
+                                break
+                            }
                             // console.log("after0")
                             if (res !== 0 && global.tech['queue'] && (keyMult === 1 || (global.settings.qKey && keyMap.q))){
                                 let used = 0;
@@ -6770,7 +6808,7 @@ function runAction(c_action,action,type){
                             break;
                         }
                         else {
-                            // console.log("is here")
+                            // console.log("is here",res)
                             if (global.race['inflation'] && global.tech['primitive']){
                                 // console.log("here?")
                                 if (!c_action.hasOwnProperty('inflation') || c_action.inflation){
@@ -6784,6 +6822,7 @@ function runAction(c_action,action,type){
                         // console.log("is in post build!")
                         postBuild(c_action,action,type);
                         if (global.tech['queue'] && c_action['queue_complete']) {
+                            // console.log("in here now queue")
                             let buid_max = c_action.queue_complete();
                             for (let i=0, j=0; j<global.queue.queue.length; i++, j++){
                                 let item = global.queue.queue[j];
@@ -6814,17 +6853,21 @@ function runAction(c_action,action,type){
 }
 
 export function postBuild(c_action,action,type){
+    console.log("is in here now")
     if (!checkAffordable(c_action)){
         let id = c_action.id;
         $(`#${id}`).addClass('cna');
+        console.log("not affordable")
     }
     if (c_action['grant']){
+        console.log("is grant")
         let tech = c_action.grant[0];
         if (!global.tech[tech] || global.tech[tech] < c_action.grant[1]){
             global.tech[tech] = c_action.grant[1];
         }
     }
     if (c_action['grant'] || c_action['refresh']){
+        console.log("is grant or refresh")
         removeAction(c_action.id);
         if (global.race.species === 'protoplasm'){
             drawEvolution();
@@ -6839,6 +6882,7 @@ export function postBuild(c_action,action,type){
         }
     }
     if (c_action['post']){
+        console.log("is post")
         callback_queue.set([c_action, 'post'], []);
     }
     updateDesc(c_action,action,type);
@@ -7728,6 +7772,7 @@ export function removeAction(id){
 export function updateDesc(c_action,category,action){
     var id = c_action.id;
     if (global[category] && global[category][action] && global[category][action]['count']){
+        console.log("in the first one")
         if(!c_action.hasOwnProperty('count')){
             $(`#${id} .count`).html(global[category][action].count);
         }
@@ -7739,6 +7784,7 @@ export function updateDesc(c_action,category,action){
         }
     }
     if ($('#popper').data('id') === id){
+        console.log("in the second")
         actionDesc($('#popper'),c_action,global[category][action],false,category,action);
     }
 }
@@ -9694,6 +9740,7 @@ export function fanaticism(god){
         arpa('Genetics');
     }
     else {
+        // console.log(god,races[god])
         switch (races[god].fanaticism){
             case 'smart':
                 if (global.race['dumb']){

@@ -8822,7 +8822,7 @@ const techs = {
         reqs: { particles: 2, supercollider: 2 },
         grant: ['particles',3],
         arch:{
-            locked:!false
+            locked:false
         },
         cost: {
             Knowledge(){ return 125000; }
@@ -12732,7 +12732,7 @@ const techs = {
         reqs: { supercollider: 2 },
         grant: ['tp_particles',1],
         arch:{
-            locked:!false
+            locked:false
         },
         cost: {
             Knowledge(){ return 125000; }

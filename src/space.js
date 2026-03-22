@@ -6725,7 +6725,7 @@ export function incrementStruct(c_action,sector,args){
     //     }
     // }
     // else{
-        console.log(struct)
+        // console.log(struct)
         global[sector][struct].count++;
     // }
 }

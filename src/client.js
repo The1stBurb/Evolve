@@ -3,7 +3,7 @@
 import { Client } from "./archipelago.js";
 // import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
 import { messageQueue } from "./functions.js";
-import { actions, initStruct, setPlanet } from "./actions.js"
+import { actions, initStruct, setPlanet, runAction } from "./actions.js"
 import { eventList, events } from './events.js'
 import { global, seededRandom, atrack } from './vars.js'
 import { incrementStruct } from './space.js'
@@ -187,7 +187,7 @@ function triggerResourceBonus(index){//right now special kind are
         // console.log(chosRes)
         if(global.resource[chosRes].display){
             var amnt=100;
-            if(global.resource[chosRes].max==-1){amnt=Math.floor(apRandom(0,1000))}
+            if(global.resource[chosRes].max==-1){amnt=Math.floor(apRandom(0,1000,attempts+index))}
             else{amnt=Math.floor(apRandom(0,global.resource[chosRes].max-global.resource[chosRes].amount,index))}
             // console.log(0,global.resource[chosRes].max-global.resource[chosRes].amount)
             global.resource[chosRes].amount+=amnt;
@@ -197,6 +197,7 @@ function triggerResourceBonus(index){//right now special kind are
     }
     // console.log("finished",attempts)
 }
+// var global.resouce
 function triggerPlasmid1(index){
     var amnt=Math.round(apRandom(1,10,index))
     prestigeMod("Plasmid",amnt);
@@ -258,7 +259,9 @@ function triggerCrispr(index,type){
     messageQueue(`The CRISPR gene ${type} has been upgraded to level ${global.genes[type]}${getPlayer()}!`,"archItem")
 }
 function triggerPowerBonus(index){
-    incrementStruct("ap_power_bonus","city","itemTrigger")
+    addBuilding("ap_power_bonus")
+    // runAction(actions.city["ap_power_bonus"],"city","ap_power_bonus")
+    // incrementStruct("ap_power_bonus","city","itemTrigger")
     messageQueue(`You get +5MW${getPlayer()}!`,"archItem")
 }
 function triggerProdBonus(index){
@@ -268,6 +271,11 @@ function triggerProdBonus(index){
 function triggerPopBonus(index){
     incrementStruct("ap_pop_bonus","city","itemTrigger")
     messageQueue(`You get +1 to population${getPlayer()}!`,"archItem")
+}
+
+function addBuilding(name,typ){
+    runAction(actions.city[name],typ??"city",name)
+    actions.city[name].apInc()
 }
 
 function triggerResourceMalus(index){
@@ -290,7 +298,8 @@ function triggerResourceMalus(index){
     // console.log("finished",attempts)
 }
 function triggerPowerMalus(index){
-    incrementStruct("ap_power_malus","city","itemTrigger")
+    addBuilding("ap_power_malus")
+    // incrementStruct("ap_power_malus","city","itemTrigger")
     messageQueue(`You get -1MW${getPlayer()} due to a trap!`,"archTrap")
 }
 function triggerProdMalus(index){x
@@ -310,6 +319,7 @@ function triggerAttack(index){
 var players=[];
 //connect to the server
 function connectToServer(){
+    // global.race.gods=global.race.species
     //login obviously
     client.login(connectInfo.port, connectInfo.user,connectInfo.game,{password:connectInfo.pass})
     .then(() => {
@@ -368,13 +378,18 @@ function connectToServer(){
             if(opt.prerace){
                 global.race.gods=["error","Human", "elf", "orc", "kobold", "goblin", "gnome", "ogre", "cyclops", "troll", "tortoisan", "gecko", "sliheryn", "cacti", "pinguicula", "sporgar", "shroomi", "moldling", "mantis", "scorpid", "antid", "sharkin", "octigoran", "dryad", "satyr", "phoenix", "salamander", "yeti", "wendigo", "tuskin", "kamel", "balrog", "imp", "seraph", "unicorn", "synth", "nano", "ghast", "shoggoth", "dwarf", "lichen", "wyvern", "eye-spector", "djinn", "narwhalus", "bombardier", "nephilim", "hellspawn", "cath", "wolven", "vulpine", "centaur", "rhinotaur", "capybara", "araak", "pterodacti", "dracnid", "ent", "racconar", "dwarf", "racconar"][opt.prerace]
             }
+            else{
+                global.race.gods=global.race.species
+            }
             global.setupComplete=true;
         }
         else{
             var opt=packet.slot_data;
             global.opts.deathlink=opt.deathlink==1?true:false;
             global.opts.deathamn=opt.deathamn;
+            if(global.race.gods=="none"){global.race.gods=global.race.species;}
         }
+        console.log(global.race.gods)
         // console.log(global.opts.deathlink)
         
     };
@@ -672,7 +687,11 @@ function sendCommand(text){
             count=Math.round(Math.random()*100)
         }
         triggerDeathLink({"cause":cause,"count":count,"loc":dloc[Math.floor(Math.random()*dloc.length)]})
-        // updateItems(text.split(" ")[1],10+Math.random()*1000)
+        
+        return
+    }
+    else if(commandCheck(text,"!items")){
+        updateItems(text.split(" ")[1],10+Math.random()*1000)
         return
     }
     console.log("sending command:"+text,);
@@ -763,10 +782,10 @@ export function initChatModule(){
 // var offlineLocs=[]
 //manages locations when reached
 export function reachedLocation(type,loc){
-    console.log(type,loc)
+    // console.log(type,loc)
     //if not connected send it to the offline handler, otherwise the client can handle it
     if(!window.connected){
-        console.log(global)
+        // console.log(global)
         global.offlineLocs.push([type,loc])
     }
     else{client.check(window.locTable[`loc-${type}:${loc}`])}
