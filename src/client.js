@@ -435,20 +435,22 @@ function connectToServer(){
         var player=""
         // console.log(nodes)
         var stop=false
+        // var itemMessage
         //convert nodes to text
         for(const node of nodes){
             var nodeTxt=node.text
+
             msgText+=nodeTxt;
-            // if(node.type=="item"||node.type=="location"){
+            if(node.type=="item"||node.type=="location"){
             //     nodeTxt=itemLocText(node.text)
             //     if(nodeTxt=="stop")stop=true
-            //     if(node.type=="item"){hasItem=true}
-            // }
-            // if(node.type=="player"){
-            //     // if(node.player.slot==client.players.self.slot){
-            //         player=node.text;
-            //     // }
-            // }
+                if(node.type=="item"){hasItem=true}
+            }
+            if(node.type=="player"){
+                if(node.player.slot!=client.players.self.slot){
+                    player=node.text;
+                }
+            }
             // if(node.type=="item")hasItem=true;
             //this bit of code doesnt work because of evolve code. Imma see if i can fix that but later
             // console.log(node.type);
