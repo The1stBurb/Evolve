@@ -920,7 +920,7 @@ export function index(){
                 </span>
             </span>
         </span>
-        <span class="version" id="versionLog"><a href="wiki.html#changelog" target="_blank"></a></span>
+        <span class="version" id="clientVersion"></span><span class="version" id="versionLog"><a href="wiki.html#changelog" target="_blank"></a></span>
     </div>`);
 
     let main = $(`<div id="main" class="main"></div>`);

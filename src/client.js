@@ -763,6 +763,7 @@ export function triggerDeathLink(args){
 }
 
 //initialize anything needed, mostly an added structures and the chat part
+let curVersion=[0,3,13]
 export function initChatModule(){
     global.offlineLocs=[];
     document.getElementById("commandInpForm").addEventListener("submit", function (event) {
@@ -793,7 +794,7 @@ export function initChatModule(){
     global.settings.arpa.arpaTabs = 2;
     global.settings.showGenetics = true;
     arpa("Crispr",true);
-    
+    $("#topBar #clientVersion").html(`Client: v${curVersion[0]}.${curVersion[1]}.${curVersion[2]}`)
 }
 
 var genesInPool={}
