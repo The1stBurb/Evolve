@@ -2,13 +2,13 @@
 
 import { Client } from "./archipelago.js";
 // import { Client } from "https://unpkg.com/archipelago.js/dist/archipelago.min.js";
-import { messageQueue } from "./functions.js";
-import { actions, initStruct, setPlanet, runAction } from "./actions.js"
+import { messageQueue, vBind, popover } from "./functions.js";
+import { actions, initStruct, setPlanet, runAction, actionDesc, removeAction } from "./actions.js"
 import { eventList, events } from './events.js'
 import { global, seededRandom, atrack } from './vars.js'
 import { incrementStruct } from './space.js'
 import { loc } from './locale.js'
-
+import { drawGenes, arpa, genePool } from './arpa.js'
 const client = new Client();
 // client.deathLink.enableDeathlink();
 
@@ -660,6 +660,10 @@ function sendCommand(text){
         logined=true;
         return
     }
+    else if(commandCheck(text,"!random")||commandCheck(text,"!rand")){
+        seededRandom(0,100000)
+        return
+    }
     else if(commandCheck(text,"!e help")){
         for(var i=0; i<evolveCommands.length; i++){
             var comd=evolveCommands[i];
@@ -781,7 +785,77 @@ export function initChatModule(){
         global.ap_init=true
     }
     
+    for(var i in genePool){
+        genesInPool[`${genePool[i].grant[0]}:${genePool[i].grant[1]}`]=i
+    }
+
+    global.settings.arpa.crispr = true;
+    global.settings.arpa.arpaTabs = 2;
+    global.settings.showGenetics = true;
+    arpa("Crispr",true);
+    
 }
+
+var genesInPool={}
+
+export function drawHasCrispr(){
+    var parent=$("#has_genes")
+    var nm=""
+    for(var i in global.genes){
+        for(var j=1; j<=global.genes[i]; j++){
+            nm=`${i}:${j}`
+            // console.log(global.genes[i],i)
+            // console.log(nm)
+            if(!genesInPool.hasOwnProperty(nm)){
+                // console.log(nm,"woops")
+                console.log("woops")
+                continue
+            }
+            let c_action=genePool[genesInPool[nm]]
+            removeAction(c_action.id)
+            var element=$(`<div id="${c_action.id}" class="action hl"></div>`)
+            let clss = ``;
+            if (c_action['class']){
+                clss = typeof c_action['class'] === 'function' ? ` ${c_action.class()}`: ` ${c_action['class']}`;
+            }
+            var active=`<span class="is-sr-only">${loc('not_active')}</span>`;
+            element.append($(`<a class="button is-dark${clss}" role="link"><span class="aTitle" v-html="$options.filters.title(title)"></span></a><a role="button" v-on:click="describe" class="is-sr-only">{{ title }} description</a>`))//
+            parent.append(element)
+            vBind({
+                el:"#"+c_action.id,
+                data:{
+                    title: typeof c_action.title === 'string' ? c_action.title : c_action.title(),
+                },
+                methods:{
+                    describe(){
+                        srSpeak(srDesc(c_action,false))
+                    }
+                },
+                filters:{
+                    title(t){
+                        return t
+                    }
+                }
+            })
+            let type=genesInPool[nm]
+            popover(c_action.id,function(){ return undefined; },{
+                in: function(obj){
+                    // console.log(type)
+                    actionDesc(obj.popper,c_action,global["genes"][type],null,"genes",type);
+                },
+                out: function(){
+                    vBind({el: `#popTimer`},'destroy');
+                    // clearPopper(c_action.id)
+                },
+                attach: '#main',
+                wide: c_action['wide'],
+                classes: c_action.hasOwnProperty('class') ? c_action.class : false,
+            });
+        }
+    }
+    // parent.append()
+}
+
 // var offlineLocs=[]
 //manages locations when reached
 export function reachedLocation(type,loc){

@@ -4,6 +4,7 @@ let strings;
 getString(global.settings.locale);
 
 export function loc(key, variables) {
+    // if(key.includes("evo")){return key}
     let string = strings[key];
     if (!string) {
         if (global.settings.expose){

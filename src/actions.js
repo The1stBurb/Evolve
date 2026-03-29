@@ -263,7 +263,7 @@ export const actions = {
             reqs: { evo: 2 },
             grant: ['evo',7],
             condition(){
-                return genus_condition(2) && global.stats.achieve['obsolete'] && global.stats.achieve.obsolete.l >= 5;
+                return genus_condition(2)// && global.stats.achieve['obsolete'] && global.stats.achieve.obsolete.l >= 5;
             },
             cost: {
                 DNA(){ return 200; }
@@ -609,7 +609,7 @@ export const actions = {
             reqs: { evo: 6, evo_angelic: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = global.city.biome === 'eden' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
+                let allowed = true//global.city.biome === 'eden' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
                 return allowed && genus_condition(6);
             },
             cost: {
@@ -633,10 +633,10 @@ export const actions = {
             desc: loc('evo_demonic_desc'),
             reqs: { evo: 6, evo_demonic: 1 },
             grant: ['evo',7],
-            condition(){
-                let allowed = global.city.biome === 'hellscape' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
-                return allowed && genus_condition(6);
-            },
+            // condition(){
+            //     let allowed = global.city.biome === 'hellscape' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
+            //     return allowed && genus_condition(6);
+            // },
             cost: {
                 DNA(){ return 260; }
             },
@@ -659,7 +659,7 @@ export const actions = {
             reqs: { evo: 5, evo_eldritch: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = global.stats.achieve['nightmare'] && global.stats.achieve.nightmare['mg'] ? true : false;
+                let allowed = true//global.stats.achieve['nightmare'] && global.stats.achieve.nightmare['mg'] ? true : false;
                 return allowed && genus_condition(5);
             },
             cost: {
@@ -684,7 +684,7 @@ export const actions = {
             reqs: { evo: 5, evo_aquatic: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = ['oceanic','swamp'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
+                let allowed = true// ['oceanic','swamp'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
                 return allowed && genus_condition(5);
             },
             cost: {
@@ -709,7 +709,7 @@ export const actions = {
             reqs: { evo: 5, evo_fey: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = ['forest','swamp','taiga'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
+                let allowed = true//['forest','swamp','taiga'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
                 return allowed && genus_condition(5);
             },
             cost: {
@@ -734,7 +734,7 @@ export const actions = {
             reqs: { evo: 5, evo_heat: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = ['volcanic','ashland'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
+                let allowed = true//['volcanic','ashland'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
                 return allowed && genus_condition(5);
             },
             cost: {
@@ -759,7 +759,7 @@ export const actions = {
             reqs: { evo: 5, evo_polar: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = ['tundra','taiga'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
+                let allowed =true// ['tundra','taiga'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
                 return allowed && genus_condition(5);
             },
             cost: {
@@ -784,7 +784,7 @@ export const actions = {
             reqs: { evo: 5, evo_sand: 1 },
             grant: ['evo',7],
             condition(){
-                let allowed = ['desert','ashland'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
+                let allowed =true// ['desert','ashland'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
                 return allowed && genus_condition(5);
             },
             cost: {
@@ -873,7 +873,7 @@ export const actions = {
             desc: loc('evo_sentience_desc'),
             reqs: { evo: 7 },
             grant: ['evo',8],
-            condition(){ return global.tech['evo'] && global.tech.evo === 7 && global.evolution['final'] === 100; },
+            condition(){ return global.tech['evo'] && global.tech.evo === 7 && global.evolution['final'] === 100&&false; },
             cost: {
                 RNA(){ return 300; },
                 DNA(){ return 300; }
@@ -4579,6 +4579,7 @@ export const actions = {
         deathamn:1,
         deaths:0,
     },
+    ap:true,
     gameSeed:0,
     offlineLocs:[],
 };
@@ -5353,6 +5354,7 @@ const raceList = [
     'dwarf','raccoon','lichen','wyvern','beholder','djinn','narwhal','bombardier','nephilim',
     'custom','hybrid'
 ];
+const cantUseRace=["entish","sharkin","dryad","wendigo","balorg","unicorn","shoggoth","lichen","wyvern","beholder","narhwal","bombardier","nephilim"]
 raceList.forEach(function(race){
     if (!['custom','hybrid'].includes(race) || (race === 'custom' && global.custom.hasOwnProperty('race0')) || (race === 'hybrid' && global.custom.hasOwnProperty('race1')) ){
         if (race === 'hybrid' && global.custom.race1.genus !== 'hybrid'){
@@ -5373,11 +5375,13 @@ raceList.forEach(function(race){
                     if (global.tech[`evo_${t}`] >= 2){ typeCheck = true; }
                 });
                  
-                return (global.race.seeded 
-                    || (global.stats.achieve['mass_extinction'] && global.stats.achieve['mass_extinction'].l >= 1) 
-                    || (global.stats.achieve[`extinct_${race}`] && global.stats.achieve[`extinct_${race}`].l >= 1))
-                    && typeCheck 
-                    && global.evolution.final === 100 && !global.race['evoFinalMenu']; 
+                return (
+                // (global.race.seeded 
+                    // || (global.stats.achieve['mass_extinction'] && global.stats.achieve['mass_extinction'].l >= 1) 
+                    // || (global.stats.achieve[`extinct_${race}`] && global.stats.achieve[`extinct_${race}`].l >= 1))
+                    // && 
+                    !cantUseRace.includes(race) && typeCheck 
+                    && global.evolution.final === 100 && !global.race['evoFinalMenu']); 
             },
             cost: {
                 RNA(){ return 320; },
@@ -6413,6 +6417,7 @@ export function addAction(action,type,old,prediction){
 
 export function setAction(c_action,action,type,old,prediction){
     if (checkTechQualifications(c_action,type) === false) {
+        console.log(c_action,type,c_action.condition)
         return;
     }
     let tab = action;
@@ -6550,7 +6555,7 @@ export function setAction(c_action,action,type,old,prediction){
     let modal = {
         template: '<div id="modalBox" class="modalBox"></div>'
     };
-    // console.log("building",c_action,action,type)
+    // console.log("building",action,type,parent)
     vBind({
         el: '#'+id,
         data: {
@@ -6563,7 +6568,7 @@ export function setAction(c_action,action,type,old,prediction){
                     return;
                 }
                 else {
-                    console.log(c_action,action,type)
+                    // console.log(c_action,action,type)
                     runAction(c_action,action,type);
                 }
             },
@@ -9209,7 +9214,7 @@ function sentience(){
         tradeSummery();
 
         arpa('Genetics');
-        arpa('Crispr');
+        // arpa('Crispr');
         arpa('Blood');
     }
     else {

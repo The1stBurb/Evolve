@@ -39,6 +39,7 @@ export var global = {
         deaths:0,
     },
     gameSeed:0,
+    ap:true,
     offlineLocs:[],
     
 };

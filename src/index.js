@@ -829,7 +829,7 @@ export function loadTab(tab){
                 });
                 arpa('Physics');
                 arpa('Genetics');
-                arpa('Crispr');
+                arpa('Crispr',true);
                 arpa('Blood');
             }
             break;
