@@ -9,6 +9,7 @@ import { global, seededRandom, atrack } from './vars.js'
 import { incrementStruct } from './space.js'
 import { loc } from './locale.js'
 import { drawGenes, arpa, genePool } from './arpa.js'
+import { races }from './races.js'
 const client = new Client();
 // client.deathLink.enableDeathlink();
 
@@ -357,22 +358,21 @@ function connectToServer(){
             prestigeMod("Phage",opt.phage,true);
             prestigeMod("AntiPlasmid",opt.antip,true);
             global.opts.deathlink=opt.deathlink==1?true:false;
-            
             global.opts.deathamn=opt.deathamn;
+            global.opts.deathperc=opt.deathperc/100;
+
             if(opt.relig){
                 global.genes["ancients"]=2;
                 global.tech["theology"]=1
             }
             if(opt.govnr)global.genes["governor"]=0;
-            let opts={hell:false};
-            var biomes=["grassland","oceanic","forest","desert","volcanic","tundra","savanna","swamp","ashland","taiga"]
-            if(opt.planet){
-                opts.biome=biomes[opt.biome-1];
+
+            global.ap_genus=["other","carnivore","avian","plant","heat","angelic","fungi","demonic","synthetic","eldritch"][opt.genus];
+            
+            if(opt.univ!="standard"){
+                global.race['universe']=opt.univ
+                global.opts.univ=opt.univ
             }
-            else{
-                opts.biome=randChoice(biomes,opt.planet+Math.random()*100)
-            }
-            setPlanet(opts,true);
             global.settings.at=opt.speed*60*60/2.5
             atrack.t = global.settings.at;
             if(opt.prerace){
@@ -382,14 +382,40 @@ function connectToServer(){
                 global.race.gods=global.race.species
             }
             global.setupComplete=true;
+
+            
+            global.ap_stats={
+                plasmid:opt.plasmid,
+                phage:opt.phage,
+                antip:opt.antip,
+
+                deathsTot:0,
+                deathsTrig:0,
+
+                deathlink:opt.deathlink,
+                deathamn:opt.deathamn,
+                deathperc:opt.deathperc,
+
+                start2x:opt.speed,
+                prerace:opt.prerace,
+
+                relig:opt.relig,
+                govnr:opt.govnr,
+
+                genus:opt.genus,
+
+            }
         }
         else{
             var opt=packet.slot_data;
             global.opts.deathlink=opt.deathlink==1?true:false;
             global.opts.deathamn=opt.deathamn;
+            global.opts.deathperc=opt.deathperc/100;
+
             if(global.race.gods=="none"){global.race.gods=global.race.species;}
         }
-        console.log(global.race.gods)
+            
+        // console.log(global.race.gods)
         // console.log(global.opts.deathlink)
         
     };
@@ -484,9 +510,11 @@ function connectToServer(){
     function deathlinkListener(source,time,cause,msg){
         // console.log(global.opts.deaths,global.opts.deathamn,global.opts);
         global.opts.deaths++;
+        global.ap_stats.deathsTot++;
         if(global.opts.deaths>=global.opts.deathamn){
             // console.log("You ran out of luck!")
             global.opts.deaths=0;
+            global.opts.deathsTrig++;
         }
         else{
             // console.log("your good")
@@ -709,6 +737,7 @@ function sendCommand(text){
 export function triggerDeathLink(args){
     var cause="";
     var player=client.players.self.alias
+    global.ap_stats.deathsCaused++;
     switch(args.cause){
         case "starve":
             if(args.count==1){
@@ -869,8 +898,147 @@ export function reachedLocation(type,loc){
     else{client.check(window.locTable[`loc-${type}:${loc}`])}
 }
 
+const stringPack={
+    plasmid:"Starting Plasmids",
+    phage:"Starting Phage",
+    antip:"Starting Anti-Plasmids",
+
+    deathsTot:"Total Deaths",
+    deathsTrig:"Total Death Links Triggered",
+    deathsCaused:"Death Links Caused",
+
+    deathlink:"Death Link Active",
+    deathamn:"Death Link Amnesty",
+    deathperc:"Death Link Percent",
+
+    start2x:"Starting 2x Speed",
+    prerace:"Chosen Gods",
+
+    relig:"Religion Unlocked",
+    govnr:"Governors Unlocked",
+
+    runTime:"Game Days Taken",
+    runTimeActual:"Estimated Time Taken",
+    "tier-1":"cause Mutually Assured Destruction and a resulting nuclear winter",
+    "tier-2":"Bioseed on a new planet",
+    "tier-3":"explode the blackhole and destroy the universe",
+
+    
+    deathlinkSection:"Death Link Stats",
+    prestige:"Starting Values",
+    runStats:"Time Stats",
+}
+const wonFormat={
+    deathamn(n){
+        return n+"x"
+    },
+    deathperc(n){
+        return `${(n*100).toFixed(2)}%`
+    },
+    start2x(n){
+        return `${n}:00`
+    },
+    prerace(n){return races[global.race.species].name},
+    runTime(n){
+        return n
+    },
+    runTimeActual(n,n2){
+        let days = (n2 * 60 * 60) / 5;
+        let not2 = n - days;
+
+        let times = (not2 < 0 ? days / 2 : not2 + days / 2) * 5; // in seconds
+
+        console.log(days, not2, times);
+
+        let hours = Math.floor(times / 3600);
+        let remaining = times % 3600;
+        let minutes = Math.floor(remaining / 60);
+        let seconds = remaining % 60;
+
+        // Format with leading zeros
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+}
+// const determineIfSeen={
+//     deathlinkSection(){return global.opts.deathlink?true:false;}
+// }
+export function setupWon(){
+    let won=$(`#mTabWon`)
+    won.append(`<div class="tabWon_stats" id="tabWonStats"></div>`)
+    won=$(`#tabWonStats`)
+    console.log(global.opts.goal)
+    won.append(`<span class="has-text-success">Congratulations! You have won the game! </span><div class="has-text-success tabWonGoal">You managed to <b>${stringPack[global.opts.goal]}</b>!</div>`)
+    won.append(`<div id="wonPanel" class="vb"></div>`)
+    console.log("eepy")
+    let wonpan=$(`#mTabWon #wonPanel`)
+    const sections={"prestige":["plasmid","phage","antip","start2x","prerace","relig","govnr"],"deathlinkSection":["deathlink","deathamn","deathperc","deathsTot","deathsCaused","deathsTrig"],"runStats":["runTime","runTimeActual"]}
+    const alwaysVis=["deathlink"]
+    for(let i in sections){
+        wonpan.append(`<div class="has-text-success wonPanelTitle">${stringPack[i]}</div>`)
+        // let subs=$(`#wonPanel #${i}`)
+        for(let j in sections[i]){
+            let cs=sections[i][j]
+            let inp=""
+            if(wonFormat[cs]){
+                if(cs=="runTimeActual"||cs=="runTime"){
+                    inp=`specFormat(time,'${cs}',s.start2x)`
+                }
+                else{
+                    inp=`specFormat(s.${cs},'${cs}')`
+                }
+            }
+            else{
+                inp=`format(s.${cs})`
+            }//${!alwaysVis.includes(j)?' v-if="s.deathlink"':''}
+            console.log(inp,cs)
+            wonpan.append(`<div>
+                <span class="has-text-warning wonPanelSub">${stringPack[cs]}:</span> {{${inp}}}
+                </div>`)
+        }
+    }
+    console.log("done")
+    // for(let i in global.ap_stats){
+    //     let cst=global.ap_stats[i]
+    //     let inp=""
+    //     if(wonFormat[i]){
+    //         inp=`specFormat(s.${i},'${i}')`
+    //     }
+    //     else{
+    //         inp=`format(s.${i})`
+    //     }
+    //     won.append(`<div>
+    //         <span class="has-text-warning">${stringPack[i]}:</span> {{${inp}}}
+    //         </div>`)
+    // }
+    vBind({
+        el: '#wonPanel',
+        data: {
+            s: global.ap_stats,
+            time:global.stats.days,
+        },
+        methods:{
+            format(s){
+                if(s===false){s="No"}
+                else if(s===true){s="Yes"}
+                console.log(s)
+                return s.toLocaleString();
+            },
+            specFormat(s,n,s2){
+                console.log(s,n,s2)
+                return wonFormat[n](s,s2).toLocaleString()
+            }
+
+        },
+        filters: {
+                        
+        }
+    });
+    // won.append(``)
+}
+
 //have we reached out goal?
 export function reachedGoal(){
+    global.settings.reachedGoal=true;
     messageQueue("You did it! Congratulations!","arch",false,["all"])
     client.goal();
 }

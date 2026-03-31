@@ -14,6 +14,7 @@ import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObse
 import { renderEdenic } from './edenic.js';
 import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
+import { setupWon } from './client.js';
 
 export function mainVue(){
     vBind({
@@ -23,7 +24,9 @@ export function mainVue(){
         },
         methods: {
             swapTab(tab){
+                console.log("swap",tab)
                 if (!global.settings.tabLoad){
+                    console.log("yes")
                     loadTab(tab);
                 }
                 return tab;
@@ -330,6 +333,7 @@ export function loadTab(tab){
         clearElement($(`#mTabArpa`));
         clearElement($(`#mTabStats`));
         clearElement($(`#mTabObserve`));
+        clearElement($(`#mTabWon`))
     }
     else {
         tagEvent('page_view',{ page_title: `Evolve - All Tabs` });
@@ -870,11 +874,20 @@ export function loadTab(tab){
                 setupStats();
             }
             break;
-        case 7:
+        case 8:
             if (!global.settings.tabLoad){
                 tagEvent('page_view',{ page_title: `Evolve - Settings` });
             }
             break;
+        case 7:
+        case 'mTabWon':
+            {
+                if (!global.settings.tabLoad){
+                    tagEvent('page_view',{ page_title: `Evolve - You Won!` });
+                }
+                setupWon();
+            }
+            break
         case 'mTabObserve':
         default:
             if (!global.settings.tabLoad){
@@ -1166,6 +1179,7 @@ export function index(){
     let tabs = $(`<b-tabs id="mainTabs" v-model="s.civTabs" :animated="s.animated" @input="swapTab"></b-tabs>`);
     content.append(tabs);
 
+    // if(!global.reachedGoal){
     // Evolution Tab
     let evolution = $(`<b-tab-item id="evolution" class="tab-item sticky" :visible="s.showEvolve">
         <template slot="header">
@@ -1219,6 +1233,10 @@ export function index(){
     </b-tab-item>`);
     tabs.append(arpa);
 
+    // }
+    // else{
+
+    // }
     // Stats Tab
     let stats = $(`<b-tab-item :visible="s.showAchieve">
         <template slot="header">
@@ -1227,6 +1245,17 @@ export function index(){
         <div id="mTabStats"></div>
     </b-tab-item>`);
     tabs.append(stats);
+    
+    // if(global.reachedGoal){
+    let onWinTab=$(`<b-tab-item :visible="s.reachedGoal">
+        <template slot="header">
+            {{ 'tech_won' | label }}
+        </template>
+        <div id="mTabWon"></div>
+    </b-tab-item>`)
+    tabs.append(onWinTab)
+    // }
+
 
     let iconlist = '';
     let icons = [
@@ -1468,7 +1497,6 @@ export function index(){
     </b-tab-item>`);
 
     tabs.append(settings);
-
     // (Hidden Last Tab) Hell Observation Tab
     let observe = $(`<b-tab-item disabled>
         <template slot="header"></template>
@@ -1493,6 +1521,7 @@ export function index(){
             <span class="right">
                 <h2 class="is-sr-only">External Links</h2>
                 <ul class="external-links">
+                    <li><a href="yaml.html" target="_blank">YAML Editor</a></li>
                     <li><a href="https://github.com/The1stBurb/EvolveAPWorld/blob/main/evolve/docs/setup_en.md" target="_blank">Setup</a></li>
                     <li><a href="https://github.com/The1stBurb/EvolveAPWorld/blob/main/evolve/docs/en_Evolve.md" target="_blank">AP Info</a></li>
                     <li><a href="wiki.html" target="_blank">Wiki</a></li>

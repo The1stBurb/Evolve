@@ -11661,5 +11661,9 @@
   "city_dist_ap_bonus_desc":"Some items wind up here!",
   "city_dist_ap_bonus":"Archipeligo Bonus Items",
   "city_dist_ap_malus_desc":"Traps wind up here!",
-  "city_dist_ap_malus":"Archipeligo Malus Items"
+  "city_dist_ap_malus":"Archipeligo Malus Items",
+
+  "tech_won":"You Won!",
+
+  "not_to_use":"null"
 }

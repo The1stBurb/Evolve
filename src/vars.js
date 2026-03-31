@@ -37,6 +37,27 @@ export var global = {
         deathlink:false,
         deathamn:1,
         deaths:0,
+        deathperc:1,
+    },
+    ap_stats:{
+        plasmid:0,
+        phage:0,
+        antip:0,
+
+        deathsTot:0,
+        deathsTrig:0,
+        deathsCaused:0,
+
+        deathlink:false,
+        deathamn:1,
+        deathperc:1,
+
+        start2x:0,
+        prerace:'none',
+
+        relig:false,
+        govnr:false,
+
     },
     gameSeed:0,
     ap:true,
@@ -118,6 +139,37 @@ export function setGlobal(gameState) {
 if (!global['version']){
     global['version'] = '0.2.0';
 }
+function defSet(nm,defaultVal){
+    // console.log(nm,typeof nm)
+    if(typeof nm==="object"){
+        // console.log(nm,!global[nm[0]][nm[1]])
+        !global[nm[0]][nm[1]]?global[nm[0]][nm[1]]=defaultVal:false
+    }
+    !global[nm]?global[nm]=defaultVal:false
+}
+defSet('ap_init',false)
+defSet('itemcount',0)
+defSet('setupComplete',false)
+defSet('opts',{deathlink:false,deathamn:1,deaths:0,deathperc:1,goal:'tier-1'})
+defSet(['opts','deathlink'],false)
+defSet(['opts','deathamn'],1)
+defSet(['opts','deaths'],0)
+defSet(['opts','deathperc'],1)
+defSet(['opts','goal'],"tier-1")
+defSet('ap_genus','other')
+// global.ap_genus='other'
+defSet('gameSeed',global['seed'])
+defSet('ap',true)
+defSet('offlineLocs',[])
+let apstats={plasmid:0,phage:0,antip:0,deathsTot:0,deathsCaused:0,deathsTrig:0,deathlink:false,deathamn:1,deathperc:1,start2x:0,prerace:'none',relig:false,govnr:false,genus:'other'}
+defSet('ap_stats',apstats)
+for(let i in apstats){
+    defSet(['ap_stats',i],apstats[i])
+}
+defSet(['settings','reachedGoal'],false)
+// global.reachedGoal=!true
+// global.settings.reachedGoal=!false
+// global.deathsCaused=0
 
 if (convertVersion(global['version']) < 2060){
     Object.keys(global.resource).forEach(function (res){

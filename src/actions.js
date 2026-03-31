@@ -183,7 +183,7 @@ export const actions = {
             desc: loc('evo_phagocytosis_desc'),
             reqs: { evo: 2 },
             grant: ['evo',3],
-            condition(){ return global.tech['evo'] && global.tech.evo === 2; },
+            condition(){ return global.tech['evo'] && global.tech.evo === 2 && !["plant","fungi"].includes(global.ap_genus); },
             cost: {
                 DNA(){ return 175; }
             },
@@ -204,7 +204,7 @@ export const actions = {
             desc: loc('evo_chloroplasts_desc'),
             reqs: { evo: 2 },
             grant: ['evo',3],
-            condition(){ return genus_condition(2); },
+            condition(){ return genus_condition(2) && global.ap_genus=="plant"; },
             cost: {
                 DNA(){ return 175; }
             },
@@ -233,7 +233,7 @@ export const actions = {
             desc: loc('evo_chitin_desc'),
             reqs: { evo: 2 },
             grant: ['evo',3],
-            condition(){ return genus_condition(2); },
+            condition(){ return genus_condition(2) && global.ap_genus=="fungi"; },
             cost: {
                 DNA(){ return 175; }
             },
@@ -263,7 +263,7 @@ export const actions = {
             reqs: { evo: 2 },
             grant: ['evo',7],
             condition(){
-                return genus_condition(2)// && global.stats.achieve['obsolete'] && global.stats.achieve.obsolete.l >= 5;
+                return genus_condition(2) && global.ap_genus=="synthetic"// && global.stats.achieve['obsolete'] && global.stats.achieve.obsolete.l >= 5;
             },
             cost: {
                 DNA(){ return 200; }
@@ -404,7 +404,7 @@ export const actions = {
             desc: loc('evo_athropods_desc'),
             reqs: { evo: 5, evo_insectoid: 1 },
             grant: ['evo',7],
-            condition(){ return genus_condition(5); },
+            condition(){ return genus_condition(5) && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 260; }
             },
@@ -426,7 +426,7 @@ export const actions = {
             desc: loc('evo_mammals_desc'),
             reqs: { evo: 5, evo_mammals: 1 },
             grant: ['evo',6],
-            condition(){ return global.tech['evo'] && global.tech.evo === 5; },
+            condition(){ return global.tech['evo'] && global.tech.evo === 5 && !["demonic","heat","celestial"].includes(global.ap_genus); },
             cost: {
                 DNA(){ return 245; }
             },
@@ -452,7 +452,7 @@ export const actions = {
             desc: loc('evo_humanoid_desc'),
             reqs: { evo: 6, evo_humanoid: 1 },
             grant: ['evo',7],
-            condition(){ return genus_condition(6); },
+            condition(){ return genus_condition(6) && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 260; }
             },
@@ -474,7 +474,7 @@ export const actions = {
             desc: loc('evo_gigantism_desc'),
             reqs: { evo: 6, evo_giant: 1 },
             grant: ['evo',7],
-            condition(){ return genus_condition(6); },
+            condition(){ return genus_condition(6) && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 260; }
             },
@@ -496,7 +496,7 @@ export const actions = {
             desc: loc('evo_dwarfism_desc'),
             reqs: { evo: 6, evo_small: 1 },
             grant: ['evo',7],
-            condition(){ return genus_condition(6); },
+            condition(){ return genus_condition(6) && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 260; }
             },
@@ -518,7 +518,7 @@ export const actions = {
             desc: loc('evo_animalism_desc'),
             reqs: { evo: 6, evo_animalism: 1 },
             grant: ['evo',7],
-            condition(){ return genus_condition(6) && global.tech['evo_animalism'] && global.tech.evo_animalism === 1; },
+            condition(){ return genus_condition(6) && global.tech['evo_animalism'] && global.tech.evo_animalism === 1 && (global.ap_genus=="other" || global.ap_genus=="carnivore"); },
             cost: {
                 DNA(){ return 250; }
             },
@@ -539,7 +539,7 @@ export const actions = {
             desc: loc('evo_carnivore_desc'),
             reqs: { evo_animalism: 2 },
             grant: ['evo_animalism',3],
-            condition(){ return genus_condition(7) && global.tech['evo_animalism'] && global.tech.evo_animalism === 2; },
+            condition(){ return genus_condition(7) && global.tech['evo_animalism'] && global.tech.evo_animalism === 2 && global.ap_genus=="carnivore"; },
             cost: {
                 DNA(){ return 255; }
             },
@@ -562,7 +562,7 @@ export const actions = {
             desc: loc('evo_herbivore_desc'),
             reqs: { evo_animalism: 2 },
             grant: ['evo_animalism',3],
-            condition(){ return genus_condition(7) && global.tech['evo_animalism'] && global.tech.evo_animalism === 2; },
+            condition(){ return genus_condition(7) && global.tech['evo_animalism'] && global.tech.evo_animalism === 2 && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 255; }
             },
@@ -585,7 +585,7 @@ export const actions = {
             desc: loc('evo_omnivore_desc'),
             reqs: { evo_animalism: 2, locked: 1 },
             grant: ['evo_animalism',3],
-            condition(){ return genus_condition(7) && global.tech['evo_animalism'] && global.tech.evo_animalism === 2; },
+            condition(){ return genus_condition(7) && global.tech['evo_animalism'] && global.tech.evo_animalism === 2 && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 255; }
             },
@@ -610,7 +610,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed = true//global.city.biome === 'eden' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
-                return allowed && genus_condition(6);
+                return allowed && genus_condition(6) && global.ap_genus=="angelic";
             },
             cost: {
                 DNA(){ return 260; }
@@ -633,10 +633,10 @@ export const actions = {
             desc: loc('evo_demonic_desc'),
             reqs: { evo: 6, evo_demonic: 1 },
             grant: ['evo',7],
-            // condition(){
-            //     let allowed = global.city.biome === 'hellscape' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
-            //     return allowed && genus_condition(6);
-            // },
+            condition(){
+                // let allowed = global.city.biome === 'hellscape' || global.blood['unbound'] && global.blood.unbound >= 3 ? true : false;
+                return genus_condition(6) && global.ap_genus=="demonic";
+            },
             cost: {
                 DNA(){ return 260; }
             },
@@ -660,7 +660,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed = true//global.stats.achieve['nightmare'] && global.stats.achieve.nightmare['mg'] ? true : false;
-                return allowed && genus_condition(5);
+                return allowed && genus_condition(5) && global.ap_genus=="eldritch";
             },
             cost: {
                 DNA(){ return 260; }
@@ -685,7 +685,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed = true// ['oceanic','swamp'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
-                return allowed && genus_condition(5);
+                return allowed && genus_condition(5) && global.ap_genus=="other";
             },
             cost: {
                 DNA(){ return 260; }
@@ -710,7 +710,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed = true//['forest','swamp','taiga'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
-                return allowed && genus_condition(5);
+                return allowed && genus_condition(5) && global.ap_genus=="other";
             },
             cost: {
                 DNA(){ return 260; }
@@ -735,7 +735,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed = true//['volcanic','ashland'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
-                return allowed && genus_condition(5);
+                return allowed && genus_condition(5) && global.ap_genus=="heat";
             },
             cost: {
                 DNA(){ return 260; }
@@ -760,7 +760,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed =true// ['tundra','taiga'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
-                return allowed && genus_condition(5);
+                return allowed && genus_condition(5) && global.ap_genus=="other";
             },
             cost: {
                 DNA(){ return 260; }
@@ -785,7 +785,7 @@ export const actions = {
             grant: ['evo',7],
             condition(){
                 let allowed =true// ['desert','ashland'].includes(global.city.biome) || global.blood['unbound'] ? true : false;
-                return allowed && genus_condition(5);
+                return allowed && genus_condition(5) && global.ap_genus=="other";
             },
             cost: {
                 DNA(){ return 260; }
@@ -808,7 +808,7 @@ export const actions = {
             desc: loc('evo_eggshell_desc'),
             reqs: { evo: 5, evo_eggshell: 1 },
             grant: ['evo',6],
-            condition(){ return global.tech['evo'] && global.tech.evo === 5 && !global.evolution['gselect']; },
+            condition(){ return global.tech['evo'] && global.tech.evo === 5 && !global.evolution['gselect'] && (global.ap_genus=="other" || global.ap_genus=="avian"); },
             cost: {
                 DNA(){ return 245; }
             },
@@ -829,7 +829,7 @@ export const actions = {
             desc: loc('evo_endothermic_desc'),
             reqs: { evo: 6, evo_eggshell: 2 },
             grant: ['evo',7],
-            condition(){ return genus_condition(6); },
+            condition(){ return genus_condition(6) && global.ap_genus=="avian"; },
             cost: {
                 DNA(){ return 260; }
             },
@@ -851,7 +851,7 @@ export const actions = {
             desc: loc('evo_ectothermic_desc'),
             reqs: { evo: 6, evo_eggshell: 2 },
             grant: ['evo',7],
-            condition(){ return genus_condition(6); },
+            condition(){ return genus_condition(6) && global.ap_genus=="other"; },
             cost: {
                 DNA(){ return 260; }
             },
@@ -5355,6 +5355,7 @@ const raceList = [
     'custom','hybrid'
 ];
 const cantUseRace=["entish","sharkin","dryad","wendigo","balorg","unicorn","shoggoth","lichen","wyvern","beholder","narhwal","bombardier","nephilim"]
+const specialGenus=["carnivore","avian","plant","heat","angelic","fungi","demonic","synthetic","eldritch"]
 raceList.forEach(function(race){
     if (!['custom','hybrid'].includes(race) || (race === 'custom' && global.custom.hasOwnProperty('race0')) || (race === 'hybrid' && global.custom.hasOwnProperty('race1')) ){
         if (race === 'hybrid' && global.custom.race1.genus !== 'hybrid'){
@@ -5375,13 +5376,14 @@ raceList.forEach(function(race){
                     if (global.tech[`evo_${t}`] >= 2){ typeCheck = true; }
                 });
                  
+                console.log(race,global.ap_genus,races[race].type,(global.ap_genus=='other'?!specialGenus.includes(races[race].type):global.ap_genus==races[race].type))
                 return (
                 // (global.race.seeded 
                     // || (global.stats.achieve['mass_extinction'] && global.stats.achieve['mass_extinction'].l >= 1) 
                     // || (global.stats.achieve[`extinct_${race}`] && global.stats.achieve[`extinct_${race}`].l >= 1))
                     // && 
-                    !cantUseRace.includes(race) && typeCheck 
-                    && global.evolution.final === 100 && !global.race['evoFinalMenu']); 
+                    !cantUseRace.includes(race) && (global.ap_genus=='other'?!specialGenus.includes(races[race].type):global.ap_genus==races[race].type) &&
+                    typeCheck && global.evolution.final === 100 && !global.race['evoFinalMenu']); 
             },
             cost: {
                 RNA(){ return 320; },
@@ -6417,7 +6419,7 @@ export function addAction(action,type,old,prediction){
 
 export function setAction(c_action,action,type,old,prediction){
     if (checkTechQualifications(c_action,type) === false) {
-        console.log(c_action,type,c_action.condition)
+        // console.log(c_action,type,c_action.condition)
         return;
     }
     let tab = action;

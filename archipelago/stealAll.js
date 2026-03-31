@@ -17884,6 +17884,16 @@ class OR{
         }
         return false
     }
+    build(inv){
+        return "("+this.lgcor.map(lgc=>{
+            if(typeof lgc=="string"){
+                return typerForLogic(lgc,inv)
+            }
+            else{
+                return lgc.build(inv)
+            }
+        }).join(inv?" and ":" or ")+")"
+    }
 }
 class AND{
     constructor(...args){
@@ -17907,6 +17917,16 @@ class AND{
         }
         return true
     }
+    build(inv){
+        return "("+this.lgcand.map(lgc=>{
+            if(typeof lgc=="string"){
+                return typerForLogic(lgc,inv)
+            }
+            else{
+                return lgc.build(inv)
+            }
+        }).join(inv?" or ":" and ")+")"
+    }
 }
 class Conditional{
     constructor(logic,ontrue,onfalse){
@@ -17914,8 +17934,51 @@ class Conditional{
         this.ontrue=ontrue??""
         this.onfalse=onfalse??""
     }
-    build(){
-        return `fnctionyay`
+    build(inv){
+        let lgc="err",ont="err",onf="err";
+        let onts=typeof this.ontrue =="string",onfs=typeof this.onfalse=="string"
+        inv=inv??false
+        if(this.ontrue instanceof Conditional){
+            ont=this.ontrue.build(inv)
+        }
+        else{
+            ont=this.ontrue
+        }
+        if(this.onfalse instanceof Conditional){
+            onf=this.onfalse.build(inv)
+        }
+        else{
+            onf=this.onfalse
+        }
+        if(inv){
+            let tmp=ont
+            ont=onf
+            onf=tmp
+        }
+        // if(onts&&ont.includes("true")||onfs&&onf.includes("false")){
+        //     ont=ont.trim()
+        //     onf=onf.trim()
+        //     // return `${lgc}(tt${ont},ff${onf})`
+        // }
+        // else 
+        if((onts&&ont.includes("false")||onfs&&onf.includes("true"))&&!inv){
+            return this.build(true)+"inv"
+            // let tmp=ont.trim()
+            // ont=onf.trim()
+            // onf=tmp
+            // // [onf,ont]=["ft"+ont,"tf"+onf]
+            // inv=true
+            // return `${lgc}(tf${onf},ft${ont})`
+        }
+        if(typeof this.logic!=="string"){
+            lgc=this.logic.build(inv)
+        }
+        else{
+            lgc=typerForLogic(this.logic)
+        }
+        // console.log(lgc,ont,onf)
+        // console.log("\n\n\n")
+        return `${lgc}(${ont},${onf})`
     }
 }
 class Condition{
@@ -17941,8 +18004,8 @@ class Condition{
         }
     }
 
-    build(){
-        return this.cond.build()
+    build(locs){
+        return `MultLogic(["${locs.join('","')}"],${this.cond.build()})`
     }
 }
 function evaluater(arg,inp){
@@ -17955,8 +18018,10 @@ function evaluater(arg,inp){
 }
 function typerChecker(arg){
     if(typeof arg!=="string")return arg
-    arg=arg.replace(/global.tech\['(.*?)'\]/,'has_tech[$1]').replace(/global\.(.*?)\.(.*?) ([><=!]{1,3}) (\d|(?:'.*?'))/,'$1_is[$2,$3,$4]').replace(/'is_race\[(.*?)\]'/,"is_race[$1]")
-    return arg
+    let targ=arg+" "
+    arg=arg.replace(/global\.race\['universe'\]/,'global.race.universe').replace(/global\.race\[(.*?)\]/,'has_race[$1]').replace(/global.tech\['(.*?)'\]/,'has_tech[$1]').replace(/global\.(.*?)\.(.*?) ([><=!]{1,3}) (\d|(?:'.*?'))/,'$1_is[$2,$3,$4]').replace(/;| |\{|\}|return|/,'')//.replace(/global\.(.*?)\.(.*?)/,'$1_is[$2]').replace(/global\.(.*?)\[(.*?)\]/,'$1_is[$2]')
+    // if(targ===arg+" ")console.log(`|${targ}|${arg+" "}|`)
+    return arg//targ==arg+" "?"":arg
 }
 function conditionifi(cond){
     let sections=[]
@@ -18033,9 +18098,26 @@ function parse(expr) {
     return expr;
 }
 
+function typerForLogic(inp,inv){
+    inp=typerChecker(inp)//.trim()
+    if(inp.includes("!")){
+        inv=inv!=true
+        inp=inp.replace("!","")
+    }
+    console.log(inp)
+
+    // if(inp.includes(""))
+    return (inv?"not ":"")+inp
+}
+
+let rconds={}
 for(let i in conds){
-    console.log(conds[i])
-    nconds[i]=new Condition(conds[i]).build()
+    rconds.hasOwnProperty(conds[i])?rconds[conds[i]].push(i):rconds[conds[i]]=[i]
+}
+
+for(let i in rconds){
+    // console.log(rconds[i],i)
+    nconds[i]=new Condition(i).build(rconds[i])
 }
 
 }
@@ -18055,12 +18137,12 @@ data["conditions"]=conds
 // data["traits"]=traits
 // data["ntraits"]=ntraits
 fs.writeFileSync("archipelago/data.json", JSON.stringify(data,"",2));
-let ncondsStr="{\n"
+let ncondsStr="class MultLogic():pass\nclass is_genus():pass\nclass isnt_genus():pass\nimps={\n"
 for(let i in nconds){
-    ncondsStr+=`\t'${i}':${nconds[i]},\n`
+    ncondsStr+=`\t${nconds[i]},\n`
 }
 ncondsStr+="}"
-fs.writeFileSync("archipelago/conditions.txt",ncondsStr)
+fs.writeFileSync("archipelago/conditions.py",ncondsStr)
 // fs.writeFileSync("archipelago/NumberList.json", JSON.stringify(techNums,"",2));
 // fs.writeFileSync("archipelago/ReqsList.json", JSON.stringify(reqs,"",2));
 // fs.writeFileSync("archipelago/SpecialReqsList.json", JSON.stringify(specials,"",2));
