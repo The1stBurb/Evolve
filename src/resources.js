@@ -1089,7 +1089,7 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
 
     $(`#res${name}`).on('mouseover',function(){
         $(`.res-${name}`).each(function(){
-            if (global.resource[name].amount >= $(this).attr(`data-${name}`)){
+            if ((global.resource[name]?.amount ?? 0) >= $(this).attr(`data-${name}`)){
                 $(this).addClass('hl-ca');
             }
             else {
