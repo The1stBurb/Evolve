@@ -449,7 +449,12 @@ function loadSmelter(parent,bind){
                 return value > 0 ? `+${sizeApproximation(value,2)}` : sizeApproximation(value,2);
             },
             spook(v){
-                if (bind && (((global.race['kindling_kindred'] || global.race['smoldering']) && (global.city.smelter.Steel === 6 || global.city.smelter.Iron === 6)) || global.city.smelter.Wood === 6) && global.city.smelter.Coal === 6 && global.city.smelter.Oil === 6){
+                if (!bind || !global.city?.smelter) return v;
+
+                let smelter = global.city.smelter;
+                let noWood = (global.race['kindling_kindred'] || global.race['smoldering']);
+
+                if (bind && (smelter.Wood === 6 || (noWood && (smelter.Steel === 6 || smelter.Iron === 6))) && smelter.Coal === 6 && smelter.Oil === 6) {
                     let trick = trickOrTreat(3,12,true);
                     if (trick.length > 0){
                         return trick;
@@ -488,6 +493,7 @@ function loadSmelter(parent,bind){
             case 'oil':
                 return global.race['forge'] ? loc('modal_build_forge') : loc('modal_build_oil',['0.35',global.resource?.Oil?.name]);
             case 'star':
+                return global.tech['irid_smelting'] ? loc('modal_build_star2',[global.resource?.Titanium?.name,global.resource?.Iridium?.name]) : loc('modal_build_star',[global.resource?.Titanium?.name]);
             case 'inferno':
                 {
                     let coal = 50;
