@@ -7773,9 +7773,6 @@ export function drawHellObservations(startup){
 }
 
 function drawHellAnalysis(){
-    if (!global.settings.tabLoad && global.settings.hellTabs !== 1){
-        return;
-    }
     let info = ($(`#h_Analysis`));
 
     if (info.length === 0) {
@@ -8233,9 +8230,6 @@ function drawPieChart(info,labels,data,settings){
 }
 
 function drawHellReports(){
-    if (!global.settings.tabLoad && global.settings.hellTabs !== 0){
-        return;
-    }
     purgeReports();
     
     let list = ``;
