@@ -391,19 +391,19 @@ function loadSmelter(parent,bind){
             addMetal(m){
                 let keyMult = keyMultiplier();
                 for (let i=0; i<keyMult; i++){
-                    let count = global.city.smelter.Wood + global.city.smelter.Coal + global.city.smelter.Oil + global.city.smelter.Star + global.city.smelter.Inferno;
-                    if (global.city.smelter.Iron + global.city.smelter.Steel + global.city.smelter.Iridium < count){
+                    let count = global.city?.smelter?.Wood + global.city?.smelter?.Coal + global.city?.smelter?.Oil + global.city?.smelter?.Star + global.city?.smelter?.Inferno;
+                    if (global.city?.smelter?.Iron + global.city?.smelter?.Steel + global.city?.smelter?.Iridium < count){
                         global.city.smelter[m]++;
                     }
-                    else if (global.city.smelter.Iron > 0 && m !== 'Iron'){
+                    else if (global.city?.smelter?.Iron > 0 && m !== 'Iron'){
                         global.city.smelter.Iron--;
                         global.city.smelter[m]++;
                     }
-                    else if (global.city.smelter.Steel > 0 && m !== 'Steel'){
+                    else if (global.city?.smelter?.Steel > 0 && m !== 'Steel'){
                         global.city.smelter.Steel--;
                         global.city.smelter[m]++;
                     }
-                    else if (global.city.smelter.Iridium > 0 && m !== 'Iridium'){
+                    else if (global.city?.smelter?.Iridium > 0 && m !== 'Iridium'){
                         global.city.smelter.Iridium--;
                         global.city.smelter[m]++;
                     }
@@ -412,7 +412,9 @@ function loadSmelter(parent,bind){
                     }
                 }
             },
-            subMetal(m){
+            subMetal(m) {
+                if (!global.city?.smelter) return;
+
                 let keyMult = keyMultiplier();
                 global.city.smelter[m] -= keyMult;
                 if (global.city.smelter[m] < 0){
@@ -423,23 +425,25 @@ function loadSmelter(parent,bind){
                 return tooltip(type);
             },
             ariaCount(fuel, name=fuel){
-                return ` ${global.city.smelter[fuel]} ${name} fueled.`;
+                return ` ${global.city?.smelter?.[fuel] ?? 0} ${name} fueled.`;
             },
             ariaProd(res){
-                return `. ${global.city.smelter[res]} producing ${res}.`;
+                return `. ${global.city?.smelter?.[res] ?? 0} producing ${res}.`;
             },
             net(res){
-                return global.resource[res].diff >= 0 ? 'has-text-success' : 'has-text-danger';
+                return global.resource[res]?.diff >= 0 ? 'has-text-success' : 'has-text-danger';
             },
             level(){
-                let workers = global.city.smelter.Wood + global.city.smelter.Coal + global.city.smelter.Oil + global.city.smelter.Star + global.city.smelter.Inferno;
-                return colorRange(workers,global.city.smelter.count);
+                let smelter = global.city?.smelter;
+                if (!smelter) return '';
+                let workers = smelter.Wood + smelter.Coal + smelter.Oil + smelter.Star + smelter.Inferno;
+                return colorRange(workers, smelter.count);
             },
             on_f(c){
-                return global.city.smelter.Wood + global.city.smelter.Coal + global.city.smelter.Oil + global.city.smelter.Star + global.city.smelter.Inferno;
+                return global.city?.smelter?.Wood + global.city?.smelter?.Coal + global.city?.smelter?.Oil + global.city?.smelter?.Star + global.city?.smelter?.Inferno;
             },
             son(c){
-                return global.city.smelter.Iron + global.city.smelter.Steel + global.city.smelter.Iridium;
+                return global.city?.smelter?.Iron + global.city?.smelter?.Steel + global.city?.smelter?.Iridium;
             },
             diffSize(value){
                 return value > 0 ? `+${sizeApproximation(value,2)}` : sizeApproximation(value,2);
@@ -454,6 +458,8 @@ function loadSmelter(parent,bind){
                 return v;
             },
             altspook(v){
+                if (!bind || !global.city?.smelter) return v;
+
                 if (bind && global.race['forge'] && global.city.smelter.Steel === 6 && global.city.smelter.Iron === 6){
                     let trick = trickOrTreat(3,12,true);
                     if (trick.length > 0){
@@ -476,24 +482,25 @@ function loadSmelter(parent,bind){
                         return loc('modal_build_coal2',[fuel_config.c_cost,global.resource.Coal.name,global.resource.Uranium.name]);
                     }
                     else {
-                        return loc('modal_build_coal1',[fuel_config.c_cost,global.resource.Coal.name]);
+                        return loc('modal_build_coal1',[fuel_config.c_cost,global.resource?.Coal?.name]);
                     }
                 }
             case 'oil':
-                return global.race['forge'] ? loc('modal_build_forge') : loc('modal_build_oil',['0.35',global.resource.Oil.name]);
+                return global.race['forge'] ? loc('modal_build_forge') : loc('modal_build_oil',['0.35',global.resource?.Oil?.name]);
             case 'star':
-                return global.tech['irid_smelting'] ? loc('modal_build_star2',[global.resource.Titanium.name,global.resource.Iridium.name]) : loc('modal_build_star',[global.resource.Titanium.name]);
             case 'inferno':
                 {
                     let coal = 50;
                     let oil = 35;
                     let infernite = 0.5;
-                    return loc('modal_build_inferno',[coal,global.resource.Coal.name,oil,global.resource.Oil.name,infernite,global.resource.Infernite.name]);
+                    return loc('modal_build_inferno',[coal,global.resource?.Coal?.name,oil,global.resource?.Oil?.name,infernite,global.resource?.Infernite?.name]);
                 }
         }
     }
 
     function matText(type){
+        if (!global.city?.smelter) return '';
+
         if (type === 'steel'){
             let boost = global.tech['smelting'] >= 4 ? 1.2 : 1;
             if (global.tech['smelting'] >= 5){
@@ -685,11 +692,11 @@ function loadFactory(parent,bind){
                 return tooltip(type);
             },
             ariaProd(prod){
-                return `. ${global.city.factory[prod]} factories producing ${prod}.`;
+                return `. ${global.city?.factory?.[prod] ?? 0} factories producing ${prod}.`;
             },
             level(){
-                let on = global.city.factory.Lux + global.city.factory.Furs + global.city.factory.Alloy + global.city.factory.Polymer + global.city.factory.Nano + global.city.factory.Stanene;
-                let max = global.space['red_factory'] ? global.space.red_factory.on + global.city.factory.on : global.city.factory.on;
+                let on = global.city?.factory?.Lux + global.city?.factory?.Furs + global.city?.factory?.Alloy + global.city?.factory?.Polymer + global.city?.factory?.Nano + global.city?.factory?.Stanene;
+                let max = global.space['red_factory'] ? global.space?.red_factory?.on + global.city?.factory?.on : global.city?.factory?.on;
                 if (global.interstellar['int_factory'] && p_on['int_factory']){
                     max += p_on['int_factory'] * 2;
                 }
@@ -702,22 +709,29 @@ function loadFactory(parent,bind){
                 return colorRange(on,max);
             },
             on_f(){
-                return global.city.factory.Lux + global.city.factory.Furs + global.city.factory.Alloy + global.city.factory.Polymer + global.city.factory.Nano + global.city.factory.Stanene;
+                let factory = global.city?.factory;
+                if (!factory) return 0;
+                return factory.Lux + factory.Furs + factory.Alloy + factory.Polymer + factory.Nano + factory.Stanene;
             },
             max_f(){
-                let max = global.space['red_factory'] ? global.space.red_factory.on + global.city.factory.on : global.city.factory.on;
-                if (global.interstellar['int_factory'] && p_on['int_factory']){
+                let factory = global.city?.factory;
+                if (!factory) return 0;
+
+                let max = global.space?.['red_factory'] ? global.space.red_factory.on + factory.on : factory.on;
+                if (global.interstellar?.['int_factory'] && p_on['int_factory']) {
                     max += p_on['int_factory'] * 2;
                 }
-                if (global.tauceti['tau_factory'] && support_on['tau_factory']){
+                if (global.tauceti?.['tau_factory'] && support_on['tau_factory']) {
                     max += support_on['tau_factory'] * (global.tech['isolation'] ? 5 : 3);
                 }
-                if (global.portal['hell_factory'] && p_on['hell_factory']){
+                if (global.portal?.['hell_factory'] && p_on['hell_factory']) {
                     max += p_on['hell_factory'] * actions.portal.prtl_wasteland.hell_factory.lines();
                 }
                 return max;
             },
             spook(v){
+                if (!bind || !global.city?.factory) return v;
+                
                 if (global.city.factory.Lux === 3 && bind){
                     let trick = trickOrTreat(6,12,true);
                     if (trick.length > 0){
@@ -731,6 +745,8 @@ function loadFactory(parent,bind){
 
     function tooltip(type){
         let assembly = global.tech['factory'] ? true : false;
+        if (!assembly) { return ''; }
+
         switch(type){
             case 'Lux':{
                 let demand = +(highPopAdjust(global.resource[global.race.species].amount) * (assembly ? f_rate.Lux.demand[global.tech['factory']] : f_rate.Lux.demand[0]));
@@ -845,7 +861,7 @@ function loadNFactory(parent,bind){
             subItem: function(r){
                 let keyMult = keyMultiplier();
                 global.city.nanite_factory[r] -= keyMult;
-                if (global.city.nanite_factory[r] < 0){
+                if (global.city?.nanite_factory?.[r] < 0){
                     global.city.nanite_factory[r] = 0;
                 }
             },
@@ -853,9 +869,9 @@ function loadNFactory(parent,bind){
                 let keyMult = keyMultiplier();
                 let on = 0;
                 nf_resources.forEach(function(r){
-                    on += global.city.nanite_factory[r];
+                    on += global.city?.nanite_factory?.[r];
                 });
-                let avail = global.city.nanite_factory.count * 50 - on;
+                let avail = global.city?.nanite_factory?.count * 50 - on;
                 if (keyMult > avail){
                     keyMult = avail;
                 }
@@ -864,25 +880,25 @@ function loadNFactory(parent,bind){
                 }
             },
             eatLabel(r){
-                return `Consume ${r} to produce ${global.resource.Nanite.name}`;
+                return `Consume ${r} to produce ${global.resource.Nanite?.name}`;
             },
             level(){
                 let on = 0;
                 nf_resources.forEach(function(r){
-                    on += global.city.nanite_factory[r];
+                    on += global.city?.nanite_factory?.[r];
                 });
-                let max = global.city.nanite_factory.count;
+                let max = global.city?.nanite_factory?.count;
                 return colorRange(on,max);
             },
             on_f(){
                 let on = 0;
                 nf_resources.forEach(function(r){
-                    on += global.city.nanite_factory[r];
+                    on += global.city?.nanite_factory?.[r];
                 });
                 return on;
             },
             max_f(){
-                return global.city.nanite_factory.count * 50;
+                return global.city?.nanite_factory?.count * 50;
             }
         }
     });
@@ -908,7 +924,7 @@ function loadDroid(parent,bind){
     let fuel = $(`<div><span class="has-text-warning">${loc('modal_factory_operate')}:</span> <span :class="level()">{{ on_f(count) }}/{{ max_f(on) }}</span></div>`);
     parent.append(fuel);
 
-    let adam = $(`<div class="factory"><span class="adam" :aria-label="buildLabel('adam') + ariaProd('adam')">${global.resource.Adamantite.name}</span></div>`);
+    let adam = $(`<div class="factory"><span class="adam" :aria-label="buildLabel('adam') + ariaProd('adam')">${global.resource.Adamantite?.name}</span></div>`);
     parent.append(adam);
     let adamCount = $(`<span class="current">{{ adam }}</span>`);
     let adamSub = $(`<span class="sub" @click="subItem('adam')" role="button" aria-label="Decrease Adamantite production">&laquo;</span>`);
@@ -917,7 +933,7 @@ function loadDroid(parent,bind){
     adam.append(adamCount);
     adam.append(adamAdd);
 
-    let uran = $(`<div class="factory"><span class="uran" :aria-label="buildLabel('uran') + ariaProd('uran')">${global.resource.Uranium.name}</span></div>`);
+    let uran = $(`<div class="factory"><span class="uran" :aria-label="buildLabel('uran') + ariaProd('uran')">${global.resource.Uranium?.name}</span></div>`);
     parent.append(uran);
     let uranCount = $(`<span class="current">{{ uran }}</span>`);
     let uranSub = $(`<span class="sub" @click="subItem('uran')" role="button" aria-label="Decrease Uranium production">&laquo;</span>`);
@@ -926,7 +942,7 @@ function loadDroid(parent,bind){
     uran.append(uranCount);
     uran.append(uranAdd);
 
-    let coal = $(`<div class="factory"><span class="coal" :aria-label="buildLabel('coal') + ariaProd('coal')">${global.resource.Coal.name}</span></div>`);
+    let coal = $(`<div class="factory"><span class="coal" :aria-label="buildLabel('coal') + ariaProd('coal')">${global.resource.Coal?.name}</span></div>`);
     parent.append(coal);
     let coalCount = $(`<span class="current">{{ coal }}</span>`);
     let coalSub = $(`<span class="sub" @click="subItem('coal')" role="button" aria-label="Decrease Coal production">&laquo;</span>`);
@@ -935,7 +951,7 @@ function loadDroid(parent,bind){
     coal.append(coalCount);
     coal.append(coalAdd);
 
-    let alum = $(`<div class="factory"><span class="alum" :aria-label="buildLabel('alum') + ariaProd('alum')">${global.resource.Aluminium.name}</span></div>`);
+    let alum = $(`<div class="factory"><span class="alum" :aria-label="buildLabel('alum') + ariaProd('alum')">${global.resource.Aluminium?.name}</span></div>`);
     parent.append(alum);
     let alumCount = $(`<span class="current">{{ alum }}</span>`);
     let alumSub = $(`<span class="sub" @click="subItem('alum')" role="button" aria-label="Decrease Aluminium production">&laquo;</span>`);
@@ -974,18 +990,18 @@ function loadDroid(parent,bind){
                 return tooltip(type);
             },
             ariaProd(prod){
-                return `. ${global.interstellar.mining_droid[prod]} driod mining ${prod}.`;
+                return `. ${global.interstellar?.mining_droid?.[prod]} driod mining ${prod}.`;
             },
             level(){
-                let on = global.interstellar.mining_droid.adam + global.interstellar.mining_droid.uran + global.interstellar.mining_droid.coal + global.interstellar.mining_droid.alum;
-                let max = global.interstellar.mining_droid.on;
+                let on = global.interstellar?.mining_droid?.adam + global.interstellar?.mining_droid?.uran + global.interstellar?.mining_droid?.coal + global.interstellar?.mining_droid?.alum;
+                let max = global.interstellar?.mining_droid?.on;
                 return colorRange(on,max);
             },
             on_f(){
-                return global.interstellar.mining_droid.adam + global.interstellar.mining_droid.uran + global.interstellar.mining_droid.coal + global.interstellar.mining_droid.alum;
+                return global.interstellar?.mining_droid?.adam + global.interstellar?.mining_droid?.uran + global.interstellar?.mining_droid?.coal + global.interstellar?.mining_droid?.alum;
             },
             max_f(){
-                return global.interstellar.mining_droid.on;
+                return global.interstellar?.mining_droid?.on;
             }
         }
     });
@@ -1163,8 +1179,8 @@ function loadGraphene(parent,bind){
                 return `. ${global[graph_source][graph_struct][res]} producing ${res}.`;
             },
             level(){
-                let on = global[graph_source][graph_struct].Lumber + global[graph_source][graph_struct].Coal + global[graph_source][graph_struct].Oil;
-                let max = global[graph_source][graph_struct].on;
+                let on = global[graph_source][graph_struct]?.Lumber + global[graph_source][graph_struct]?.Coal + global[graph_source][graph_struct]?.Oil;
+                let max = global[graph_source][graph_struct]?.on;
                 return colorRange(on,max);
             },
             on_f(c){
@@ -1268,7 +1284,7 @@ function loadPylon(parent,bind){
                 return ` ${spell} casting.`;
             },
             level(){
-                return colorRange(global.race.casting.total,global.resource.Mana.gen,true);
+                return colorRange(global.race?.casting?.total,global.resource?.Mana?.gen,true);
             },
             drain: function(c){
                 let total = 0;
