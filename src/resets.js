@@ -6,13 +6,13 @@ import { reachedGoal } from './client.js'
 // Mutual Assured Destruction
 export function warhead(){
     if (!global.civic.mad.armed && !global.race['cataclysm']){
-        reachedGoal()
-        return
+        // reachedGoal()
+        // return
         if (!global['sim']){
             save.setItem('evolveBak',LZString.compressToUTF16(JSON.stringify(global)));
         }
         clearSavedMessages();
-        
+        reachedGoal()
         tagEvent('reset',{
             'end': 'mad'
         });
@@ -90,7 +90,9 @@ export function bioseed(){
     if (!global['sim']){
         save.setItem('evolveBak',LZString.compressToUTF16(JSON.stringify(global)));
     }
+    // reachedGoal()
     clearSavedMessages();
+    reachedGoal()
 
     tagEvent('reset',{
         'end': 'bioseed'
@@ -324,7 +326,7 @@ export function big_bang(){
         save.setItem('evolveBak',LZString.compressToUTF16(JSON.stringify(global)));
     }
     clearSavedMessages();
-
+    reachedGoal()
     tagEvent('reset',{
         'end': 'blackhole'
     });
@@ -442,6 +444,7 @@ export function vacuumCollapse(){
             save.setItem('evolveBak',LZString.compressToUTF16(JSON.stringify(global)));
         }
         clearSavedMessages();
+        reachedGoal()
 
         tagEvent('reset',{
             'end': 'vacuum'
@@ -533,6 +536,7 @@ export function vacuumCollapse(){
 // Ascension
 export function ascend(){
     clearSavedMessages();
+    reachedGoal()
 
     tagEvent('reset',{
         'end': 'ascend'
@@ -640,6 +644,7 @@ export function descension(){
         save.setItem('evolveBak',LZString.compressToUTF16(JSON.stringify(global)));
     }
     clearSavedMessages();
+    reachedGoal()
 
     tagEvent('reset',{
         'end': 'descension'
@@ -749,6 +754,7 @@ export function descension(){
 // Apotheosis
 export function apotheosis(){
     clearSavedMessages();
+    reachedGoal()
 
     tagEvent('reset',{
         'end': 'apotheosis'

@@ -18246,6 +18246,42 @@ for(let i in tconds){
 
 }
 
+let specItems={}
+let itemsToSpec=["mad_science","oil_well","industrialization","electricity"]
+{
+function getAll(id){
+    var has=[]
+    var creqs=reqs[id]
+    var nreqs=[]
+    var attempts=0;
+    while(reqs.length!=0&&attempts<10){
+        attempts+=1
+        nreqs=[]
+        // var gotten=getReqs(id,reqs,has)
+        for(var i=0; i<creqs.length; i++){
+            var r=creqs[i]
+            // console.log(r,data[r],has.includes(r))
+            if(has.includes(r))continue
+            if(reqs.hasOwnProperty(r)){nreqs.push(...reqs[r])}
+            // console.log(nreqs)
+            has.push(r)
+        }
+        // has+=gotten[0]
+        // reqs=gotten[1]
+        creqs=nreqs
+        // console.log(reqs,nreqs)
+        // console.log()
+    }
+    return has
+}
+for(let i in itemsToSpec){
+    let nm=itemsToSpec[i]
+    specItems[nm]=getAll(nm)
+    // console.log(nm,":",specItems[nm])
+}
+}
+
+
 //save it all!
 let data={}
 {
@@ -18254,6 +18290,7 @@ data["loc_id"]=techNums
 // data["loc_deps"]=deps
 data["loc_specials"]=specials
 data["specGenus"]=[]
+data["loc_reqs"]=specItems
 for(let i in genusFail){
     genusFail[i].forEach(spec=>data["specGenus"].push(spec))
     // data["specGenus"].push(genusFail[i][0])

@@ -17,8 +17,9 @@
 <body>
     <div id="eepy"></div>
 <script>
-    try{
+    // try{
         var save = window.localStorage;
+        // save.removeItem("evolved")
         let global={}
         let global_data = save.getItem('evolved') || false;
         if (global_data) {
@@ -27,11 +28,12 @@
 
             if (saveState){
                 global = saveState;
-                throw new Error("worked")
+                // throw new Error("worked")
             }
         }
         else{
-            throw new Error("workednot "+Object.keys(save))
+            console.log(Object.keys(save))
+            // throw new Error("workednot "+Object.keys(save))
         }
         const atomic_mass = {
             Food: 4.355,
@@ -106,10 +108,10 @@
             nhtml+=`<span>${i[0]} at ${i[1].toFixed(2)}</span><br>`
         }
         md.innerHTML=nhtml+"</div>"
-    }
-    catch(e){
-        document.getElementById("eepy").innerHTML="<span>"+e+"</span>"
-    }
+    // }
+    // catch(e){
+    //     document.getElementById("eepy").innerHTML="<span>"+e+"</span>"
+    // }
 </script>
 </body>
 </html>

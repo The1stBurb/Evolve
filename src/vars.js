@@ -139,34 +139,7 @@ export function setGlobal(gameState) {
 if (!global['version']){
     global['version'] = '0.2.0';
 }
-function defSet(nm,defaultVal){
-    // console.log(nm,typeof nm)
-    if(typeof nm==="object"){
-        // console.log(nm,!global[nm[0]][nm[1]])
-        !global[nm[0]][nm[1]]?global[nm[0]][nm[1]]=defaultVal:false
-    }
-    !global[nm]?global[nm]=defaultVal:false
-}
-defSet('ap_init',false)
-defSet('itemcount',0)
-defSet('setupComplete',false)
-defSet('opts',{deathlink:false,deathamn:1,deaths:0,deathperc:1,goal:'tier-1'})
-defSet(['opts','deathlink'],false)
-defSet(['opts','deathamn'],1)
-defSet(['opts','deaths'],0)
-defSet(['opts','deathperc'],1)
-defSet(['opts','goal'],"tier-1")
-defSet('ap_genus','other')
-// global.ap_genus='other'
-defSet('gameSeed',global['seed'])
-defSet('ap',true)
-defSet('offlineLocs',[])
-let apstats={plasmid:0,phage:0,antip:0,deathsTot:0,deathsCaused:0,deathsTrig:0,deathlink:false,deathamn:1,deathperc:1,start2x:0,prerace:'none',relig:false,govnr:false,genus:'other'}
-defSet('ap_stats',apstats)
-for(let i in apstats){
-    defSet(['ap_stats',i],apstats[i])
-}
-defSet(['settings','reachedGoal'],false)
+
 // global.reachedGoal=!true
 // global.settings.reachedGoal=!false
 // global.deathsCaused=0
@@ -2072,6 +2045,35 @@ global.settings.disableReset = false;
 if (global['arpa'] && global.arpa['launch_facility'] && global.arpa.launch_facility.rank > 0 && !global.tech['space']){
     global.tech['space'] = 1;
 }
+function defSet(nm,defaultVal){
+    // console.log(nm,typeof nm)
+    if(typeof nm==="object"){
+        // console.log(nm,!global[nm[0]][nm[1]])
+        !global[nm[0]].hasOwnProperty(nm[1])?global[nm[0]][nm[1]]=defaultVal:false
+    }
+    !global.hasOwnProperty(nm)?global[nm]=defaultVal:false
+}
+defSet('ap_init',false)
+defSet('itemcount',0)
+defSet('setupComplete',false)
+defSet('opts',{deathlink:false,deathamn:1,deaths:0,deathperc:1,goal:'tier-1'})
+defSet(['opts','deathlink'],false)
+defSet(['opts','deathamn'],1)
+defSet(['opts','deaths'],0)
+defSet(['opts','deathperc'],1)
+defSet(['opts','goal'],"tier-1")
+defSet('ap_genus','other')
+// global.ap_genus='other'
+defSet('gameSeed',global['seed'])
+defSet('ap',true)
+defSet('offlineLocs',[])
+let apstats={plasmid:0,phage:0,antip:0,deathsTot:0,deathsCaused:0,deathsTrig:0,deathlink:false,deathamn:1,deathperc:1,start2x:0,prerace:'none',relig:false,govnr:false,genus:'other'}
+defSet('ap_stats',apstats)
+for(let i in apstats){
+    defSet(['ap_stats',i],apstats[i])
+}
+// defSet('settings',{})
+defSet(['settings','reachedGoal'],false)
 
 function newGameData(){
     global['race'] = { species : 'protoplasm', gods: 'none', old_gods: 'none', seeded: false };
