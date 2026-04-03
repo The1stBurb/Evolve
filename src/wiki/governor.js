@@ -30,13 +30,13 @@ export function governPage(content){
                 },
                 vue: {
                     data: { b: govBoost(gov === 'bureaucrat' ? 2 : 3) },
-                    filters: {
+                    methods: {
                         desc(b){
                             let desc = '';
                             Object.keys(gmen[gov].traits).forEach(function (t){
                                 desc += (gov_traits[t].hasOwnProperty('effect') ? gov_traits[t].effect(b,{isWiki: true}) : '') + ' ';
                             });
-                            return desc;;
+                            return desc;
                         }
                     }
                 },

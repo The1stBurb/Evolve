@@ -145,7 +145,7 @@ export function govPage(content){
                 9: [`{{ line9(b, g) }}%`,loc('tech_metaphysics')]
             },
             vue: {
-                filters: {
+                methods: {
                     line3(b,g){ return b ? (g ? 250 : 220) : (g ? 220 : 200); },
                     line4(b,g){ return b ? (g ? 190 : 160) : (g ? 175 : 150); },
                     line5(b,g){ return b ? (g ? 125 : 110) : (g ? 110 : 100); },
