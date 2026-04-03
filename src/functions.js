@@ -3450,7 +3450,7 @@ export function getTraitDesc(info, trait, opts){
     let traitDesc = traitSkin('desc', trait, species);
 
     if (tpage && ['genus','major'].includes(traits[trait].type)){
-        rank = `<span><span role="button" @click="down()">&laquo;</span><span class="has-text-warning">${loc(`wiki_trait_rank`)} {{ rank }}</span><span role="button" @click="up()">&raquo;</span></span>`;
+        rank = `<span><span role="button" @click="down()">&laquo;</span> <span class="has-text-warning trait-rank-label">${loc(`wiki_trait_rank`)} </span><span class="has-text-warning trait-rank-val">{{ rank }}</span> <span role="button" @click="up()">&raquo;</span></span>`;
     }
     if (tpage || rpage){
         info.append(`<div class="type"><h2 class="has-text-warning">${traitName}</h2>${rank}</div>`);
@@ -3527,52 +3527,52 @@ export function getTraitDesc(info, trait, opts){
                     return loc(`wiki_trait_${key}_${trait}`, getTraitVals(trait, rk, species));
                 },
                 up(){
-                    switch (data.rank){
+                    switch (this.rank){
                         case 0.1:
-                            data.rank = 0.25;
+                            this.rank = 0.25;
                             break;
                         case 0.25:
-                            data.rank = 0.5;
+                            this.rank = 0.5;
                             break;
                         case 0.5:
-                            data.rank =  1;
+                            this.rank =  1;
                             break;
                         case 1:
-                            data.rank =  2;
+                            this.rank =  2;
                             break;
                         case 2:
-                            data.rank =  3;
+                            this.rank =  3;
                             break;
                         case 3:
-                            data.rank =  4;
+                            this.rank =  4;
                             break;
                         case 4:
-                            data.rank =  4;
+                            this.rank =  4;
                             break;
                     }
                 },
                 down(){
-                    switch (data.rank){
+                    switch (this.rank){
                         case 0.1:
-                            data.rank = 0.1;
+                            this.rank = 0.1;
                             break;
                         case 0.25:
-                            data.rank = 0.1;
+                            this.rank = 0.1;
                             break;
                         case 0.5:
-                            data.rank =  0.25;
+                            this.rank =  0.25;
                             break;
                         case 1:
-                            data.rank =  0.5;
+                            this.rank =  0.5;
                             break;
                         case 2:
-                            data.rank =  1;
+                            this.rank =  1;
                             break;
                         case 3:
-                            data.rank =  2;
+                            this.rank =  2;
                             break;
                         case 4:
-                            data.rank =  3;
+                            this.rank =  3;
                             break;
                     }
                 },
