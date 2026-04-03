@@ -2,6 +2,7 @@
 // import { fs }
 const fs=require("fs")
 const Races=JSON.parse(fs.readFileSync("archipelago/genus.json", "utf8"));
+const gtraits=JSON.parse(fs.readFileSync("archipelago/genusTraits.json", "utf8"));
 let global={
     race:{},
     genes:{},
@@ -8513,7 +8514,6 @@ const techs = {
         not_trait: ['cataclysm','lone_survivor','warlord'],
         grant: ['mad',1],
         condition(){
-            if (global.race['sludge'] || global.race['ultra_sludge']){ return false; }
             return global.race['truepath'] ? (global.tech['world_control'] ? true : false ) : true;
         },
         cost: {
@@ -17621,10 +17621,14 @@ function swissKnife(){}
 
 let eras=["primitive","civilized",'discovery','industrialized','globalized',]//'early_space','deep_space','interstellar','intergalactic','dimensional','existential']
 //get only the needed ones, also find any conditions
+let dontIncludes=new RegExp(["reclaimer",".*shovel","wooden_tool","wagon"].join("|"))
 for(var i in techs){
-    if(!eras.includes(techs[i].era)){
+    if(!eras.includes(techs[i].era)||dontIncludes.test(i)){
         delete techs[i]
     }
+    // else if(){
+
+    // }
     // else if(techs[i].hasOwnProperty("condition"){}
 }
 
@@ -17690,15 +17694,16 @@ for(let i in reqs){
 let conds={}
 let traits={}
 let ntraits={}
+let excludeTraits=["gravity_well","cataclysm","truepath","steelen","forager","witch_hunter","lone_survivor","fasting","warlord"]
 {
 function getFuncBody(fn) {
     let str = fn.toString().trim();
     return str.slice(str.indexOf("{") + 1, str.lastIndexOf("}")).trim();
 }
-let excludeTraits=["gravity_well","cataclysm"]
 for(let i in techs){
     let tech=techs[i]
     if(tech.hasOwnProperty("condition")){
+        // let tempCond=
         conds[i]=getFuncBody(tech.condition)
     }
     if(tech.hasOwnProperty("trait")){
@@ -17740,6 +17745,9 @@ function getAllReqs(name){
     }
     return checked.slice(1)
 }
+function equalLists(a, b) {
+    return a.length === b.length && a.every((val, i) => val === b[i]);
+}
 {
 class racer{
     constructor(arg,args,has,nhas){
@@ -17749,9 +17757,7 @@ class racer{
         this.nhas=nhas
     }
 }
-function equalLists(a, b) {
-    return a.length === b.length && a.every((val, i) => val === b[i]);
-}
+
 let race={}
 
 for(var i in Races){
@@ -17885,14 +17891,17 @@ class OR{
         return false
     }
     build(inv){
-        return "("+this.lgcor.map(lgc=>{
+        let tempLgc=this.lgcor.map(lgc=>{
             if(typeof lgc=="string"){
                 return typerForLogic(lgc,inv)
             }
             else{
                 return lgc.build(inv)
             }
-        }).join(inv?" and ":" or ")+")"
+        }).filter(x=>x!=null&&x!="()")
+        if(tempLgc.length==0)return null
+        if(tempLgc.length==1)return tempLgc[0]
+        return (inv?"AND":"OR")+"("+tempLgc.join(", ")+")"
     }
 }
 class AND{
@@ -17918,14 +17927,19 @@ class AND{
         return true
     }
     build(inv){
-        return "("+this.lgcand.map(lgc=>{
+        let tempLgc=this.lgcand.map(lgc=>{
             if(typeof lgc=="string"){
                 return typerForLogic(lgc,inv)
+                // if(newlgc)return newlgc
             }
             else{
+                // console.log(lgc,typeof lgc)
                 return lgc.build(inv)
             }
-        }).join(inv?" or ":" and ")+")"
+        }).filter(x=>x!=null&&x!="()")
+        if(tempLgc.length==0)return null
+        if(tempLgc.length==1)return tempLgc[0]
+        return (inv?"OR":"AND")+"("+tempLgc.join(", ")+")"
     }
 }
 class Conditional{
@@ -17939,16 +17953,16 @@ class Conditional{
         let onts=typeof this.ontrue =="string",onfs=typeof this.onfalse=="string"
         inv=inv??false
         if(this.ontrue instanceof Conditional){
-            ont=this.ontrue.build(inv)
+            ont=structuredClone(this.ontrue.build(inv))
         }
         else{
             ont=this.ontrue
         }
         if(this.onfalse instanceof Conditional){
-            onf=this.onfalse.build(inv)
+            onf=structuredClone(this.onfalse.build(inv))
         }
         else{
-            onf=this.onfalse
+            onf=this.onfalse    
         }
         if(inv){
             let tmp=ont
@@ -17962,7 +17976,7 @@ class Conditional{
         // }
         // else 
         if((onts&&ont.includes("false")||onfs&&onf.includes("true"))&&!inv){
-            return this.build(true)+"inv"
+            return this.build(true)
             // let tmp=ont.trim()
             // ont=onf.trim()
             // onf=tmp
@@ -17971,19 +17985,21 @@ class Conditional{
             // return `${lgc}(tf${onf},ft${ont})`
         }
         if(typeof this.logic!=="string"){
-            lgc=this.logic.build(inv)
+            lgc=structuredClone(this.logic.build(inv))
         }
         else{
             lgc=typerForLogic(this.logic)
         }
         // console.log(lgc,ont,onf)
         // console.log("\n\n\n")
-        return `${lgc}(${ont},${onf})`
+        if(lgc==null)return ""
+        return `${lgc}`
     }
 }
 class Condition{
     constructor(cond){
         cond=cond.slice(cond.indexOf("return ")+"return ".length)
+        // cond2?cond2=cond2.slice(cond.indexOf("return ")+"return ".length):false
         try{
             this.cond=conditionifi(cond);
         }
@@ -18004,8 +18020,10 @@ class Condition{
         }
     }
 
-    build(locs){
-        return `MultLogic(["${locs.join('","')}"],${this.cond.build()})`
+    build(locs,inside){
+        let cond=this.cond.build()
+        if(locs.length==0||cond.length==0||cond=="()")return""
+        return inside?cond:`MultLogic(["${locs.join('","')}"],${cond})`
     }
 }
 function evaluater(arg,inp){
@@ -18018,9 +18036,10 @@ function evaluater(arg,inp){
 }
 function typerChecker(arg){
     if(typeof arg!=="string")return arg
-    let targ=arg+" "
+    // let targ=arg+" "
     arg=arg.replace(/global\.race\['universe'\]/,'global.race.universe').replace(/global\.race\[(.*?)\]/,'has_race[$1]').replace(/global.tech\['(.*?)'\]/,'has_tech[$1]').replace(/global\.(.*?)\.(.*?) ([><=!]{1,3}) (\d|(?:'.*?'))/,'$1_is[$2,$3,$4]').replace(/;| |\{|\}|return|/,'')//.replace(/global\.(.*?)\.(.*?)/,'$1_is[$2]').replace(/global\.(.*?)\[(.*?)\]/,'$1_is[$2]')
     // if(targ===arg+" ")console.log(`|${targ}|${arg+" "}|`)
+    // console.log(arg)
     return arg//targ==arg+" "?"":arg
 }
 function conditionifi(cond){
@@ -18093,31 +18112,136 @@ function parse(expr) {
     if (andParts.length > 1) {
         return new AND(...andParts.map(parse));
     }
+    // else{
+    return typerChecker(expr)
+    // }
 
     // Base case (string)
     return expr;
 }
-
+let traitMatches={"carnivore":"carnivore","detritivore":"fungi","herbivore":"herbivore","soul_eater":"demonic","artifical":"synthetic","unfathomable":"eldritch","terrifying":"demonic","evil":"demonic"}
 function typerForLogic(inp,inv){
     inp=typerChecker(inp)//.trim()
     if(inp.includes("!")){
         inv=inv!=true
         inp=inp.replace("!","")
     }
-    console.log(inp)
+    inp=bonk(inp.replace(/\(| |\r|\n|;|\}|return/,""))
+    // console.log(inp[1][0],inp[1][0].replaceAll("'",""),excludeTraits.includes(inp[1][0].replaceAll("'","")))
+    if(excludeTraits.includes(inp[1][0].replaceAll("'","")) || ["global.stats.achieve","stat_is","has_tech","global.genes","tech_is","civic_is","stats_is","global.civic.priest.displa"].includes(inp[0]))return null//"nope"+inp
+    // console.log(inp)
+    inv=inv?"nt":""
+    if(inp[0]=="has_race"){
+        // inp[1][1]=="'steelen"?return:false
+        // console.log(inp[1][0])
+        if(!gtraits["traits"].includes(inp[1][0].replaceAll("'",""))){console.error(`HEY! this is not a genus / trait! ${inp[1][0]}`);return null}
+        if(!traitMatches.hasOwnProperty(inp[1][0].replaceAll("'",""))){console.error(`HEY! this trait has no genus to match to! ${inp[1][0]}`);return null}
+        inp=`is${inv}_genus(${inp[1][0]})`
+    }
+    else if(inp[0]=="race_is"){
+        let ky=inp[1][0]
+        if(ky=="species"){
+            return null
+            console.log(inp)
+        }
+        else if(ky=="universe"){
+            return `is${inv}_universe(${inp[1][2]})`
+        }
+        else{console.log(inp,ky)}
+    }
+    // else{
+    // console.log(inp)
+    // }
 
     // if(inp.includes(""))
-    return (inv?"not ":"")+inp
+    return inp
 }
 
 let rconds={}
 for(let i in conds){
-    rconds.hasOwnProperty(conds[i])?rconds[conds[i]].push(i):rconds[conds[i]]=[i]
+    if(rconds.hasOwnProperty(conds[i])){
+        // let otcnd=rconds[conds[i]][0]
+        // let trtsSame=traits.hasOwnProperty(otcnd)&&traits.hasOwnProperty(i)//?equalLists(traits[otcnd],traits[i]):false
+        // let ntrtsSame=ntraits.hasOwnProperty(otcnd)&&ntraits.hasOwnProperty(i)//?equalLists(ntraits[otcnd],ntraits[i]):false
+        // if((trtsSame&&equalLists(traits[otcnd],traits[i])&&ntrtsSame&&equalLists(ntraits[otcnd],ntraits[i]))||  (trtsSame&&equalLists(traits[otcnd],traits[i])&&!ntrtsSame)||  (ntrtsSame&&equalLists(ntraits[otcnd],ntraits[i])&&!trtsSame)){
+            // if(traits.hasOwnProperty(i)&&ntraits.hasOwnProprty(i))
+            rconds[conds[i]].push(i)
+        // }
+        // continue
+    }
+    else{
+        rconds[conds[i]]=[i]
+    }
 }
+// for(let i in rconds){
+//     for(let j in rconds[i]){
 
+//     }
+// }
+function groupByTraits(rconds) {
+  let tempConds = [];
+
+  for (let i in rconds) {
+    let names = rconds[i];
+    // console.log(names,rconds[i])
+    let groups = [];
+    // console.log(groups,names)
+
+    for (let j in names) {
+        let name=names[j]
+        let placed = false;
+        // console.log(name,names)
+      for (let group of groups) {
+        let rep = group[0]; // representative of group
+
+        if (
+          (traits.hasOwnProperty(name)?equalLists(traits[name], traits[rep]):true) &&
+          (ntraits.hasOwnProperty(name)?equalLists(ntraits[name], ntraits[rep]):true)
+        ) {
+          group.push(name);
+          placed = true;
+          break;
+        }
+      }
+
+      // if no matching group found, create new one
+      if (!placed) {
+        groups.push([name]);
+      }
+    }
+    // console.log(groups)
+    tempConds[rconds[i][0]]=groups//groups.length==1?groups[0]:groups
+  }
+
+  return tempConds;
+}
+let tempConds={}
 for(let i in rconds){
     // console.log(rconds[i],i)
-    nconds[i]=new Condition(i).build(rconds[i])
+    // if()
+    // console.log()
+    // nconds[i]=
+    tempConds[rconds[i][0]]=i 
+}
+let tconds=groupByTraits(rconds)
+// console.log(tconds)
+function getType(val) {
+  return Object.prototype.toString.call(val).slice(8, -1);
+}
+for(let i in tconds){
+    let cond=tempConds[i]
+    // console.log("\n")
+    for(let j in tconds[i]){
+        let nm=tconds[i][j]
+        let newLgc=[traits.hasOwnProperty(nm[0])?traits[nm[0]]:[],ntraits.hasOwnProperty(nm[0])?ntraits[nm[0]]:[]]
+        
+        let tempCond=newLgc[0].length+newLgc[1].length==0?"":new Condition("return "+[...newLgc[0].map(itm=>`global.race['${itm}']`),...newLgc[1].map(itm=>`!global.race['${itm}']`)].join(" && ")+"? true : false").build(nm,true)
+        let acond=new Condition(cond).build(nm,true)
+        nconds[nm[0]]=acond==""?(tempCond==""?"":`MultLogic(["${nm.join('", "')}"],${tempCond})`):(tempCond==""?`MultLogic(["${nm.join('", "')}"],${acond})`:`MultLogic(["${nm.join('", "')}"],AND(${acond},${tempCond}))`)
+        // if(nconds[nm[0]]==""){continue}
+        // console.log(nm[0],nconds[nm[0]],"|",tempCond,"|",newLgc)//,getType(acond.lgc))
+        // console.log("\n")
+    }
 }
 
 }
@@ -18127,18 +18251,24 @@ let data={}
 {
 data["loc_id"]=techNums
 // data["loc_reqs"]=reqs
-data["loc_deps"]=deps
+// data["loc_deps"]=deps
 data["loc_specials"]=specials
+data["specGenus"]=[]
+for(let i in genusFail){
+    genusFail[i].forEach(spec=>data["specGenus"].push(spec))
+    // data["specGenus"].push(genusFail[i][0])
+}
 // data["race_based_locs"]=race2
 // data["genus_pass"]=genus
-data["genus_fail"]=genusFail
-data["cond_items"]=cond_itms
-data["conditions"]=conds
+// data["genus_fail"]=genusFail
+// data["cond_items"]=cond_itms
+// data["conditions"]=conds
 // data["traits"]=traits
 // data["ntraits"]=ntraits
 fs.writeFileSync("archipelago/data.json", JSON.stringify(data,"",2));
-let ncondsStr="class MultLogic():pass\nclass is_genus():pass\nclass isnt_genus():pass\nimps={\n"
+let ncondsStr="class MultLogic():pass\nclass is_universe():pass\nclass is_genus():pass\nclass isnt_genus():pass\nclass AND():pass\nclass OR():pass\nimps={\n"
 for(let i in nconds){
+    if(!nconds[i])continue
     ncondsStr+=`\t${nconds[i]},\n`
 }
 ncondsStr+="}"
