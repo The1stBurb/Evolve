@@ -279,7 +279,7 @@ export function getSolarName(planet) {
 export function createRevealSection(info,id,type,insert){
     let reveal = $(`<div></div>`);
     info.append(reveal);
-    reveal.append(`<span role="button" id="${id}${type}Button" class="has-text-info reveal" @click="show()">{{ vis | label }}</span>`);
+    reveal.append(`<div id="${id}${type}Button"><span role="button" class="has-text-info reveal" @click="show()">{{ label(vis) }}</span></div>`);
     let section = $(`<div id="${id}${type}Section" style="display: none;"></div>`);
     reveal.append(section);
     
@@ -299,9 +299,7 @@ export function createRevealSection(info,id,type,insert){
                     modSection.style.display = 'block';
                     modDisplay.vis = true;
                 }
-            }
-        },
-        filters: {
+            },
             label(vis){
                 return vis ? loc(`wiki_reveal_hide`,[insert]) : loc(`wiki_reveal_show`,[insert]);
             }
@@ -315,7 +313,7 @@ export function createCalcSection(info,id,type,insert){
     insert = insert || loc(`wiki_calc_insert_` + type);
     let calc = $(`<div></div>`);
     info.append(calc);
-    calc.append(`<span role="button" id="${id}${type}Button" class="has-text-info reveal" @click="show()">{{ vis | label }}</span>`);
+    calc.append(`<div id="${id}${type}Button"><span role="button" class="has-text-info reveal" @click="show()">{{ label(vis) }}</span></div>`);
     let section = $(`<div id="${id}${type}Section" style="display: none;"></div>`);
     calc.append(section);
     
@@ -335,9 +333,7 @@ export function createCalcSection(info,id,type,insert){
                     modSection.style.display = 'block';
                     modDisplay.vis = true;
                 }
-            }
-        },
-        filters: {
+            },
             label(vis){
                 return vis ? loc(`wiki_calc_hide`,[insert]) : loc(`wiki_calc_show`,[insert]);
             }

@@ -26,7 +26,7 @@ export function governPage(content){
                     1: `governor_${gov}_desc`
                 },
                 rawtext: {
-                    2: `{{ b | desc }}`
+                    2: `{{ desc(b) }}`
                 },
                 vue: {
                     data: { b: govBoost(gov === 'bureaucrat' ? 2 : 3) },

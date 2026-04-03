@@ -129,16 +129,18 @@ function addCosts(parent,key){
     if (key === 'monument'){
         calcInputs += `
                 <div class="calcInput"><span>${loc('wiki_calc_m_type')}</span> <b-dropdown hoverable>
-                    <button class="button is-primary" slot="trigger">
-                        <span>{{ i.extra.m_type | monumentLabel }}</span>
-                        <i class="fas fa-sort-down"></i>
-                    </button>
-                    <b-dropdown-item v-on:click="pickMonument('Obelisk')">{{ 'Obelisk' | monumentLabel }}</b-dropdown-item>
-                    <b-dropdown-item v-on:click="pickMonument('Statue')">{{ 'Statue' | monumentLabel }}</b-dropdown-item>
-                    <b-dropdown-item v-on:click="pickMonument('Sculpture')">{{ 'Sculpture' | monumentLabel }}</b-dropdown-item>
-                    <b-dropdown-item v-on:click="pickMonument('Monolith')">{{ 'Monolith' | monumentLabel }}</b-dropdown-item>
-                    <b-dropdown-item v-on:click="pickMonument('Pillar')">{{ 'Pillar' | monumentLabel }}</b-dropdown-item>
-                    <b-dropdown-item v-on:click="pickMonument('Megalith')">{{ 'Megalith' | monumentLabel }}</b-dropdown-item>
+                    <template #trigger>
+                        <button class="button is-primary">
+                            <span>{{ monumentLabel(i.extra.m_type) }}</span>
+                            <i class="fas fa-sort-down"></i>
+                        </button>
+                    </template>
+                    <b-dropdown-item v-on:click="pickMonument('Obelisk')">{{ monumentLabel('Obelisk') }}</b-dropdown-item>
+                    <b-dropdown-item v-on:click="pickMonument('Statue')">{{ monumentLabel('Statue') }}</b-dropdown-item>
+                    <b-dropdown-item v-on:click="pickMonument('Sculpture')">{{ monumentLabel('Sculpture') }}</b-dropdown-item>
+                    <b-dropdown-item v-on:click="pickMonument('Monolith')">{{ monumentLabel('Monolith') }}</b-dropdown-item>
+                    <b-dropdown-item v-on:click="pickMonument('Pillar')">{{ monumentLabel('Pillar') }}</b-dropdown-item>
+                    <b-dropdown-item v-on:click="pickMonument('Megalith')">{{ monumentLabel('Megalith') }}</b-dropdown-item>
                 </b-dropdown></div>
         `;
     }
@@ -191,9 +193,7 @@ function addCosts(parent,key){
                 if (key === 'monument' && global.arpa['m_type']){
                     inputs.extra.m_type = global.arpa.m_type;
                 }
-            }
-        },
-        filters: {
+            },
             monumentLabel(type){
                 switch(type){
                     case 'Obelisk':

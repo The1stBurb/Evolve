@@ -858,7 +858,7 @@ function decayCalc(info){
             <h2 class="has-text-caution">${loc('wiki_calc_decay_rate')}</h2>
         </div>
         <div>
-            <span>{{ i.resource.val | base }} * 0.001 * ({{ i.amount.val, 'amount' | generic }} - 50)</span><span v-show="s.result.vis"> = {{ | calc }}</span>
+            <span>{{ base(i.resource.val) }} * 0.001 * ({{ generic(i.amount.val, 'amount') }} - 50)</span><span v-show="s.result.vis"> = {{ calc() }}</span>
         </div>
     `);
     
@@ -866,11 +866,15 @@ function decayCalc(info){
     variables.append(var_input);
     
     let dropdown = `
-        <div class="calcInput"><span>${loc('wiki_calc_decay_resource')}</span> <b-dropdown hoverable scrollable>
-            <button class="button is-primary" slot="trigger">
-                <span>{{ i.resource.val | resLabel }}</span>
-                <i class="fas fa-sort-down"></i>
-            </button>
+        <div class="calcInput">
+            <span>${loc('wiki_calc_decay_resource')}</span>
+            <b-dropdown hoverable scrollable>
+                <template #trigger>
+                    <button class="button is-primary">
+                        <span>{{ resLabel(i.resource.val) }}</span>
+                        <i class="fas fa-sort-down"></i>
+                    </button>
+                </template>
     `;
     Object.keys(tradeRatio).forEach(function (res){
         dropdown += `
@@ -907,9 +911,7 @@ function decayCalc(info){
             resetInputs(){
                 inputs.resource.val = undefined;
                 inputs.amount.val = undefined;
-            }
-        },
-        filters: {
+            },
             generic(num, type){
                 return num !== undefined ? num : loc('wiki_calc_decay_' + type);
             },
@@ -956,31 +958,31 @@ function inflationCalc(info){
             <h2 class="has-text-caution">${loc('wiki_calc_inflation_cost')}</h2>
         </div>
         <div>
-            <span>{{ i.inflation.val, 'inflation' | generic }} / 75</span><span v-show="s.result.vis"> = {{ 'cost' | calc }} = +{{ 'cost', true | calc }}%</span>
+            <span>{{ generic(i.inflation.val, 'inflation') }} / 75</span><span v-show="s.result.vis"> = {{ calc('cost') }} = +{{ calc('cost', true) }}%</span>
         </div>
         <div>
             <h2 class="has-text-caution">${loc('wiki_calc_inflation_luxury')}</h2>
         </div>
         <div>
-            <span>{{ i.inflation.val, 'inflation' | generic }} / 1250</span><span v-show="s.result.vis"> = {{ 'luxury' | calc }} = +{{ 'luxury', true | calc }}%</span>
+            <span>{{ generic(i.inflation.val, 'inflation') }} / 1250</span><span v-show="s.result.vis"> = {{ calc('luxury') }} = +{{ calc('luxury', true) }}%</span>
         </div>
         <div>
             <h2 class="has-text-caution">${loc('wiki_calc_inflation_casino_prod')}</h2>
         </div>
         <div>
-            <span>{{ i.inflation.val, 'inflation' | generic }} / 1250</span><span v-show="s.result.vis"> = {{ 'casino_prod' | calc }} = +{{ 'casino_prod', true | calc }}%</span>
+            <span>{{ generic(i.inflation.val, 'inflation') }} / 1250</span><span v-show="s.result.vis"> = {{ calc('casino_prod') }} = +{{ calc('casino_prod', true) }}%</span>
         </div>
         <div>
             <h2 class="has-text-caution">${loc('wiki_calc_inflation_casino_store')}</h2>
         </div>
         <div>
-            <span>{{ i.inflation.val, 'inflation' | generic }} / 100</span><span v-show="s.result.vis"> = {{ 'casino_store' | calc }} = +{{ 'casino_store', true | calc }}%</span>
+            <span>{{ generic(i.inflation.val, 'inflation') }} / 100</span><span v-show="s.result.vis"> = {{ calc('casino_store') }} = +{{ calc('casino_store', true) }}%</span>
         </div>
         <div>
             <h2 class="has-text-caution">${loc('wiki_calc_inflation_bank_vault')}</h2>
         </div>
         <div>
-            <span>{{ i.inflation.val, 'inflation' | generic }} / 125</span><span v-show="s.result.vis"> = {{ 'bank_vault' | calc }} = +{{ 'bank_vault', true | calc }}%</span>
+            <span>{{ generic(i.inflation.val, 'inflation') }} / 125</span><span v-show="s.result.vis"> = {{ calc('bank_vault') }} = +{{ calc('bank_vault', true) }}%</span>
         </div>
     `);
     
@@ -1011,9 +1013,7 @@ function inflationCalc(info){
             },
             importInputs(){
                 inputs.inflation.val = global.race.inflation || 0;
-            }
-        },
-        filters: {
+            },
             generic(num, type){
                 return num !== undefined ? num : loc('wiki_calc_' + type);
             },
