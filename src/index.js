@@ -1,5 +1,5 @@
 import { global, tmp_vars, save, message_logs, message_filters, webWorker } from './vars.js';
-import { loc, locales } from './locale.js';
+import { loc, locales, updateHtmlLang } from './locale.js';
 import { setupStats, alevel } from './achieve.js';
 import { vBind, initMessageQueue, clearElement, flib, tagEvent, gameLoop, popover, clearPopper, powerGrid, easterEgg, trickOrTreat, drawIcon } from './functions.js';
 import { initResourceTabs, drawResourceTab, tradeSummary } from './resources.js';
@@ -129,7 +129,11 @@ export function mainVue(){
             lChange(locale){
                 global.settings.locale = locale;
                 global.queue.rename = true;
-                save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
+                save.setItem('evolved', LZString.compressToUTF16(JSON.stringify(global)));
+
+                // Update the HTML lang attribute for accessibility
+                updateHtmlLang(locale);
+
                 if (webWorker.w){
                     webWorker.w.terminate();
                 }

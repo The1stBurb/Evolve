@@ -102,3 +102,33 @@ export const locales = {
     'im-PL': 'Igpay-Atinlay',
     'ja-JP': '日本語' 
 };
+
+/**
+ * Updates the HTML lang attribute based on the current locale setting
+ * @param {string} locale - Locale code ('en-US', 'fr-FR')
+ */
+export function updateHtmlLang(locale) {
+    if (!locale) return;
+
+    // extract primary language code ('en-US' -> 'en')
+    const langCode = locale.split('-')[0];
+    document.documentElement.setAttribute('lang', langCode);
+};
+
+/**
+ * Initializes the HTML lang attribute from saved game data
+ * call on page load before game renders
+ */
+export function initHtmlLang() {
+    try {
+        const savedData = save.getItem('evolved');
+        if (savedData) {
+            const gameState = JSON.parse(LZString.decompressFromUTF16(savedData));
+            if (gameState?.settings?.locale) {
+                updateHtmlLang(gameState.settings.locale);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not initialize lang attribute:', e);
+    }
+}

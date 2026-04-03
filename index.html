@@ -1,8 +1,25 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <script src="lib/lz-string.min.js"></script>
+    <script>
+        // Set lang attribute from localStorage before page renders
+        (function () {
+            try {
+                const savedData = localStorage.getItem('evolved');
+                if (savedData) {
+                    const gameState = JSON.parse(LZString.decompressFromUTF16(savedData));
+                    if (gameState?.settings?.locale) {
+                        document.documentElement.setAttribute('lang', gameState.settings.locale.split('-')[0]);
+                    }
+                }
+            } catch (e) {
+                // Keep default 'en' if parsing fails
+            }
+        })();
+    </script>
     <title>Evolve</title>
-    <meta http-equiv="Content-type" content="text/html;charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="evolved-light.ico" type="images/x-icon" media="(prefers-color-scheme:dark)">
     <link rel="icon" href="evolved.ico" type="images/x-icon" media="(prefers-color-scheme:light)">
