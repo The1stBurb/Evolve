@@ -368,7 +368,7 @@ function connectToServer(){
             if(opt.govnr)global.genes["governor"]=0;
 
             global.ap_genus=["other","carnivore","avian","plant","heat","angelic","fungi","demonic","synthetic","eldritch"][opt.genus];
-            console.log(global.ap_genus,"eeee")
+            console.log(global.ap_genus,"eeeeeeeeeee")
             if(opt.univ!="standard"){
                 global.race['universe']=opt.univ
                 global.opts.univ=opt.univ
