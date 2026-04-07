@@ -426,7 +426,7 @@ export const actions = {
             desc: loc('evo_mammals_desc'),
             reqs: { evo: 5, evo_mammals: 1 },
             grant: ['evo',6],
-            condition(){ return global.tech['evo'] && global.tech.evo === 5 && !["demonic","heat","celestial"].includes(global.ap_genus); },
+            condition(){ return global.tech['evo'] && global.tech.evo === 5&&global.ap_genus!="heat"},// && !["heat","celestial"].includes(global.ap_genus); },
             cost: {
                 DNA(){ return 245; }
             },
