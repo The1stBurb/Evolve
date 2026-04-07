@@ -74,7 +74,7 @@ export function login(user,port,pass){
 
     connectInfo={
         port: port || localStorage.getItem("port") || Error,//"archipelago.gg:38281", // Default hostname
-        game: "Evolve",
+        game: "Evolve2",
         user: user || localStorage.getItem("user") || "Player1",
         pass: pass || localStorage.getItem("pass") || "",
         items_handling: 0b111,
@@ -352,7 +352,7 @@ function connectToServer(){
         console.log("_read_client_status_"+packetTeamName+"_"+packetSlotName)
         console.log(packet)
         
-        if(!global.setupComplete){
+        if(!global.setupComplete||true){
             var opt=packet.slot_data;
             prestigeMod("Plasmid",opt.plasmid,true);
             prestigeMod("Phage",opt.phage,true);
@@ -368,7 +368,7 @@ function connectToServer(){
             if(opt.govnr)global.genes["governor"]=0;
 
             global.ap_genus=["other","carnivore","avian","plant","heat","angelic","fungi","demonic","synthetic","eldritch"][opt.genus];
-            
+            console.log(global.ap_genus,"eeee")
             if(opt.univ!="standard"){
                 global.race['universe']=opt.univ
                 global.opts.univ=opt.univ
