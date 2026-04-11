@@ -17694,7 +17694,7 @@ for(let i in reqs){
 let conds={}
 let traits={}
 let ntraits={}
-let excludeTraits=["gravity_well","cataclysm","truepath","steelen","forager","witch_hunter","lone_survivor","fasting","warlord"]
+let excludeTraits=["gravity_well","cataclysm","truepath","steelen","forager","witch_hunter","lone_survivor","fasting","warlord","joyless"]
 {
 function getFuncBody(fn) {
     let str = fn.toString().trim();
@@ -18119,7 +18119,7 @@ function parse(expr) {
     // Base case (string)
     return expr;
 }
-let traitMatches={"carnivore":"carnivore","detritivore":"fungi","herbivore":"herbivore","soul_eater":"demonic","artifical":"synthetic","unfathomable":"eldritch","terrifying":"demonic","evil":"demonic"}
+let traitMatches={"carnivore":"carnivore","detritivore":"fungi","herbivore":"herbivore","soul_eater":"demonic","artifical":"synthetic","unfathomable":"eldritch","terrifying":"demonic","evil":"demonic","flier":"avian","sappy":"plant","psychic":"eldritch","kindling_kindred":"plant","smoldering":"heat","":""}
 function typerForLogic(inp,inv){
     inp=typerChecker(inp)//.trim()
     if(inp.includes("!")){
@@ -18134,8 +18134,10 @@ function typerForLogic(inp,inv){
     if(inp[0]=="has_race"){
         // inp[1][1]=="'steelen"?return:false
         // console.log(inp[1][0])
-        if(!gtraits["traits"].includes(inp[1][0].replaceAll("'",""))){console.error(`HEY! this is not a genus / trait! ${inp[1][0]}`);return null}
-        if(!traitMatches.hasOwnProperty(inp[1][0].replaceAll("'",""))){console.error(`HEY! this trait has no genus to match to! ${inp[1][0]}`);return null}
+        let clen=inp[1][0].replaceAll("'","")
+        if(!gtraits["traits"].includes(clen)){console.error(`HEY! this is not a genus / trait! ${inp[1][0]}`);return null}
+        if(!traitMatches.hasOwnProperty(clen)){console.error(`HEY! this trait has no genus to match to! ${inp[1][0]}`);return null}
+        else{inp[1][0]=`'${traitMatches[clen]}'`}
         inp=`is${inv}_genus(${inp[1][0]})`
     }
     else if(inp[0]=="race_is"){
@@ -18234,7 +18236,9 @@ for(let i in tconds){
     for(let j in tconds[i]){
         let nm=tconds[i][j]
         let newLgc=[traits.hasOwnProperty(nm[0])?traits[nm[0]]:[],ntraits.hasOwnProperty(nm[0])?ntraits[nm[0]]:[]]
-        
+        delete traits[nm[0]]
+        delete ntraits[nm[0]]
+        console.log(nm)
         let tempCond=newLgc[0].length+newLgc[1].length==0?"":new Condition("return "+[...newLgc[0].map(itm=>`global.race['${itm}']`),...newLgc[1].map(itm=>`!global.race['${itm}']`)].join(" && ")+"? true : false").build(nm,true)
         let acond=new Condition(cond).build(nm,true)
         nconds[nm[0]]=acond==""?(tempCond==""?"":`MultLogic(["${nm.join('", "')}"],${tempCond})`):(tempCond==""?`MultLogic(["${nm.join('", "')}"],${acond})`:`MultLogic(["${nm.join('", "')}"],AND(${acond},${tempCond}))`)
@@ -18242,6 +18246,16 @@ for(let i in tconds){
         // console.log(nm[0],nconds[nm[0]],"|",tempCond,"|",newLgc)//,getType(acond.lgc))
         // console.log("\n")
     }
+}
+for(let i in traits){
+    let ntrait=ntraits.hasOwnProperty(i)?ntraits[i]:[]
+    delete ntraits[i]
+    console.log(i)
+    nconds[i]=new Condition("return "+[...traits[i].map(itm=>`global.race['${itm}']`),...ntrait.map(itm=>`!global.race['${itm}']`)].join(" && ")+"? true : false").build([i])
+}
+for(let i in ntraits){
+    console.log(i)
+    nconds[i]=new Condition("return "+ntraits[i].map(val=>`!global.race['${val}']`).join(" && ")+"? true:false").build([i])
 }
 
 }
@@ -18298,7 +18312,7 @@ for(let i in genusFail){
 // data["race_based_locs"]=race2
 // data["genus_pass"]=genus
 // data["genus_fail"]=genusFail
-// data["cond_items"]=cond_itms
+data["cond_items"]=cond_itms
 // data["conditions"]=conds
 // data["traits"]=traits
 // data["ntraits"]=ntraits
@@ -18306,7 +18320,7 @@ fs.writeFileSync("archipelago/data.json", JSON.stringify(data,"",2));
 let ncondsStr="class MultLogic():pass\nclass is_universe():pass\nclass is_genus():pass\nclass isnt_genus():pass\nclass AND():pass\nclass OR():pass\nimps={\n"
 for(let i in nconds){
     if(!nconds[i])continue
-    ncondsStr+=`\t${nconds[i]},\n`
+    ncondsStr+=`\t${nconds[i]},\n\n`
 }
 ncondsStr+="}"
 fs.writeFileSync("archipelago/conditions.py",ncondsStr)

@@ -346,5 +346,492 @@
       "bone_tools",
       "club"
     ]
+  },
+  "cond_items": {
+    "smokehouse": {
+      "include": [
+        "carnivore"
+      ],
+      "exclude": []
+    },
+    "wind_plant": {
+      "include": [],
+      "exclude": [
+        "herbivore"
+      ]
+    },
+    "cement": {
+      "include": [],
+      "exclude": [
+        "avian"
+      ]
+    },
+    "rebar": {
+      "include": [],
+      "exclude": [
+        "avian"
+      ]
+    },
+    "steel_rebar": {
+      "include": [],
+      "exclude": [
+        "avian"
+      ]
+    },
+    "portland_cement": {
+      "include": [],
+      "exclude": [
+        "avian"
+      ]
+    },
+    "screw_conveyor": {
+      "include": [],
+      "exclude": [
+        "avian"
+      ]
+    },
+    "copper_sledgehammer": {
+      "include": [],
+      "exclude": [
+        "plant"
+      ]
+    },
+    "iron_sledgehammer": {
+      "include": [],
+      "exclude": [
+        "plant"
+      ]
+    },
+    "steel_sledgehammer": {
+      "include": [],
+      "exclude": [
+        "plant"
+      ]
+    },
+    "titanium_sledgehammer": {
+      "include": [],
+      "exclude": [
+        "plant"
+      ]
+    },
+    "compost": {
+      "include": [
+        "fungi"
+      ],
+      "exclude": []
+    },
+    "hot_compost": {
+      "include": [
+        "fungi"
+      ],
+      "exclude": []
+    },
+    "mulching": {
+      "include": [
+        "fungi"
+      ],
+      "exclude": []
+    },
+    "adv_mulching": {
+      "include": [
+        "fungi"
+      ],
+      "exclude": []
+    },
+    "armor": {
+      "include": [],
+      "exclude": [
+        "aquatic"
+      ]
+    },
+    "plate_armor": {
+      "include": [],
+      "exclude": [
+        "aquatic"
+      ]
+    },
+    "stone_axe": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "copper_axes": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "iron_saw": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "iron_axes": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "carpentry": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "steel_saw": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "steel_axes": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "master_craftsman": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "titanium_axes": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "brickworks": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "crafting_ritual": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "machinery": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "subtle_rituals": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "cnc_machine": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "pylon_camouflage": {
+      "include": [],
+      "exclude": [
+        "fey",
+        "heat",
+        "demonic"
+      ]
+    },
+    "soul_well": {
+      "include": [
+        "demonic"
+      ],
+      "exclude": []
+    },
+    "demonic_craftsman": {
+      "include": [
+        "demonic"
+      ],
+      "exclude": []
+    },
+    "evil_planning": {
+      "include": [
+        "demonic"
+      ],
+      "exclude": []
+    },
+    "slave_pens": {
+      "include": [
+        "demonic"
+      ],
+      "exclude": []
+    },
+    "slave_market": {
+      "include": [
+        "demonic"
+      ],
+      "exclude": []
+    },
+    "urban_planning": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "market": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "tax_rates": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "large_trades": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "corruption": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "massive_trades": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "trade": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "diplomacy": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "freight": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "missionary": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "zoning_permits": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "assistant": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "urbanization": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "blackmarket": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "casino": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "wharf": {
+      "include": [],
+      "exclude": [
+        "demonic"
+      ]
+    },
+    "aphrodisiac": {
+      "include": [],
+      "exclude": [
+        "synthetic"
+      ]
+    },
+    "agriculture": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "hospital": {
+      "include": [],
+      "exclude": [
+        "synthetic"
+      ]
+    },
+    "farm_house": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "irrigation": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "copper_hoe": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "iron_hoe": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "steel_hoe": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "titanium_hoe": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "silo": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "mill": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "windmill": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "windturbine": {
+      "include": [],
+      "exclude": [
+        "synthetic",
+        "eldritch"
+      ]
+    },
+    "captive_housing": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "torture": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "thrall_quarters": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "psychic_energy": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "psychic_attack": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "psychic_finance": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "mind_break": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    },
+    "psychic_stun": {
+      "include": [
+        "eldritch"
+      ],
+      "exclude": []
+    }
   }
 }
