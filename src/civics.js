@@ -2138,7 +2138,6 @@ export function soldierDeath(v){
     // triggerDeathLink({cause:"fight",count:killed});
     blubberFill(killed);
 }
-
 export function armyRating(val,type,wound,analysis){
     if (!global.civic.hasOwnProperty('garrison')){
         return 1;
@@ -2165,6 +2164,15 @@ export function armyRating(val,type,wound,analysis){
     data.push({ k: 'base', v: adjusted_val });
     if (global.tech.military){ data.push({ k: 'civics_garrison_weaponry', v: weapon_tech - 1 }); }
     let army = global.tech['military'] ? adjusted_val * weapon_tech : adjusted_val;
+    
+    function addTrait(trait,inv){
+        if(global.race[trait]){
+            let val=(traits[trait].vars()[0]/100)*(inv?-1:1)
+            army*=1+val
+            data.push({k:`trait_${trait}_name`,v:val})
+        }
+    }
+
     if (type === 'army' || type === 'hellArmy' || type === 'Troops'){
         if (global.race['tactical']){
             let tactical = (traits.tactical.vars()[0] * global.race['tactical'] / 100);
@@ -2191,6 +2199,7 @@ export function armyRating(val,type,wound,analysis){
             army *= 1 - puny;
             data.push({ k: 'trait_puny_name', v: -(puny) });
         }
+        // addTrait("puny",1)
         if (global.race['claws']){
             let claws = (traits.claws.vars()[0] / 100);
             army *= 1 + claws;
@@ -2363,6 +2372,7 @@ export function armyRating(val,type,wound,analysis){
             data.push({ k: 'resource_Authority_name', v: -(1 - auth) });
         }
     }
+    if(type=="hellArmy"){console.log("AMRY",val,type,wound,analysis,army)}
     army = Math.floor(army);
     let racial = racialTrait(val,type);
     army *= racial;

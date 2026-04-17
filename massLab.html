@@ -88,12 +88,12 @@
         for(let i in atomic_mass){
             console.log(i,global.resource.hasOwnProperty(i))
             let mass=atomic_mass[i]
-            let prod=global.resource[i].diff
+            let prod=Math.floor(global.resource[i].diff)
             if(prod==0)continue
             let amnt=mass*prod;
             // if(amnt>max[1])max=i,amnt
-            if(["Infernite","Elerium"].includes(i)){specs.push([i,amnt])}else{amnts.push([i,amnt])}
-            nhtml+=`<div id="res_${i}"><span id="${i}_name"><b>${i}: </b> <span id="${i}_mass">${mass}</span> kt/unit * <span id="${i}_prod">${prod}</span> unit/s =<span id="${i}_math">${(amnt>0?amnt:0).toFixed(2)}</span> kt/s</span></div>`
+            if(["Infernite","Elerium"].includes(i)){specs.push([i,amnt,prod])}else{amnts.push([i,amnt,prod])}
+            nhtml+=`<div id="res_${i}"><span id="${i}_name"><b>${i}: </b> <span id="${i}_mass">${mass}</span> kt/unit * <span id="${i}_prod">${prod}</span> unit/s =<span id="${i}_math">${(amnt>0?amnt:0).toFixed(2).toLocaleString()}</span> kt/s</span></div>`
         }
         nhtml+="<hr><div>"
         amnts.sort((a, b) => b[1] - a[1]);
@@ -105,7 +105,7 @@
             if(ai<5){
                 i[0]=`<b>${i[0]}</b>`
             }
-            nhtml+=`<span>${i[0]} at ${i[1].toFixed(2)}</span><br>`
+            nhtml+=`<span>${i[0]} at ${i[2]} units for ${i[1].toFixed(2).toLocaleString()} kt/s</span><br>`
         }
         md.innerHTML=nhtml+"</div>"
     // }

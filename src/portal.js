@@ -3795,6 +3795,7 @@ function buildEnemyFortress(parent){
             attack(idx){
                 let horde = Math.floor(global.portal.minions.spawns * seededRandom(6, 10, true) / 10);
                 let scale = global.race['hivemind'] ? traits.hivemind.vars()[0] : 1;
+                    // console.log("portal1")
                 let rating = armyRating(scale,'hellArmy',0) / scale;
                 let died = seededRandom((250 + global.portal.throne.enemy[idx].s * 250) / rating, (500 + global.portal.throne.enemy[idx].s * 1250) / rating, true);
                 if (global.race['armored']){
@@ -4175,6 +4176,7 @@ function fortressDefenseRating(v){
         army += global.tech['hdroid'] ? jobScale(droids * 2) : jobScale(droids);
     }
     let turret = global.tech['turret'] ? (global.tech['turret'] >= 2 ? 70 : 50) : 35;
+                    // console.log("portal2")
     return Math.round(armyRating(army,'hellArmy',wounded)) + (p_on['turret'] ? p_on['turret'] * turret : 0);
 }
 
@@ -4367,6 +4369,7 @@ export function bloodwar(){
     }
     let brkpnt = +(wounded % 1).toFixed(10);
     day_report.patrols = {};
+    console.log("\n\n")
     for (let i=0; i<global.portal.fortress.patrols; i++){
         let patrol_report = { encounter: false, droid: false, ambush: false, gem: 0, kills: 0, wounded: 0, died: 0};
         let hurt = brkpnt > (1 / global.portal.fortress.patrols * i) ? Math.ceil(wounded) : Math.floor(wounded);
@@ -4378,10 +4381,11 @@ export function bloodwar(){
                 pat_size += global.tech['hdroid'] ? jobScale(2) : jobScale(1);
                 terminators--;
             }
+            // console.log("portal3",i,wounded,terminators)
             let pat_rating = Math.round(armyRating(pat_size,'hellArmy',hurt));
 
             let demons = Math.rand(Math.floor(global.portal.fortress.threat / 50), Math.floor(global.portal.fortress.threat / 10));
-
+            console.log(global.portal.fortress.threat,global.portal.fortress.threat/50,global.portal.fortress.threat/10,demons,gem_chance,pat_rating)
             if (global.race['blood_thirst']){
                 global.race['blood_thirst_count'] += Math.rand(0,Math.ceil(demons / 10));
                 if (global.race['blood_thirst_count'] > traits.blood_thirst.vars()[0]){
@@ -4435,6 +4439,7 @@ export function bloodwar(){
                     let div = 35 - Math.floor(p_on['attractor'] / 3);
                     if (div < 5){ div = 5; }
                     let chances = Math.round(killed / div);
+                    console.log(chances,killed,div)
                     for (let j=0; j<chances; j++){
                         if (Math.rand(0,gem_chance) === 0){
                             patrol_report.gem++;
@@ -4894,6 +4899,7 @@ export function hellguard(){
 
         if (global.portal.throne.enemy.length > 0){
             let scale = global.race['hivemind'] ? traits.hivemind.vars()[0] : 1;
+                    // console.log("portal4")
             let rating = armyRating(scale,'hellArmy',0) / scale;
             global.portal.throne.enemy.forEach(function(e){
                 let eRating = e.s + (global.portal.minions.spawns / 9000) ** 8;
@@ -5067,6 +5073,7 @@ export function hellSupression(area, val, wiki){
                 let guard_posts_on = wiki ? (global.portal?.guard_post?.on ?? 0) : p_on['guard_post'];
                 let army = val || jobScale(guard_posts_on);
                 let arc = (wiki ? (global.portal?.arcology?.on ?? 0) : p_on['arcology']) * 75;
+                    // console.log("portal5")
                 let aRating = armyRating(army,'hellArmy',0);
                 if (global.race['holy']){
                     aRating *= 1 + (traits.holy.vars()[1] / 100);

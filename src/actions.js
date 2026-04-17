@@ -7907,6 +7907,7 @@ function checkMaxCosts(costs){
             }
         }
         else if (res === 'Army'){
+                    console.log("actions1")
             if (armyRating(global.civic.garrison.raid,'army') < Number(costs[res]())){
                 test = false;
                 return;
@@ -7981,6 +7982,7 @@ export function checkCosts(costs){
             }
         }
         else if (res === 'Army'){
+                    console.log("actions2")
             if (armyRating(global.civic.garrison.raid,'army') < Number(costs[res]())){
                 test = false;
                 return;
