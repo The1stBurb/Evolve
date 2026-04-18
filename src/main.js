@@ -191,8 +191,11 @@ if (global.lastMsg){
     });
 }
 
-$(`#msgQueue`).height(global.settings.msgQueueHeight);
-$(`#buildQueue`).height(global.settings.buildQueueHeight);
+// only restore saved heights on desktop, let CSS control layout on mobile
+if (window.innerWidth > 768) {
+    $(`#msgQueue`).height(global.settings.msgQueueHeight);
+    $(`#buildQueue`).height(global.settings.buildQueueHeight);
+}
 
 if (global.queue.rename === true){
     updateQueueNames(true);
@@ -11440,7 +11443,15 @@ function midLoop(){
         });
     });
 
-    {
+    const isMobileLayout = window.innerWidth <= 768;
+
+    if (isMobileLayout) {
+        // On mobile the CSS controls heights; clear any previously-set inline heights
+        // so they don't fight the responsive stylesheet.
+        $(`#resources`).css('height', '');
+        $(`#msgQueue`).css('height', '');
+        $(`#buildQueue`).css('height', '');
+    } else {
         let msgHeight = $(`#msgQueue`).height();
         let buildHeight = $(`#buildQueue`).height();
         let totHeight = $(`.leftColumn`).height();
