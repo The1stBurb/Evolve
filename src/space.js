@@ -7569,6 +7569,7 @@ export function ascendLab(hybrid,wiki){
     }
     else {
         $(`#city`).append(lab);
+        $('#main').addClass('custom-lab-active');
     }
 
     let labStatus = `<div><h3 class="has-text-danger">${loc('genelab_title')}</h3> - <span class="has-text-warning">${loc('genelab_genes')} {{ g.genes }}</span> - <span class="has-text-warning">${loc('trait_untapped_name')}: {{ untapped(g.genes) }}</span></div>`;
@@ -7621,8 +7622,8 @@ export function ascendLab(hybrid,wiki){
     if (hybrid){
         dGenus = 'hybrid';
         let genus = `<div class="genus_selection">`;
-        genus += `<div id="geneLabGenusA" class="genus"><div class="has-text-caution header">${loc('genelab_genus_a')}</div><button class="button" @click="genus(0)" v-html="genus_f(g.hybrid,0)"></button></div>`;
-        genus += `<div id="geneLabGenusB" class="genus"><div class="has-text-caution header">${loc('genelab_genus_b')}</div><button class="button" @click="genus(1)" v-html="genus_f(g.hybrid,1)"></button></div>`;
+        genus += `<div id="geneLabGenusA" class="genus"><div class="has-text-caution header">${loc('genelab_genus_a')}</div><button class="button" @click="openGenus(0)" v-html="genusLabel(g.hybrid,0)"></button></div>`;
+        genus += `<div id="geneLabGenusB" class="genus"><div class="has-text-caution header">${loc('genelab_genus_b')}</div><button class="button" @click="openGenus(1)" v-html="genusLabel(g.hybrid,1)"></button></div>`;
         genus += `${fanatic}`;
         genus += `<div class="resetLab"><button class="button" @click="reset()">${loc('genelab_reset')}</button></div>`;
         genus += `</div>`;
@@ -7630,7 +7631,7 @@ export function ascendLab(hybrid,wiki){
     }
     else {
         let genus = `<div class="genus_selection">`;
-        genus += `<div id="geneLabGenus" class="genus"><div class="has-text-caution header">${loc('genelab_genus')}</div><button class="button" @click="genus()">{{ genus(g.genus) }}</button></div>`;
+        genus += `<div id="geneLabGenus" class="genus"><div class="has-text-caution header">${loc('genelab_genus')}</div><button class="button" @click="openGenus()" v-html="genusLabel(g.genus)"></button></div>`;
         genus += `${fanatic}`;
         genus += `<div class="resetLab"><button class="button" @click="reset()">${loc('genelab_reset')}</button></div>`;
         genus += `</div>`;
@@ -7687,7 +7688,7 @@ export function ascendLab(hybrid,wiki){
         }
     }
 
-    let taxomized = { utility: {}, resource: {}, production: {}, combat: {}, all: {} };;
+    let taxomized = { utility: {}, resource: {}, production: {}, combat: {}, all: {} };
     Object.keys(races).forEach(function (race){
         let type = races[race].type;
         if (
@@ -7714,22 +7715,23 @@ export function ascendLab(hybrid,wiki){
         }
     }
 
-    let trait_listing = $(`<b-tabs v-model="tt.t" @input="swapTab"></b-tabs>`);
+    let trait_listing = $(`<b-tabs v-model="tt.t" :animated="true" @update:model-value="swapTab"></b-tabs>`);
     let all_listing = ``;
     Object.keys(taxomized).sort().forEach(function (tax){
         if (tax === 'all'){
             return;
         }
         let negative = '';
-        let trait_list_header = `<b-tab-item><template slot="header"><h2 class="is-sr-only">${loc(`genelab_traits_${tax}`)}}</h2><span aria-hidden="true">${loc(`genelab_traits_${tax}`)}</span></template>`;
+        let trait_list_header = `<b-tab-item :label="'${loc(`genelab_traits_${tax}`)}'">`;
+
         let trait_list = ``;
         Object.keys(taxomized[tax]).sort().forEach(function (trait){
             if (traits.hasOwnProperty(trait) && traits[trait].type === 'major'){
                 if (traits[trait].val >= 0){
-                    trait_list += `<div class="field t${trait}"><b-checkbox :disabled="allowed('${trait}')" @input="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-success">${loc(`trait_${trait}_name`)}</span> (<span class="has-text-advanced">{{ cost('${trait}') }}</span><span v-html="empower(g.traitlist,'${trait}')"></span>)</b-checkbox></div>`;
+                    trait_list += `<div class="field t${trait}"><b-checkbox :disabled="allowed('${trait}')" @update:model-value="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-success">${loc(`trait_${trait}_name`)}</span> (<span class="has-text-advanced">{{ cost('${trait}') }}</span><span v-html="empower(g.traitlist,'${trait}')"></span>)</b-checkbox></div>`;
                 }
                 else {
-                    negative += `<div class="field t${trait}"><b-checkbox :disabled="allowed('${trait}')" @input="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-danger">${loc(`trait_${trait}_name`)}</span> (<span class="has-text-caution">{{ cost('${trait}') }}</span><span v-html="empower(g.traitlist,'${trait}')"></span>)</b-checkbox></div>`;
+                    negative += `<div class="field t${trait}"><b-checkbox :disabled="allowed('${trait}')" @update:model-value="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-danger">${loc(`trait_${trait}_name`)}</span> (<span class="has-text-caution">{{ cost('${trait}') }}</span><span v-html="empower(g.traitlist,'${trait}')"></span>)</b-checkbox></div>`;
                 }
             }
         });
@@ -7739,10 +7741,10 @@ export function ascendLab(hybrid,wiki){
         all_listing += `<h3>${loc(`genelab_traits_${tax}`)}</h3>` + `<div class="lame trait_selection">` + trait_list + negative + `</div>`;
     });
 
-    let summary = `<b-tab-item id="traitSummary"><template slot="header"><h2 class="is-sr-only">${loc(`genelab_traits_summary`)}}</h2><span aria-hidden="true">${loc(`genelab_traits_summary`)}</span></template></b-tab-item>`;
+    let summary = `<b-tab-item id="traitSummary" :label="'${loc(`genelab_traits_summary`)}'"></b-tab-item>`;
     trait_listing.append(summary);
 
-    let allListing = `<b-tab-item id="traitAll"><template slot="header"><h2 class="is-sr-only">${loc(`genelab_traits_all`)}}</h2><span aria-hidden="true">${loc(`genelab_traits_all`)}</span></template>${all_listing}<h3>${loc(`genelab_traits_summary`)}</h3><div id="allSum"></div></b-tab-item>`;
+    let allListing = `<b-tab-item id="traitAll" :label="'${loc(`genelab_traits_all`)}'"><div class="allTraitsContainer">${all_listing}<h3>${loc(`genelab_traits_summary`)}</h3><div id="allSum"></div></div></b-tab-item>`;
     trait_listing.append(allListing);
 
     genes.append(trait_listing);
@@ -7801,14 +7803,17 @@ export function ascendLab(hybrid,wiki){
                 }
             },
             geneEdit(){
-                let newRanks = genome.traitlist.map(x => tRanks[x] ? { [x]: tRanks[x] } : { [x]: 1 });
-                let ranks = {};
-                newRanks.forEach(function(k){ Object.keys(k).forEach(function(t){ ranks[t] = k[t] }) });
-                tRanks = ranks;
-                genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
-                if (activeTab.t === 5){
-                    summaryTab(5);
-                }
+                this.$nextTick(() => {
+                    let newRanks = genome.traitlist.map(x => tRanks[x] ? { [x]: tRanks[x] } : { [x]: 1 });
+                    let ranks = {};
+                    newRanks.forEach(function(k){ Object.keys(k).forEach(function(t){ ranks[t] = k[t] }) });
+                    Object.keys(tRanks).forEach(k => { if (!ranks.hasOwnProperty(k)) delete tRanks[k]; });
+                    Object.assign(tRanks, ranks);
+                    genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
+                    if (activeTab.t === 5){
+                        summaryTab(5);
+                    }
+                });
             },
             setRace(){
                 if (genome.fanaticism && !genome.traitlist.includes(genome.fanaticism)){ return false; }
@@ -7834,6 +7839,7 @@ export function ascendLab(hybrid,wiki){
                         fanaticism: genome.fanaticism,
                         ranks: tRanks
                     };
+                    $('#main').removeClass('custom-lab-active');
                     if (hybrid){
                         global.custom[slot]['hybrid'] = genome.hybrid;
                         apotheosis();
@@ -7872,6 +7878,7 @@ export function ascendLab(hybrid,wiki){
                 genome.genus = dGenus;
                 genome.traitlist = [];
                 genome.ranks = {};
+                Object.keys(tRanks).forEach(k => delete tRanks[k]);
                 genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false), tRanks);
                 genome.fanaticism = false;
             },
@@ -7893,13 +7900,13 @@ export function ascendLab(hybrid,wiki){
                         var body = $('<div id="specialModal" class="modalBody"></div>');
                         $('#modalBox').append(body);
 
-                        let traits = `<div class="fanatic"><template><section>`;
+                        let traits = `<div class="fanatic">`;
                         genome.traitlist.forEach(function (trait){
                             if (trait !== 'imitation'){
                                 traits += `<div class="field ${trait}"><b-radio v-model="fanaticism" native-value="${trait}">${loc(`trait_${trait}_name`)}</b-radio></div>`;
                             }
                         });
-                        traits += `</section></template></div>`;
+                        traits += `</div>`;
                         body.append($(traits));
 
                         vBind({
@@ -7909,7 +7916,7 @@ export function ascendLab(hybrid,wiki){
                     }
                 }, 50);
             },
-            genus(slot){
+            openGenus(slot){
                 this.$buefy.modal.open({
                     hasModalCard: false,
                     customClass: 'evolve-modal',
@@ -7927,7 +7934,7 @@ export function ascendLab(hybrid,wiki){
                         var body = $('<div id="specialModal" class="modalBody"></div>');
                         $('#modalBox').append(body);
 
-                        let genus = `<div class="genus_selection"><template><section>`;
+                        let genus = `<div class="genus_selection">`;
                         Object.keys(genus_def).forEach(function (type){
                             if (type !== 'hybrid'){
                                 if (isWiki || (global.stats.achieve[`genus_${type}`] && global.stats.achieve[`genus_${type}`].l > 0)){
@@ -7940,7 +7947,7 @@ export function ascendLab(hybrid,wiki){
                                 }
                             }
                         });
-                        genus += `</section></template></div>`;
+                        genus += `</div>`;
                         body.append($(genus));
 
                         vBind({
@@ -7977,6 +7984,14 @@ export function ascendLab(hybrid,wiki){
                 }, 50);
             },
             swapTab(tab){
+                let content = document.querySelector('#celestialLab .b-tabs .tab-content');
+                if (content) {
+                    let rect = content.getBoundingClientRect();
+                    content.style.minHeight = rect.height + 'px';
+                    setTimeout(() => {
+                        content.style.minHeight = '';
+                    }, 225);
+                }
                 summaryTab(tab);
             },
             customImport(){
@@ -7984,7 +7999,7 @@ export function ascendLab(hybrid,wiki){
                 if (file){
                     let reader = new FileReader();
                     reader.readAsText(file, "UTF-8");
-                    reader.onload = function (evt) {
+                    reader.onload = (evt) => {
                         let importCustom = "";
                         try {
                             importCustom = JSON.parse(evt.target.result);
@@ -8016,7 +8031,7 @@ export function ascendLab(hybrid,wiki){
                         });
                         ['name','home','red','hell','gas','gas_moon','dwarf','titan','enceladus','triton','eris'].forEach(function(field){
                             if (!importCustom[field] && ['titan','enceladus','triton','eris'].includes(field)){
-                                genome[field] = loc(`genus_${genome.genus}_solar_${field}`)
+                                genome[field] = loc(`genus_${genome.genus}_solar_${field}`);
                             }
                             else if (genome[field].length > 20){
                                 genome[field] = genome[field].substring(0, 20);
@@ -8045,9 +8060,11 @@ export function ascendLab(hybrid,wiki){
                                 fixTraitlist.push(genome.traitlist[i]);
                             }
                         }
-                        tRanks = importCustom.hasOwnProperty('ranks') ? importCustom.ranks : {};
+                        let importedRanks = importCustom.hasOwnProperty('ranks') ? importCustom.ranks : {};
+                        Object.keys(tRanks).forEach(k => delete tRanks[k]);
+                        Object.assign(tRanks, importedRanks);
                         genome.ranks = {};
-                        genome.fanaticism = importCustom.hasOwnProperty('fanaticism') ? importCustom.fanaticism : false,
+                        genome.fanaticism = importCustom.hasOwnProperty('fanaticism') ? importCustom.fanaticism : false;
                         genome.traitlist = fixTraitlist;
                         genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
 
@@ -8082,7 +8099,7 @@ export function ascendLab(hybrid,wiki){
             fanaticism(trait){
                 return trait ? loc(`trait_${trait}_name`) : loc(`genelab_unset`);
             },
-            genus_f(g,i){
+            genusLabel(g,i){
                 return typeof i === 'undefined' ? loc(`genelab_genus_${g}`) : loc(`genelab_genus_${g[i]}`);
             },
             empower(e,t){
@@ -8171,7 +8188,7 @@ export function ascendLab(hybrid,wiki){
                 if (traits.hasOwnProperty(trait) && traits[trait].type === 'major'){
                     if (traits[trait].val >= 0){
                         summary += `<div class="field t${trait}">`;
-                        summary += `<b-checkbox :input="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-success">${loc(`trait_${trait}_name`)}</span></b-checkbox>`;
+                        summary += `<b-checkbox @update:model-value="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-success">${loc(`trait_${trait}_name`)}</span></b-checkbox>`;
                         summary += `<span>[<span class="rc"><span class="has-text-warning">${loc(`wiki_calc_cost`)}</span> <span>{{ cost('${trait}') }}</span>, <span class="has-text-warning">${loc(`genelab_rank`)}</span> <span>{{ tRank('${trait}') }}</span>`;
                         summary += `<span v-html="empower(t.empowered,'${trait}')"></span></span>]`;
                         summary += `<span role="button" aria-label="${loc(`genelab_rank_lower`,[loc(`trait_${trait}_name`)])}" class="sub has-text-danger" @click="reduce('${trait}')"><span>-</span></span>`;
@@ -8180,7 +8197,7 @@ export function ascendLab(hybrid,wiki){
                     }
                     else {
                         negative_sum += `<div class="field t${trait}">`;
-                        negative_sum += `<b-checkbox :input="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-danger">${loc(`trait_${trait}_name`)}</span></b-checkbox>`;
+                        negative_sum += `<b-checkbox @update:model-value="geneEdit()" v-model="g.traitlist" native-value="${trait}"><span class="has-text-danger">${loc(`trait_${trait}_name`)}</span></b-checkbox>`;
                         negative_sum += `<span>[<span class="rc"><span class="has-text-warning">${loc(`wiki_calc_cost`)}</span> <span>{{ cost('${trait}') }}</span>, <span class="has-text-warning">${loc(`genelab_rank`)}</span> <span>{{ tRank('${trait}') }}</span>`;
                         negative_sum += `<span v-html="empower(t.empowered,'${trait}')"></span></span>]`;
                         negative_sum += `<span role="button" aria-label="${loc(`genelab_rank_lower`,[loc(`trait_${trait}_name`)])}" class="sub has-text-danger" @click="reduce('${trait}')"><span>-</span></span>`;
@@ -8200,95 +8217,88 @@ export function ascendLab(hybrid,wiki){
                 },
                 methods: {
                     geneEdit(){
-                        let newRanks = genome.traitlist.map(x => tRanks[x] ? { [x]: tRanks[x] } : { [x]: 1 });
-                        let ranks = {};
-                        newRanks.forEach(function(k){ Object.keys(k).forEach(function(t){ ranks[t] = k[t] }) });
-                        tRanks = ranks;
-                        genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
+                        this.$nextTick(() => {
+                            let newRanks = genome.traitlist.map(x => tRanks[x] ? { [x]: tRanks[x] } : { [x]: 1 });
+                            let ranks = {};
+                            newRanks.forEach(function(k){ Object.keys(k).forEach(function(t){ ranks[t] = k[t] }) });
+                            Object.keys(tRanks).forEach(k => { if (!ranks.hasOwnProperty(k)) delete tRanks[k]; });
+                            Object.assign(tRanks, ranks);
+                            genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
+                        });
                     },
-                    reduce(t){
-                        let unlock = global.stats.achieve[`extinct_${traits[t].origin}`] && global.stats.achieve[`extinct_${traits[t].origin}`].l || 0;
-                        switch (tRanks[t]){
+                    reduce(trait){
+                        let unlock = global.stats.achieve[`extinct_${traits[trait].origin}`] && global.stats.achieve[`extinct_${traits[trait].origin}`].l || 0;
+                        switch (tRanks[trait]){
                             case 0.25:
                                 if (unlock >= 5){
-                                    tRanks[t] = 0.1;
+                                    tRanks[trait] = 0.1;
                                 }
                                 break;
                             case 0.5:
                                 if (unlock >= 4){
-                                    tRanks[t] = 0.25;
+                                    tRanks[trait] = 0.25;
                                 }
                                 break;
                             case 1:
                                 if (unlock >= 3){
-                                    tRanks[t] = 0.5;
+                                    tRanks[trait] = 0.5;
                                 }
                                 break;
                             case 2:
-                                tRanks[t] = 1;
+                                tRanks[trait] = 1;
                                 break;
                             case 3:
-                                tRanks[t] = 2;
+                                tRanks[trait] = 2;
                                 break;
                             case 4:
-                                tRanks[t] = 3;
+                                tRanks[trait] = 3;
                                 break;
                         }
-                        if (tab === 4 ){
-                            vBind({el: `#traitSummary .trait_selection`},'update');
-                        }
-                        else {
-                            vBind({el: `#allSum .trait_selection`},'update');
-                        }
+                        genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
                         let desc = $(`#traitLabActiveDesc`);
                         clearElement(desc);
                         let opts = {
-                            trank: tRanks[t] || 1,
+                            trank: tRanks[trait] || 1,
                             wiki: isWiki
                         }
-                        getTraitDesc(desc, t, opts);
+                        getTraitDesc(desc, trait, opts);
                     },
-                    increase(t){
-                        let unlock = global.stats.achieve[`extinct_${traits[t].origin}`] && global.stats.achieve[`extinct_${traits[t].origin}`].l || 0;
-                        switch (tRanks[t]){
+                    increase(trait){
+                        let unlock = global.stats.achieve[`extinct_${traits[trait].origin}`] && global.stats.achieve[`extinct_${traits[trait].origin}`].l || 0;
+                        switch (tRanks[trait]){
                             case 0.1:
-                                tRanks[t] = 0.25;
+                                tRanks[trait] = 0.25;
                                 break;
                             case 0.25:
-                                tRanks[t] = 0.5;
+                                tRanks[trait] = 0.5;
                                 break;
                             case 0.5:
-                                tRanks[t] = 1;
+                                tRanks[trait] = 1;
                                 break;
                             case 1:
                                 if (unlock >= 3){
-                                    tRanks[t] = 2;
+                                    tRanks[trait] = 2;
                                 }
                                 break;
                             case 2:
                                 if (unlock >= 4){
-                                    tRanks[t] = 3;
+                                    tRanks[trait] = 3;
                                 }
                                 break;
                             case 3:
                                 if (unlock >= 5){
-                                    tRanks[t] = 4;
+                                    tRanks[trait] = 4;
                                 }
                                 break;
                         }
-                        if (tab === 4 ){
-                            vBind({el: `#traitSummary .trait_selection`},'update');
-                        }
-                        else {
-                            vBind({el: `#allSum .trait_selection`},'update');
-                        }
+                        genome.genes = calcGenomeScore(genome,(isWiki ? wikiVars : false),tRanks);
                         let desc = $(`#traitLabActiveDesc`);
                         clearElement(desc);
                         let opts = {
-                            trank: tRanks[t] || 1,
+                            trank: tRanks[trait] || 1,
                             wiki: isWiki
                         }
-                        getTraitDesc(desc, t, opts);
+                        getTraitDesc(desc, trait, opts);
                     },
                     cost(trait){
                         return geneCost(genome,trait,tRanks);
@@ -8296,8 +8306,8 @@ export function ascendLab(hybrid,wiki){
                     tRank(trait){
                         return tRanks[trait];
                     },
-                    empower(e,t){
-                        let valid_empower = traits[t].val >= traits.empowered.vars(tRanks['empowered'] || 1)[0] && traits[t].val <= traits.empowered.vars(tRanks['empowered'] || 1)[1] && !['empowered','catnip','anise'].includes(t) && genome.traitlist.includes('empowered');
+                    empower(e,trait){
+                        let valid_empower = traits[trait].val >= traits.empowered.vars(tRanks['empowered'] || 1)[0] && traits[trait].val <= traits.empowered.vars(tRanks['empowered'] || 1)[1] && !['empowered','catnip','anise'].includes(trait) && genome.traitlist.includes('empowered');
                         return valid_empower ? `, <span class="has-text-caution">E</span>` : ``;
                     }
                 }
