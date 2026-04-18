@@ -2799,7 +2799,110 @@ a {
 
     .resTabs>section {
         .sticky();
-        height: ~"calc(100vh - 10rem)";
+        height: ~"calc(100vh - 8.5rem)";
+    }
+
+    /* Outer main tabs section: clip horizontal slide animations without
+       affecting vertical scrolling of inner resTabs sections */
+    #mainTabs>.tab-content {
+        overflow-x: clip;
+        min-height: ~"calc(100vh)";
+    }
+
+    .b-tabs .tabs {
+        margin-bottom: 0 !important;
+    }
+
+    .b-tabs .tab-content {
+        position: relative;
+        /* Migrate all padding to children to prevent absolute positioning offsets */
+        padding: 0 !important;
+    }
+
+    .b-tabs .tab-content > .tab-item {
+        width: 100%;
+        /* Preserve exact left/right padding so layouts match */
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Push non-subtab content down a bit so stuff like the settings tab doesn't scrape against the main navigation bar */
+    #mainTabs > .tab-content > .tab-item {
+        padding-top: 0.75rem !important;
+    }
+
+    /* Pull inner subtab navigation bars up so they negate the 0.75rem padding applied above, keeping them a comfortable distance from the main tabs */
+    .resTabs {
+        margin-top: -0.75rem;
+    }
+
+    /* Pull up the content within subtabs to close the inner gaps */
+    .resTabs > .tab-content {
+        margin-top: -0.5rem;
+    }
+
+    /* Firefox specifically suffers from sub-pixel rendering shimmies during transform animations
+       This change forces it to use hardware rasterization layers to fix it, but causes blurry text in Chrome
+       so for now we strictly isolate this fix to Firefox, and add other browsers or platforms as needed if they get the same issues */
+    @-moz-document url-prefix() {
+        .b-tabs .tab-content > .tab-item {
+            will-change: transform;
+        }
+    }
+
+    /* Vue 3 Buefy migration overrides for slide animations */
+    .b-tabs .tab-content > .slide-next-enter-active,
+    .b-tabs .tab-content > .slide-next-leave-active,
+    .b-tabs .tab-content > .slide-prev-enter-active,
+    .b-tabs .tab-content > .slide-prev-leave-active,
+    .b-tabs .tab-content > .slide-down-enter-active,
+    .b-tabs .tab-content > .slide-down-leave-active,
+    .b-tabs .tab-content > .slide-up-enter-active,
+    .b-tabs .tab-content > .slide-up-leave-active {
+        position: absolute;
+        box-sizing: border-box;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transition-duration: 225ms !important;
+    }
+
+    /* Webkit-specific slim, translucent scrollbars for inner sub-tabs that should avoid re-wraps */
+    .resTabs > section::-webkit-scrollbar {
+        width: 6px;
+        background: transparent;
+    }
+    .resTabs > section::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .resTabs > section::-webkit-scrollbar-thumb {
+        background: rgba(128, 128, 128, 0.4);
+        border-radius: 3px;
+    }
+    .resTabs > section::-webkit-scrollbar-thumb:hover {
+        background: rgba(128, 128, 128, 0.8);
+    }
+
+    .b-tabs .tab-content > .slide-next-enter-from,
+    .b-tabs .tab-content > .slide-prev-leave-to {
+        transform: translate3d(-100%, 0, 0);
+    }
+
+    .b-tabs .tab-content > .slide-next-leave-to,
+    .b-tabs .tab-content > .slide-prev-enter-from {
+        transform: translate3d(100%, 0, 0);
+    }
+
+    .b-tabs .tab-content > .slide-down-enter-from,
+    .b-tabs .tab-content > .slide-up-leave-to {
+        transform: translate3d(0, -100%, 0);
+    }
+
+    .b-tabs .tab-content > .slide-down-leave-to,
+    .b-tabs .tab-content > .slide-up-enter-from {
+        transform: translate3d(0, 100%, 0);
     }
 
     .govTabs2>section {
@@ -2816,7 +2919,7 @@ a {
         }
 
         @media only screen and (max-width: 48rem) {
-            display: relative;
+            position: relative;
         }
 
         .resource {
