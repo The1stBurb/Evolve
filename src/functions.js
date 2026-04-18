@@ -54,6 +54,12 @@ export function popover(id,content,opts){
                             options: {
                                 offset: opts['offset'] ? opts['offset'] : [0, 0],
                             },
+                        },
+                        {
+                            // Disable scroll tracking - prevents the Firefox
+                            // "scroll-linked positioning effect" warning.
+                            name: 'eventListeners',
+                            options: { scroll: false },
                         }
                     ],
                 }
