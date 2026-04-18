@@ -5350,6 +5350,43 @@ div.bigbang {
             width: 8.5rem;
         }
     }
+
+
+    // Tab nav: reduce padding and allow horizontal scroll
+    .b-tabs .tabs {
+        overflow-x: visible;
+
+        ul {
+            flex-wrap: nowrap;
+        }
+
+        li a {
+            padding-left: 0.75em;
+            padding-right: 0.75em;
+        }
+    }
+}
+
+// Hide left column and expand main content when the Custom Lab is open
+#main.custom-lab-active {
+    > .columns > .leftColumn {
+        display: none !important;
+    }
+    > .columns > #mainColumn {
+        width: 78% !important;
+    }
+}
+
+// Genus/Fanaticism modal: options flow horizontally and wrap
+.modalBody .genus_selection,
+.modalBody .fanatic {
+    display: flex;
+    flex-wrap: wrap;
+
+    > .field {
+        margin-right: 1rem;
+        margin-bottom: 0.25rem;
+    }
 }
 
 .listqueuestyle.bldQueue,
