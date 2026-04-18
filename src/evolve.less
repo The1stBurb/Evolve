@@ -1295,7 +1295,8 @@ Misc ---------> Main template
 
         // UI Bars
         .topBar,
-        .promoBar {
+        .promoBar,
+        #mobileNav {
             background-color: @bars-background;
         }
         
@@ -5673,4 +5674,241 @@ div.bigbang {
     z-index: 999;
     position: absolute;
     top: 1rem;
+}
+
+// Mobile layout
+// At narrow widths: stack columns, show one panel at a time via #mobileNav.
+// .mobile-panel-game and .mobile-panel-queue on #main control which panel is visible
+#mobileNav {
+    display: none; // Hidden on desktop
+}
+
+@media only screen and (max-width: 48rem) {
+
+    html {
+        // Mobile browsers by default will scale up the font size based on screen width, and font size translates to layout dimensions in most places
+        // this ends up causing nearly the entire UI to become massively overscaled and entirely unusable on narrow screens, unless the user manually adjusts their browser's font size settings
+        // So, we'll just override whatever the browser's auto font scaling chose
+        // vw units are purely viewport-width-relative and immune to font scaling
+        // clamp makes sure we don't go below 12px or above 16px
+        font-size: ~"clamp(12px, 4.2vw, 16px)" !important;
+        -moz-text-size-adjust: none;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+        // Ideally, this would be user configurable, perhaps with a mobile-specific settings menu you can access from it's own little settings cog somewhere
+        // but for now, this will at least make the UI usable on mobile by default
+    }
+
+    // Keep promoBar visible, stack mobileNav directly above it
+    .promoBar {
+        bottom: 0; // stays at bottom
+    }
+
+    // Bottom navigation bar for switching between active panels on mobile
+    #mobileNav {
+        display: flex;
+        position: fixed;
+        bottom: 1.2rem; // promoBar height — sit directly above it
+        left: 0;
+        right: 0;
+        z-index: 30;
+        height: 2.4rem;
+        border-top: 1px solid;
+
+        .mobile-nav-btn {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            border: none;
+            border-top: 2px solid transparent;
+            background: transparent;
+            color: inherit;
+            opacity: 0.75;
+            transition: opacity 0.15s;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7); // dark glow — helps text pop on any background
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+
+            &.is-active {
+                opacity: 1;
+                border-top-color: currentColor; // underline-style active indicator using text color
+            }
+        }
+    }
+
+    // Stack columns vertically, full width, minimal side margins
+    .main {
+        margin: 0.75rem;
+        overflow-y: unset;
+
+        .content {
+            .settings {
+                margin-left: 0;
+            }
+
+            .tabs ul {
+                width: calc(100vw - 2rem)
+            }
+        }
+
+        .tabs ul {
+            margin-left: 0;
+        }
+
+        .race {
+            padding-top: 0.75rem;
+        }
+        
+        .resources {
+            margin-top:-0.75rem;
+            height: calc(100vh - 6.9rem); // it's just a coincidence i swear
+            padding-top:0.75rem;
+            padding-bottom: 0.5rem;
+
+            .vscroll {
+                top: 0.5rem;
+            }
+        }
+
+        .resTabs {
+            > section {
+                top: 0.75rem;
+                height: calc(100vh - 10.1rem);
+            }
+
+            > .tab-content {
+                padding-bottom: 0.5rem !important;
+            }
+        }
+
+        .civics {
+            padding: 0;
+        }
+
+        #mainTabs {
+            > .tab-content {
+
+                #settings {
+                    padding-bottom: 1rem !important; // makes sure the settings tab content doesn't get cut off at the bottom of the screen
+                }
+            }
+        }
+    }
+
+    #r_civics {
+        nav.tabs {
+            overflow-x: clip; // government/governor doesn't need to scroll
+        }
+    }
+
+    .main > .columns {
+        display: block;
+
+        > :first-child {
+            min-width: unset;
+        }
+    }
+
+    .leftColumn,
+    #mainColumn,
+    #queueColumn {
+        width: 100% !important;
+        min-width: unset !important;
+    }
+
+    // Reduce tab content padding, it wastes a load of horizontal space, which comes at a premium on mobile (at least in portrait)
+    .b-tabs .tab-content > .tab-item {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #mainTabs > .tab-content > .tab-item {
+        padding-top: 0.25rem !important;
+    }
+
+    .resTabs {
+        margin-top: -0.25rem;
+    }
+
+    // Allow the tab bar to scroll horizontally so all tabs fit on one line
+    .b-tabs .tabs {
+
+        ul {
+            flex-wrap: nowrap;
+        }
+
+        li,
+        a {
+            white-space: nowrap;
+        }
+    }
+
+    // Disable drag-to-resize on mobile — midLoop would fight it and it's not touch-friendly
+    .bldQueue,
+    .msgQueue {
+        resize: none;
+    }
+
+    // Default panel: Resources — race + resource list only
+    .leftColumn {
+        display: block;
+        height: auto;
+        padding-bottom: 3.7rem; // promoBar (1.2) + mobileNav (2.4) + 0.1 gap
+
+        #sideQueue {
+            display: none;
+        }
+    }
+
+    #mainColumn,
+    #queueColumn {
+        display: none;
+    }
+
+    // Game panel
+    #main.mobile-panel-game {
+        .leftColumn {
+            display: none;
+        }
+
+        #mainColumn {
+            display: block;
+            padding-bottom: 3.7rem;
+        }
+    }
+
+    // Queue panel — show only build queue + message log, full natural height
+    #main.mobile-panel-queue {
+        .leftColumn {
+            display: block;
+            height: auto;
+            padding-top: 0.75rem;
+            padding-bottom: 3.7rem;
+
+            #race,
+            #resources {
+                display: none;
+            }
+
+            #sideQueue {
+                display: block;
+
+                #msgQueue {
+                    height: auto;
+                    overflow-y: visible;
+                }
+            }
+        }
+
+        #mainColumn {
+            display: none;
+        }
+    }
+
+    // Resource list height
+    .resources {
+        height: ~"calc(100svh - 8rem)";
+    }
 }
