@@ -40,7 +40,7 @@ export function popover(id,content,opts){
                 popper.append(typeof content === 'function' ? content({ this: this, popper: popper }) : content);
             }
 
-            popperRef = Popper.createPopper(opts['self'] ? this : $(opts.elm)[0],
+            popperRef = window.Popper.createPopper(opts['self'] ? this : $(opts.elm)[0],
                 document.querySelector(`#popper`),
                 {
                     placement: opts['placement'],
@@ -76,7 +76,7 @@ export function popover(id,content,opts){
         });
     }
     if (opts['unbind']){
-        if ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/ && global.settings.touch) ? true : false){
+        if ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/) && global.settings.touch) {
             $(opts.elm).on('touchend',function(e){
                 clearPopper();
                 if (opts.hasOwnProperty('out') && typeof opts['out'] === 'function'){
@@ -95,7 +95,7 @@ export function popover(id,content,opts){
     }
 }
 
-if ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/ && global.settings.touch) ? true : false){
+if ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/) && global.settings.touch) {
     $(document).on('touchend',function(e){
         if ($(`.popper`).length === 1){
             clearPopper();

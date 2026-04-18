@@ -6337,7 +6337,8 @@ export function setAction(c_action,action,type,old,prediction){
         },
         methods: {
             action(args){
-                if ('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/ && global.settings.touch) ? true : false){
+                const isMobile = 'ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/);
+                if (isMobile && global.settings.touch) {
                     return;
                 }
                 else {
