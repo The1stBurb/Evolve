@@ -22,7 +22,38 @@ export function mainVue(){
             s: global.settings
         },
         methods: {
-            swapTab(tab){
+            swapTab(tab) {
+                let contents = document.querySelectorAll('.b-tabs .tab-content');
+                if (contents.length > 0) {
+                    contents.forEach((content) => {
+                        let activeItem = content.querySelector(
+                            '.tab-item:not([style*="display: none"])',
+                        );
+                        if (activeItem && content.getBoundingClientRect().width > 0) {
+                            let rect = content.getBoundingClientRect();
+                            content.style.minHeight = rect.height + "px";
+                            if (content.closest(".resTabs")) {
+                                if (content.scrollHeight > content.clientHeight) {
+                                    content.style.overflowY = "scroll";
+                                } else {
+                                    content.style.overflowY = "hidden";
+                                }
+                            }
+                        }
+                    });
+
+                    if (global.tabAnimationTimeout) clearTimeout(global.tabAnimationTimeout);
+
+                    global.tabAnimationTimeout = setTimeout(() => {
+                        contents.forEach((content) => {
+                            content.style.minHeight = "";
+                            if (content.closest(".resTabs")) {
+                                content.style.overflowY = "";
+                            }
+                        });
+                    }, 225);
+                }
+
                 if (!global.settings.tabLoad){
                     loadTab(tab);
                 }
@@ -349,13 +380,52 @@ export function loadTab(tab){
         clearGeneticsDrag();
         clearSpyopDrag();
         clearShipDrag();
-        clearElement($(`#mTabCivil`));
-        clearElement($(`#mTabCivic`));
-        clearElement($(`#mTabResearch`));
-        clearElement($(`#mTabResource`));
-        clearElement($(`#mTabArpa`));
-        clearElement($(`#mTabStats`));
-        clearElement($(`#mTabObserve`));
+        if (global.tabClearTimeout) {
+            clearTimeout(global.tabClearTimeout);
+        }
+        let tabsToClear = [
+            `evolution`,
+            `mTabCivil`,
+            `mTabCivic`,
+            `mTabResearch`,
+            `mTabResource`,
+            `mTabArpa`,
+            `mTabStats`,
+            `mTabObserve`,
+        ];
+        // identify the incoming tab so we can clear it immediately
+        // and delay clearing all others to allow the outgoing animation to finish
+        let incoming = "mTabObserve";
+        switch (tab) {
+            case 0:
+                incoming = "evolution";
+                break;
+            case 1:
+                incoming = "mTabCivil";
+                break;
+            case 2:
+                incoming = "mTabCivic";
+                break;
+            case 3:
+                incoming = "mTabResearch";
+                break;
+            case 4:
+                incoming = "mTabResource";
+                break;
+            case 5:
+                incoming = "mTabArpa";
+                break;
+            case 6:
+                incoming = "mTabStats";
+                break;
+        }
+
+        // clear incoming tab immediately so old Vue apps don't block re-mount
+        clearElement($(`#${incoming}`));
+        tabsToClear.splice(tabsToClear.indexOf(incoming), 1);
+        global.tabClearTimeout = setTimeout(() => {
+            tabsToClear.forEach((t) => clearElement($(`#${t}`)));
+        }, 350);
     }
     else {
         tagEvent('page_view',{ page_title: `Evolve - All Tabs` });
@@ -392,14 +462,28 @@ export function loadTab(tab){
                         swapTab(tab){
                             global.settings.spaceTabs = tab;
                             if (!global.settings.tabLoad){
-                                clearElement($(`#city`));
-                                clearElement($(`#space`));
-                                clearElement($(`#interstellar`));
-                                clearElement($(`#galaxy`));
-                                clearElement($(`#portal`));
-                                clearElement($(`#outerSol`));
-                                clearElement($(`#tauCeti`));
-                                clearElement($(`#eden`));
+                                if (global.spaceTabClearTimeout)
+                                    clearTimeout(global.spaceTabClearTimeout);
+
+                                let tabs = [
+                                    "city",
+                                    "space",
+                                    "interstellar",
+                                    "galaxy",
+                                    "portal",
+                                    "outerSol",
+                                    "tauCeti",
+                                    "eden",
+                                ];
+
+                                let incoming = tabs[tab];
+                                clearElement($(`#${incoming}`));
+                                tabs.splice(tab, 1);
+
+                                global.spaceTabClearTimeout = setTimeout(() => {
+                                    tabs.forEach((t) => clearElement($(`#${t}`)));
+                                }, 350);
+
                                 switch (tab){
                                     case 0:
                                         drawCity();
@@ -479,14 +563,29 @@ export function loadTab(tab){
                                 clearSpyopDrag();
                                 clearMechDrag();
                                 clearShipDrag();
-                                clearElement($(`#civic`));
-                                clearElement($(`#industry`));
-                                clearElement($(`#powerGrid`));
-                                clearElement($(`#military`));
-                                clearElement($(`#mechLab`));
-                                clearElement($(`#dwarfShipYard`));
-                                clearElement($(`#psychicPowers`));
-                                clearElement($(`#supernatural`));
+
+                                if (global.civicTabClearTimeout)
+                                    clearTimeout(global.civicTabClearTimeout);
+
+                                let tabs = [
+                                    "civic",
+                                    "industry",
+                                    "powerGrid",
+                                    "military",
+                                    "mechLab",
+                                    "dwarfShipYard",
+                                    "psychicPowers",
+                                    "supernatural",
+                                ];
+
+                                let incoming = tabs[tab];
+                                clearElement($(`#${incoming}`));
+                                tabs.splice(tab, 1);
+
+                                global.civicTabClearTimeout = setTimeout(() => {
+                                    tabs.forEach((t) => clearElement($(`#${t}`)));
+                                }, 350);
+
                                 switch (tab){
                                     case 0:
                                         {
@@ -639,11 +738,13 @@ export function loadTab(tab){
                         swapTab(tab) {
                             if (!global.settings.tabLoad) {
                                 // clear and redraw each tab on demand with preload off
-                                clearElement($(`#market`));
-                                clearElement($(`#resStorage`));
-                                clearElement($(`#resEjector`));
-                                clearElement($(`#resCargo`));
-                                clearElement($(`#resAlchemy`));
+                                if (global.resTabClearTimeout) clearTimeout(global.resTabClearTimeout);
+
+                                let tabs = ['market', 'resStorage', 'resEjector', 'resCargo', 'resAlchemy'];
+                                tabs.splice(tab, 1);
+                                global.resTabClearTimeout = setTimeout(() => {
+                                    tabs.forEach(t => clearElement($(`#${t}`)));
+                                }, 350);
 
                                 const tabMap = ['market', 'storage', 'ejector', 'supply', 'alchemy'];
                                 const tabName = tabMap[tab];
@@ -1013,11 +1114,12 @@ export function index(){
     mainColumn.append(content);
 
     content.append(`<h2 class="is-sr-only">Tab Navigation</h2>`);
-    let tabs = $(`<b-tabs id="mainTabs" v-model="s.civTabs" :animated="s.animated" @update:model-value="swapTab(s.civTabs)"></b-tabs>`);
+    let tabs = $(`<b-tabs id="mainTabs" v-model="s.civTabs" :animated="s.animated" @update:model-value="swapTab($event)"></b-tabs>`);
     content.append(tabs);
 
     // Evolution Tab
-    let evolution = $(`<b-tab-item id="evolution" class="tab-item sticky" :visible="s.showEvolve" :label="label('tab_evolve')">
+    let evolution = $(`<b-tab-item class="tab-item sticky" :visible="s.showEvolve" :label="label('tab_evolve')">
+        <div id="evolution"></div>
     </b-tab-item>`);
     tabs.append(evolution);
 
@@ -1127,6 +1229,7 @@ export function index(){
 
     // Settings Tab
     let settings = $(`<b-tab-item id="settings" class="settings sticky" :label="label('tab_settings')">
+        <div id="mTabSettings">
         <div class="theme">
             <span>{{ label('theme') }} </span>
             <b-dropdown aria-role="list">
@@ -1282,6 +1385,7 @@ export function index(){
                     </div>
                 </div>
             </b-collapse>
+        </div>
         </div>
     </b-tab-item>`);
 
