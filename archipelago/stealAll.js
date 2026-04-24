@@ -17618,8 +17618,8 @@ function payCosts(){return arguments}
 function loc(){return arguments}
 function structName(){return arguments}
 function swissKnife(){}
-
-let eras=["primitive","civilized",'discovery','industrialized','globalized',]//'early_space','deep_space','interstellar','intergalactic','dimensional','existential']
+//"primitive","civilized",'discovery','industrialized','globalized','early_space','deep_space','interstellar',
+let eras=['intergalactic',]//'dimensional','existential']
 //get only the needed ones, also find any conditions
 let dontIncludes=new RegExp(["reclaimer",".*shovel","wooden_tool","wagon"].join("|"))
 for(var i in techs){
@@ -18261,13 +18261,14 @@ for(let i in ntraits){
 }
 
 let specItems={}
-let itemsToSpec=["mad_science","oil_well","industrialization","electricity"]
+let itemsToSpec=[]//"mad_science","oil_well","industrialization","electricity"]
 {
 function getAll(id){
     var has=[]
     var creqs=reqs[id]
     var nreqs=[]
     var attempts=0;
+    console.log(creqs,nreqs,id)
     while(reqs.length!=0&&attempts<10){
         attempts+=1
         nreqs=[]
@@ -18304,7 +18305,7 @@ data["loc_id"]=techNums
 // data["loc_deps"]=deps
 data["loc_specials"]=specials
 data["specGenus"]=[]
-data["loc_reqs"]=specItems
+data["item_reqs"]=specItems
 for(let i in genusFail){
     genusFail[i].forEach(spec=>data["specGenus"].push(spec))
     // data["specGenus"].push(genusFail[i][0])

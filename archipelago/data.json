@@ -1,833 +1,228 @@
 {
   "loc_id": {
-    "club": 0,
-    "bone_tools": 1,
-    "sundial": 2,
-    "wheel": 3,
-    "steam_engine": 4,
-    "combustion_engine": 5,
-    "osha": 6,
-    "blackmarket": 7,
-    "pipelines": 8,
-    "housing": 9,
-    "cottage": 10,
-    "apartment": 11,
-    "steel_beams": 12,
-    "aphrodisiac": 13,
-    "captive_housing": 14,
-    "torture": 15,
-    "thrall_quarters": 16,
-    "minor_wish": 17,
-    "major_wish": 18,
-    "psychic_energy": 19,
-    "psychic_attack": 20,
-    "psychic_finance": 21,
-    "mind_break": 22,
-    "psychic_stun": 23,
-    "spear": 24,
-    "bronze_spear": 25,
-    "iron_spear": 26,
-    "steel_spear": 27,
-    "titanium_spear": 28,
-    "dowsing_rod": 29,
-    "metal_detector": 30,
-    "smokehouse": 31,
-    "lodge": 32,
-    "alt_lodge": 33,
-    "soul_well": 34,
-    "compost": 35,
-    "hot_compost": 36,
-    "mulching": 37,
-    "adv_mulching": 38,
-    "agriculture": 39,
-    "farm_house": 40,
-    "irrigation": 41,
-    "silo": 42,
-    "mill": 43,
-    "windmill": 44,
-    "windturbine": 45,
-    "wind_plant": 46,
-    "gmfood": 47,
-    "foundry": 48,
-    "artisans": 49,
-    "apprentices": 50,
-    "carpentry": 51,
-    "demonic_craftsman": 52,
-    "master_craftsman": 53,
-    "brickworks": 54,
-    "machinery": 55,
-    "cnc_machine": 56,
-    "vocational_training": 57,
-    "assembly_line": 58,
-    "banquet": 59,
-    "theatre": 60,
-    "playwright": 61,
-    "magic": 62,
-    "radio": 63,
-    "tv": 64,
-    "casino": 65,
-    "dazzle": 66,
-    "mining": 67,
-    "bayer_process": 68,
-    "smelting": 69,
-    "steel": 70,
-    "blast_furnace": 71,
-    "bessemer_process": 72,
-    "oxygen_converter": 73,
-    "electric_arc_furnace": 74,
-    "rotary_kiln": 75,
-    "metal_working": 76,
-    "iron_mining": 77,
-    "coal_mining": 78,
-    "storage": 79,
-    "reinforced_shed": 80,
-    "barns": 81,
-    "warehouse": 82,
-    "cameras": 83,
-    "containerization": 84,
-    "reinforced_crates": 85,
-    "cranes": 86,
-    "titanium_crates": 87,
-    "steel_containers": 88,
-    "gantry_crane": 89,
-    "alloy_containers": 90,
-    "evil_planning": 91,
-    "urban_planning": 92,
-    "zoning_permits": 93,
-    "urbanization": 94,
-    "assistant": 95,
-    "government": 96,
-    "theocracy": 97,
-    "republic": 98,
-    "socialist": 99,
-    "corpocracy": 100,
-    "technocracy": 101,
-    "magocracy": 102,
-    "governor": 103,
-    "spy": 104,
-    "espionage": 105,
-    "spy_training": 106,
-    "spy_gadgets": 107,
-    "code_breakers": 108,
-    "currency": 109,
-    "market": 110,
-    "tax_rates": 111,
-    "large_trades": 112,
-    "corruption": 113,
-    "massive_trades": 114,
-    "trade": 115,
-    "diplomacy": 116,
-    "freight": 117,
-    "wharf": 118,
-    "banking": 119,
-    "investing": 120,
-    "vault": 121,
-    "bonds": 122,
-    "steel_vault": 123,
-    "eebonds": 124,
-    "swiss_banking": 125,
-    "safety_deposit": 126,
-    "stock_market": 127,
-    "home_safe": 128,
-    "monument": 129,
-    "science": 130,
-    "library": 131,
-    "thesis": 132,
-    "research_grant": 133,
-    "scientific_journal": 134,
-    "adjunct_professor": 135,
-    "tesla_coil": 136,
-    "internet": 137,
-    "bioscience": 138,
-    "genetics": 139,
-    "crispr": 140,
-    "mad_science": 141,
-    "electricity": 142,
-    "matter_replicator": 143,
-    "industrialization": 144,
-    "electronics": 145,
-    "fission": 146,
-    "arpa": 147,
-    "rocketry": 148,
-    "robotics": 149,
-    "thermomechanics": 150,
-    "uranium": 151,
-    "uranium_storage": 152,
-    "uranium_ash": 153,
-    "mine_conveyor": 154,
-    "oil_well": 155,
-    "oil_depot": 156,
-    "oil_power": 157,
-    "titanium_drills": 158,
-    "alloy_drills": 159,
-    "fracking": 160,
-    "polymer": 161,
-    "fluidized_bed_reactor": 162,
-    "synthetic_fur": 163,
-    "stone_axe": 164,
-    "copper_axes": 165,
-    "iron_saw": 166,
-    "steel_saw": 167,
-    "iron_axes": 168,
-    "steel_axes": 169,
-    "titanium_axes": 170,
-    "copper_sledgehammer": 171,
-    "iron_sledgehammer": 172,
-    "steel_sledgehammer": 173,
-    "titanium_sledgehammer": 174,
-    "copper_pickaxe": 175,
-    "iron_pickaxe": 176,
-    "steel_pickaxe": 177,
-    "jackhammer": 178,
-    "jackhammer_mk2": 179,
-    "copper_hoe": 180,
-    "iron_hoe": 181,
-    "steel_hoe": 182,
-    "titanium_hoe": 183,
-    "slave_pens": 184,
-    "slave_market": 185,
-    "ceremonial_dagger": 186,
-    "last_rites": 187,
-    "garrison": 188,
-    "mercs": 189,
-    "signing_bonus": 190,
-    "hospital": 191,
-    "boot_camp": 192,
-    "bows": 193,
-    "flintlock_rifle": 194,
-    "machine_gun": 195,
-    "bunk_beds": 196,
-    "armor": 197,
-    "plate_armor": 198,
-    "kevlar": 199,
-    "black_powder": 200,
-    "dynamite": 201,
-    "anfo": 202,
-    "mad": 203,
-    "cement": 204,
-    "rebar": 205,
-    "steel_rebar": 206,
-    "portland_cement": 207,
-    "screw_conveyor": 208,
-    "hunter_process": 209,
-    "kroll_process": 210,
-    "theology": 211,
-    "fanaticism": 212,
-    "alt_fanaticism": 213,
-    "indoctrination": 214,
-    "missionary": 215,
-    "zealotry": 216,
-    "anthropology": 217,
-    "alt_anthropology": 218,
-    "mythology": 219,
-    "archaeology": 220,
-    "merchandising": 221,
-    "unite": 222,
-    "mana": 223,
-    "ley_lines": 224,
-    "rituals": 225,
-    "crafting_ritual": 226,
-    "clerics": 227,
-    "conjuring": 228,
-    "res_conjuring": 229,
-    "alchemy": 230,
-    "secret_society": 231,
-    "cultists": 232,
-    "conceal_ward": 233,
-    "subtle_rituals": 234,
-    "pylon_camouflage": 235,
-    "fake_tech": 236,
-    "might": 237,
-    "executions": 238,
-    "secret_police": 239
+    "bolognium_alloy_beams": 0,
+    "fertility_clinic": 1,
+    "psychic_efficiency": 2,
+    "stellar_forge": 3,
+    "stellar_smelting": 4,
+    "high_tech_factories": 5,
+    "bolognium_vaults": 6,
+    "bolognium_crates": 7,
+    "bolognium_containers": 8,
+    "nanoweave_containers": 9,
+    "foreign_investment": 10,
+    "xeno_tourism": 11,
+    "expedition": 12,
+    "subspace_sensors": 13,
+    "alien_database": 14,
+    "orichalcum_capacitor": 15,
+    "metaphysics": 16,
+    "orichalcum_analysis": 17,
+    "study_corrupt_gem": 18,
+    "soul_binding": 19,
+    "soul_capacitor": 20,
+    "absorption_chamber": 21,
+    "incorporeal": 22,
+    "tech_ascension": 23,
+    "terraforming": 24,
+    "graphene_processing": 25,
+    "orichalcum_driver": 26,
+    "nanoweave": 27,
+    "gauss_rifles": 28,
+    "hammocks": 29,
+    "nanoweave_vest": 30,
+    "hydroponics": 31,
+    "orichalcum_panels": 32,
+    "dyson_sphere2": 33,
+    "orichalcum_sphere": 34,
+    "mega_manufacturing": 35,
+    "luxury_condo": 36,
+    "asteroid_redirect": 37,
+    "wormholes": 38,
+    "advanced_predators": 39,
+    "shield_generator": 40,
+    "enhanced_sensors": 41,
+    "xeno_linguistics": 42,
+    "xeno_culture": 43,
+    "cultural_exchange": 44,
+    "shore_leave": 45,
+    "xeno_gift": 46,
+    "industrial_partnership": 47,
+    "embassy_housing": 48,
+    "advanced_telemetry": 49,
+    "defense_platform": 50,
+    "scout_ship": 51,
+    "corvette_ship": 52,
+    "frigate_ship": 53,
+    "cruiser_ship": 54,
+    "dreadnought": 55,
+    "ship_dock": 56,
+    "ore_processor": 57,
+    "scavenger": 58,
+    "coordinates": 59,
+    "chthonian_survey": 60,
+    "gateway_depot": 61,
+    "soul_forge": 62,
+    "soul_attractor": 63,
+    "soul_absorption": 64,
+    "soul_link": 65,
+    "gun_emplacement": 66,
+    "advanced_emplacement": 67,
+    "transmutation": 68,
+    "improved_concealment": 69,
+    "predictive_arrests": 70
   },
   "loc_specials": {
-    "steam_engine": [
-      "transport:2"
+    "bolognium_alloy_beams": [
+      "housing_reduction:3",
+      "gateway:3"
     ],
-    "crispr": [
-      "genetics:3"
+    "fertility_clinic": [
+      "reproduction:1"
     ],
-    "theology": [
-      "theology:1"
+    "psychic_efficiency": [
+      "psychic:4"
     ],
-    "unite": [
-      "unify:1"
+    "stellar_forge": [
+      "foundry:8",
+      "high_tech:15",
+      "gateway:3",
+      "neutron:1"
+    ],
+    "high_tech_factories": [
+      "factory:3"
+    ],
+    "bolognium_vaults": [
+      "gambling:5",
+      "gateway:3"
+    ],
+    "bolognium_crates": [
+      "container:7",
+      "gateway:3"
+    ],
+    "bolognium_containers": [
+      "steel_container:6",
+      "gateway:3"
+    ],
+    "foreign_investment": [
+      "banking:12"
+    ],
+    "xeno_tourism": [
+      "monument:2",
+      "monuments:10"
+    ],
+    "expedition": [
+      "science:15"
+    ],
+    "alien_database": [
+      "conflict:5"
+    ],
+    "metaphysics": [
+      "high_tech:15",
+      "xeno:5"
+    ],
+    "study_corrupt_gem": [
+      "corrupt:1"
+    ],
+    "graphene_processing": [
+      "ai_core:2"
+    ],
+    "orichalcum_driver": [
+      "mass:1"
+    ],
+    "gauss_rifles": [
+      "military:9"
+    ],
+    "hammocks": [
+      "marines:1"
+    ],
+    "nanoweave_vest": [
+      "armor:3"
+    ],
+    "hydroponics": [
+      "mars:5",
+      "gateway:3"
+    ],
+    "orichalcum_panels": [
+      "swarm:5"
+    ],
+    "dyson_sphere2": [
+      "proxima:3",
+      "piracy:1"
+    ],
+    "mega_manufacturing": [
+      "alpha:3"
+    ],
+    "asteroid_redirect": [
+      "blackhole:5",
+      "gateway:3"
+    ],
+    "wormholes": [
+      "gravity:1",
+      "science:15"
+    ],
+    "advanced_predators": [
+      "portal:6"
+    ],
+    "shield_generator": [
+      "high_tech:14",
+      "gateway:3",
+      "infernite:4"
+    ],
+    "xeno_linguistics": [
+      "xeno:1"
+    ],
+    "xeno_culture": [
+      "xeno:3"
+    ],
+    "cultural_exchange": [
+      "xeno:5"
+    ],
+    "industrial_partnership": [
+      "xeno:9"
+    ],
+    "advanced_telemetry": [
+      "xeno:5"
+    ],
+    "defense_platform": [
+      "stargate:5",
+      "piracy:1"
+    ],
+    "scout_ship": [
+      "gateway:3"
+    ],
+    "corvette_ship": [
+      "xeno:1"
+    ],
+    "ship_dock": [
+      "gateway:3"
+    ],
+    "ore_processor": [
+      "conflict:2"
+    ],
+    "coordinates": [
+      "conflict:5"
+    ],
+    "chthonian_survey": [
+      "chthonian:2"
+    ],
+    "soul_forge": [
+      "hell_pit:3"
+    ],
+    "transmutation": [
+      "alchemy:1"
+    ],
+    "improved_concealment": [
+      "roguemagic:7"
+    ],
+    "predictive_arrests": [
+      "evil:4"
     ]
   },
-  "specGenus": [
-    "entish",
-    "mantis",
-    "octigoran",
-    "satyr",
-    "wendigo",
-    "imp",
-    "unicorn",
-    "shoggoth"
-  ],
-  "loc_reqs": {
-    "mad_science": [
-      "library",
-      "steel",
-      "science",
-      "cement",
-      "smelting",
-      "coal_mining",
-      "housing",
-      "mining",
-      "storage",
-      "iron_mining",
-      "sundial",
-      "currency",
-      "metal_working",
-      "bone_tools",
-      "club"
-    ],
-    "oil_well": [
-      "industrialization",
-      "electricity",
-      "rebar",
-      "steel_containers",
-      "mad_science",
-      "iron_mining",
-      "cement",
-      "steel",
-      "containerization",
-      "library",
-      "metal_working",
-      "mining",
-      "storage",
-      "science",
-      "smelting",
-      "coal_mining",
-      "sundial",
-      "currency",
-      "housing",
-      "bone_tools",
-      "club"
-    ],
-    "industrialization": [
-      "electricity",
-      "rebar",
-      "steel_containers",
-      "mad_science",
-      "iron_mining",
-      "cement",
-      "steel",
-      "containerization",
-      "library",
-      "metal_working",
-      "mining",
-      "storage",
-      "science",
-      "smelting",
-      "coal_mining",
-      "sundial",
-      "currency",
-      "housing",
-      "bone_tools",
-      "club"
-    ],
-    "electricity": [
-      "mad_science",
-      "library",
-      "steel",
-      "science",
-      "cement",
-      "smelting",
-      "coal_mining",
-      "housing",
-      "mining",
-      "storage",
-      "iron_mining",
-      "sundial",
-      "currency",
-      "metal_working",
-      "bone_tools",
-      "club"
-    ]
-  },
+  "specGenus": [],
+  "item_reqs": {},
   "cond_items": {
-    "smokehouse": {
-      "include": [
-        "carnivore"
-      ],
-      "exclude": []
-    },
-    "wind_plant": {
-      "include": [],
-      "exclude": [
-        "herbivore"
-      ]
-    },
-    "cement": {
-      "include": [],
-      "exclude": [
-        "avian"
-      ]
-    },
-    "rebar": {
-      "include": [],
-      "exclude": [
-        "avian"
-      ]
-    },
-    "steel_rebar": {
-      "include": [],
-      "exclude": [
-        "avian"
-      ]
-    },
-    "portland_cement": {
-      "include": [],
-      "exclude": [
-        "avian"
-      ]
-    },
-    "screw_conveyor": {
-      "include": [],
-      "exclude": [
-        "avian"
-      ]
-    },
-    "copper_sledgehammer": {
-      "include": [],
-      "exclude": [
-        "plant"
-      ]
-    },
-    "iron_sledgehammer": {
-      "include": [],
-      "exclude": [
-        "plant"
-      ]
-    },
-    "steel_sledgehammer": {
-      "include": [],
-      "exclude": [
-        "plant"
-      ]
-    },
-    "titanium_sledgehammer": {
-      "include": [],
-      "exclude": [
-        "plant"
-      ]
-    },
-    "compost": {
-      "include": [
-        "fungi"
-      ],
-      "exclude": []
-    },
-    "hot_compost": {
-      "include": [
-        "fungi"
-      ],
-      "exclude": []
-    },
-    "mulching": {
-      "include": [
-        "fungi"
-      ],
-      "exclude": []
-    },
-    "adv_mulching": {
-      "include": [
-        "fungi"
-      ],
-      "exclude": []
-    },
-    "armor": {
-      "include": [],
-      "exclude": [
-        "aquatic"
-      ]
-    },
-    "plate_armor": {
-      "include": [],
-      "exclude": [
-        "aquatic"
-      ]
-    },
-    "stone_axe": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "copper_axes": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "iron_saw": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "iron_axes": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "carpentry": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "steel_saw": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "steel_axes": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "master_craftsman": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "titanium_axes": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "brickworks": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "crafting_ritual": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "machinery": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "subtle_rituals": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "cnc_machine": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "pylon_camouflage": {
-      "include": [],
-      "exclude": [
-        "fey",
-        "heat",
-        "demonic"
-      ]
-    },
-    "soul_well": {
-      "include": [
-        "demonic"
-      ],
-      "exclude": []
-    },
-    "demonic_craftsman": {
-      "include": [
-        "demonic"
-      ],
-      "exclude": []
-    },
-    "evil_planning": {
-      "include": [
-        "demonic"
-      ],
-      "exclude": []
-    },
-    "slave_pens": {
-      "include": [
-        "demonic"
-      ],
-      "exclude": []
-    },
-    "slave_market": {
-      "include": [
-        "demonic"
-      ],
-      "exclude": []
-    },
-    "urban_planning": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "market": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "tax_rates": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "large_trades": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "corruption": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "massive_trades": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "trade": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "diplomacy": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "freight": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "missionary": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "zoning_permits": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "assistant": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "urbanization": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "blackmarket": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "casino": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "wharf": {
-      "include": [],
-      "exclude": [
-        "demonic"
-      ]
-    },
-    "aphrodisiac": {
-      "include": [],
-      "exclude": [
-        "synthetic"
-      ]
-    },
-    "agriculture": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "hospital": {
-      "include": [],
-      "exclude": [
-        "synthetic"
-      ]
-    },
-    "farm_house": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "irrigation": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "copper_hoe": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "iron_hoe": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "steel_hoe": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "titanium_hoe": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "silo": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "mill": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "windmill": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "windturbine": {
-      "include": [],
-      "exclude": [
-        "synthetic",
-        "eldritch"
-      ]
-    },
-    "captive_housing": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "torture": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "thrall_quarters": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "psychic_energy": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "psychic_attack": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "psychic_finance": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "mind_break": {
-      "include": [
-        "eldritch"
-      ],
-      "exclude": []
-    },
-    "psychic_stun": {
+    "psychic_efficiency": {
       "include": [
         "eldritch"
       ],
