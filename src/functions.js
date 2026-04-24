@@ -1168,7 +1168,10 @@ export function vBind(bind, action) {
         try {
             if (action === 'update') {
                 // With reactive data, this shouldn't be needed, but keep for edge cases
-                $(bind.el)[0].__vue_app__._instance.proxy.$forceUpdate();
+                const instance = $(bind.el)[0].__vue_app__._instance;
+                if (instance) {
+                    instance.proxy.$forceUpdate();
+                }
             }
             else if (action === 'destroy') {
                 const app = $(bind.el)[0].__vue_app__;
