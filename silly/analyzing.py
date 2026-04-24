@@ -85,11 +85,23 @@ class BIT:
     def __repr__(self):return f"BIT('{self.nm}',{self.specs},{self.kids})"#self.__str__()
 broke=[]
 splits=[]
+
+ActualData=ach
 if __name__=="__main__":
-    for i in range(0,len(ach)):
-        split=html_to_bit(ach[i])
+    for i in range(0,len(ActualData)):
+        split=html_to_bit(ActualData[i])
         # split=re.findall(r"<(.*?) (.*?)>(.*)</.*>$",ach[i])
-        print(split,ach[i])
+        # print(split,ActualData[i])
         splits.append(split)
     with open("silly/urStrings.py","w")as string:
         string.write("from analyzing import BIT\n[\n  "+",\n  ".join(repr(i) for i in splits)+",\n]")
+
+    """
+    so scrape.py will get each .js file itself and yeet it into the silly/data/ folder
+    then in here (analyzing.py) specify on line 89 which one you want using the imports at the top
+    it will spit it out into urStrings.py rn with some fancy stuff
+
+    If you dont want it to be parsed and just want the raw HTML, just look at the stuff in the /data/ folder
+    
+    
+    """
