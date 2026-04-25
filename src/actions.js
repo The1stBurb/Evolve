@@ -8933,7 +8933,7 @@ function sentience(){
         arpa('Blood');
     }
     else {
-        loadTab('mTabCivil');
+        loadTab(1);
     }
 
     if (global.queue.hasOwnProperty('queue')){
