@@ -8327,7 +8327,13 @@ export function initStruct(c_action){
     }
 }
 
+// flag to prevent duplicate calls of sentience that can lead to extra ranks of traits
+// (or anything else gained on evolution) being granted upon evolution by just clicking really fast
+let evolving = false;
+
 function evoExtraState(race){
+    if (evolving) return false;
+
     if ((race === 'synth' || (race === 'custom' && global.custom.race0.traits.includes('imitation')) || (race === 'hybrid' && global.custom.race1.traits.includes('imitation'))) && Object.keys(global.stats.synth).length > 1){
         global.race['evoFinalMenu'] = race;
         drawEvolution();
@@ -8340,6 +8346,9 @@ function evoExtraState(race){
 }
 
 function sentience(){
+    if (evolving) return;
+    evolving = true; // sentience only ever runs once per page lifetime so we don't need to ever reset it
+
     if (global.race['simulation']){
         simulation();
     }
