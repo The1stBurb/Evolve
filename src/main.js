@@ -9342,25 +9342,10 @@ function midLoop(){
             }
         }
         if (global.city['wardenclyffe']){
-            let gain_base = 1000;
-            if (global.city.ptrait.includes('magnetic')){
-                gain_base += planetTraits.magnetic.vars()[1];
-            }
-            let gain = global.city['wardenclyffe'].count * gain_base;
-            lCaps['scientist'] += jobScale(global.city['wardenclyffe'].count);
-            let powered_gain = global.tech['science'] >= 7 ? 1500 : 1000;
-            gain += (p_on['wardenclyffe'] * powered_gain);
-            if (global.tech['supercollider']){
-                let ratio = global.tech['tp_particles'] || (global.tech['particles'] && global.tech['particles'] >= 3) ? 12.5: 25;
-                gain *= (global.tech['supercollider'] / ratio) + 1;
-            }
-            if (global.space['satellite']){
-                gain *= 1 + (global.space.satellite.count * 0.04);
-            }
-            let athVal = govActive('athleticism',2);
-            if (athVal){
-                gain *= 1 - (athVal / 100);
-            }
+            let wardenCount=global.city['wardenclyffe'].count
+            lCaps['scientist'] += jobScale(wardenCount);
+            
+            let gain=actions.city.wardenclyffe.maxKnowledgeGain(wardenCount,p_on['wardenclyffe'])
             caps['Knowledge'] += gain;
             breakdown.c.Knowledge[wardenLabel()] = gain+'v';
 
