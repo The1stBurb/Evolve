@@ -5195,7 +5195,7 @@ raceList.forEach(function(race){
             action(args){
                 if (global.race['warlord'] && ['custom','hybrid','nano'].includes(race)){ return false; }
                 if (payCosts($(this)[0])){
-                    if (['synth','custom'].includes(race)){
+                    if (['synth','custom','hybrid'].includes(race)){
                         return evoExtraState(race);
                     }
                     else {
