@@ -3862,41 +3862,14 @@ export const actions = {
                 Nanite(offset){ return global.race['deconstructor'] ? costMultiplier('wardenclyffe', offset, 50, 1.18) : 0; },
             },
             effect(){
-                let gain = 1000;
-                if (global.city.ptrait.includes('magnetic')){
-                    gain += planetTraits.magnetic.vars()[1];
-                }
-                if (global.tech['supercollider']){
-                    let ratio = global.tech['particles'] && global.tech['particles'] >= 3 ? 12.5: 25;
-                    gain *= (global.tech['supercollider'] / ratio) + 1;
-                }
-                if (global.space['satellite']){
-                    gain *= 1 + (global.space.satellite.count * 0.04);
-                }
-                let athVal = govActive('athleticism',2);
-                if (athVal){
-                    gain *= 1 - (athVal / 100);
-                }
+                let gain=actions.city['wardenclyffe'].maxKnowledgeGain(1,0)
                 gain = +(gain).toFixed(0);
 
                 let desc = `<div>${loc('city_wardenclyffe_effect1',[jobScale(1),global.civic.scientist ? global.civic.scientist.name : loc('job_scientist')])}</div><div>${loc('city_max_knowledge',[gain.toLocaleString()])}</div>`;
                 if (global.city.powered){
-                    let pgain = global.tech['science'] >= 7 ? 2500 : 2000;
-                    if (global.city.ptrait.includes('magnetic')){
-                        pgain += planetTraits.magnetic.vars()[1];
-                    }
-                    if (global.space['satellite']){
-                        pgain *= 1 + (global.space.satellite.count * 0.04);
-                    }
-                    if (global.tech['supercollider']){
-                        let ratio = global.tech['particles'] && global.tech['particles'] >= 3 ? 12.5: 25;
-                        pgain *= (global.tech['supercollider'] / ratio) + 1;
-                    }
-                    let athVal = govActive('athleticism',2);
-                    if (athVal){
-                        pgain *= 1 - (athVal / 100);
-                    }
+                    let pgain = actions.city['wardenclyffe'].maxKnowledgeGain(0,1)
                     pgain = +(pgain).toFixed(1);
+                    
                     if (global.tech.science >= 15){
                         desc = desc + `<div>${loc('city_wardenclyffe_effect4',[2])}</div>`;
                     }
@@ -3916,6 +3889,30 @@ export const actions = {
                     }
                 }
                 return desc;
+            },
+            maxKnowledgeGain(count,pcount){
+                let gain_base=1000
+                if (global.city.ptrait.includes('magnetic')){
+                    gain_base += planetTraits.magnetic.vars()[1];
+                }
+
+                let gain = count * gain_base;
+                let powered_gain = global.tech['science'] >= 7 ? 1500 : 1000;
+                gain += (pcount * powered_gain);
+
+
+                if (global.tech['supercollider']){
+                    let ratio = global.tech['tp_particles'] || (global.tech['particles'] && global.tech['particles'] >= 3) ? 12.5: 25;
+                    gain *= (global.tech['supercollider'] / ratio) + 1;
+                }
+                if (global.space['satellite']){
+                    gain *= 1 + (global.space.satellite.count * 0.04);
+                }
+                let athVal = govActive('athleticism',2);
+                if (athVal){
+                    gain *= 1 - (athVal / 100);
+                }
+                return gain
             },
             powered(){ return powerCostMod(2); },
             action(args){
