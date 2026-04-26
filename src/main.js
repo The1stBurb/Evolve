@@ -9262,94 +9262,61 @@ function midLoop(){
         if (global.race['wish'] && global.race['wishStats'] && global.race.wishStats.priest){
             lCaps['priest'] += jobScale(global.race.wishStats.priest);
         }
-        let pirate_alien2 = piracy('gxy_alien2');
+
+        //Knowledge structures!
+        let city=actions.city
         if (global.city['university']){
-            let gain = actions.city.university.knowVal() * global.city.university.count;
-            lCaps['professor'] += jobScale(global.city.university.count);
+            let univCount=global.city.university.count;
+
+            let gain = city.university.knowVal() * univCount;
+            lCaps['professor'] += jobScale(univCount);
             caps['Knowledge'] += gain;
             breakdown.c.Knowledge[loc('city_university')] = gain+'v';
         }
-        if (global.race['lone_survivor'] && global.tauceti['alien_outpost']){
-            lCaps['professor'] += jobScale(global.tauceti.alien_outpost.count);
-        }
         if (global.city['library']){
-            let shelving = 125;
-            if (global.race['nearsighted']){
-                shelving *= 1 - (traits.nearsighted.vars()[0] / 100);
-            }
-            if (global.race['studious']){
-                shelving *= 1 + (traits.studious.vars()[1] / 100);
-            }
-            let fathom = fathomCheck('elven');
-            if (fathom > 0){
-                shelving *= 1 + (traits.studious.vars(1)[1] / 100 * fathom);
-            }
-            if (global.tech['science'] && global.tech['science'] >= 8){
-                shelving *= 1.4;
-            }
-            if (global.tech['science'] && global.tech['science'] >= 5){
-                let sci_val = workerScale(global.civic.scientist.workers,'scientist');
-                if (global.race['high_pop']){
-                    sci_val = highPopAdjust(sci_val);
-                }
-                shelving *= 1 + (sci_val * 0.12);
-            }
-            if (global.tech['anthropology'] && global.tech['anthropology'] >= 2){
-                shelving *= 1 + faithTempleCount() * 0.05;
-            }
-            let teachVal = govActive('teacher',0);
-            if (teachVal){
-                shelving *= 1 + (teachVal / 100);
-            }
-            let athVal = govActive('athleticism',2);
-            if (athVal){
-                shelving *= 1 - (athVal / 100);
-            }
-            let muckVal = govActive('muckraker',1);
-            if (muckVal){
-                shelving *= 1 + (muckVal / 100);
-            }
-            let gain = Math.round(global.city.library.count * shelving);
+            let libCount=global.city.library.count
+
+            let gain = Math.round(city.library.knowVal(libCount));
             caps['Knowledge'] += gain;
             breakdown.c.Knowledge[loc('city_library')] = gain+'v';
+            
             if (global.tech['science'] && global.tech['science'] >= 3){
-                global.civic.professor.impact = 0.5 + (global.city.library.count * 0.01)
+                global.civic.professor.impact = 0.5 + (libCount * 0.01)
             }
         }
         if (global.city['wardenclyffe']){
-            let gain_base = 1000;
-            if (global.city.ptrait.includes('magnetic')){
-                gain_base += planetTraits.magnetic.vars()[1];
-            }
-            let gain = global.city['wardenclyffe'].count * gain_base;
-            lCaps['scientist'] += jobScale(global.city['wardenclyffe'].count);
-            let powered_gain = global.tech['science'] >= 7 ? 1500 : 1000;
-            gain += (p_on['wardenclyffe'] * powered_gain);
-            if (global.tech['supercollider']){
-                let ratio = global.tech['tp_particles'] || (global.tech['particles'] && global.tech['particles'] >= 3) ? 12.5: 25;
-                gain *= (global.tech['supercollider'] / ratio) + 1;
-            }
-            if (global.space['satellite']){
-                gain *= 1 + (global.space.satellite.count * 0.04);
-            }
-            let athVal = govActive('athleticism',2);
-            if (athVal){
-                gain *= 1 - (athVal / 100);
-            }
+            let wardenCount=global.city['wardenclyffe'].count, pwardenCount=p_on['wardenclyffe'], label=wardenLabel();
+
+            lCaps['scientist'] += jobScale(wardenCount);
+
+            let gain=city.wardenclyffe.knowVal(wardenCount,pwardenCount)
             caps['Knowledge'] += gain;
-            breakdown.c.Knowledge[wardenLabel()] = gain+'v';
+            breakdown.c.Knowledge[label] = gain+'v';
 
             if (global.race.universe === 'magic'){
-                let mana = global.city.wardenclyffe.count * spatialReasoning(8);
+                let mana = wardenCount * spatialReasoning(8);
                 caps['Mana'] += mana;
-                breakdown.c.Mana[wardenLabel()] = mana+'v';
+                breakdown.c.Mana[label] = mana+'v';
             }
 
             if (global.race['artifical']){
-                let gain = p_on['wardenclyffe'] * spatialReasoning(250);
+                let gain = pwardenCount * spatialReasoning(250);
                 caps['Food'] += gain;
-                breakdown.c.Food[wardenLabel()] = gain+'v';
+                breakdown.c.Food[label] = gain+'v';
             }
+        }
+        if (global.city['biolab']){
+            let gain = p_on['biolab'] * city.biolab.knowVal()
+            caps['Knowledge'] += gain;
+            breakdown.c.Knowledge[loc('city_biolab')] = gain+'v';
+        }
+
+
+
+
+
+        if (global.race['lone_survivor'] && global.tauceti['alien_outpost']){
+            lCaps['professor'] += jobScale(global.tauceti.alien_outpost.count);
         }
         if (global.race['logical']){
             let factor = global.tech.hasOwnProperty('high_tech') ? global.tech.high_tech : 0;
@@ -9408,27 +9375,7 @@ function midLoop(){
                 breakdown.c.Mana[loc(global.race.universe === 'magic' ? 'tech_sanctum' : 'interstellar_laboratory_title')] = mana+'v';
             }
         }
-        if (global.city['biolab']){
-            let gain = 3000;
-            if (global.portal['sensor_drone'] && global.tech['science'] >= 14){
-                gain *= 1 + (p_on['sensor_drone'] * 0.02);
-            }
-            if (global.tech['science'] >= 20){
-                gain *= 3;
-            }
-            if (global.tech['science'] >= 21){
-                gain *= 1.45;
-            }
-            if (global.tech['biotech'] >= 1){
-                gain *= 2.5;
-            }
-            if (global.race['elemental'] && traits.elemental.vars()[0] === 'frost'){
-                gain *= 1 + highPopAdjust(traits.elemental.vars()[4] * global.resource[global.race.species].amount / 100);
-            }
-
-            caps['Knowledge'] += (p_on['biolab'] * gain);
-            breakdown.c.Knowledge[loc('city_biolab')] = (p_on['biolab'] * gain)+'v';
-        }
+        
         if (global.space['zero_g_lab'] && Math.min(support_on['zero_g_lab'],p_on['zero_g_lab']) > 0){
             let using = Math.min(support_on['zero_g_lab'],p_on['zero_g_lab']);
             let synd = syndicate('spc_enceladus');
@@ -9847,6 +9794,7 @@ function midLoop(){
             breakdown.c.Knowledge[loc('galaxy_telemetry_beacon_bd')] = gain+'v';
         }
         if (p_on['s_gate'] && gal_on['scavenger']){
+            let pirate_alien2 = piracy('gxy_alien2');
             let gain = gal_on['scavenger'] * Math.round(pirate_alien2 * 25000);
             caps['Knowledge'] += gain;
             breakdown.c.Knowledge[loc('galaxy_scavenger')] = gain+'v';
