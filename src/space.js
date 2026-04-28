@@ -67,15 +67,19 @@ const spaceProjects = {
                 Alloy(offset){ return spaceCostMultiplier('satellite', offset, 8000, 1.22); }
             },
             effect(){
-                let knowledge = global.race['cataclysm'] || global.race['orbit_decayed'] ? 2000 : 750;
-                if ((global.race['cataclysm'] || global.race['orbit_decayed']) && global.tech['supercollider']){
-                    let ratio = global.tech['particles'] && global.tech['particles'] >= 3 ? 5 : 10;
-                    knowledge *= (global.tech['supercollider'] / ratio) + 1;
-                }
+                let knowledge = actions.space.spc_home.satellite.knowVal()
                 let label = global.race['cataclysm'] ? loc('space_moon_observatory_title') : (global.race['orbit_decayed'] ? loc('city_university') : wardenLabel());
                 let amount = global.race['cataclysm'] ? 25 : (global.race['orbit_decayed'] ? 12 : 4);
                 let synergy = `<div>${loc('space_home_satellite_effect2',[label, amount])}</div>`;
                 return `<div>${loc('plus_max_resource',[knowledge,global.resource.Knowledge.name])}</div>${synergy}<div>${loc('space_home_satellite_effect3',[global.civic.scientist ? global.civic.scientist.name : loc('job_scientist')])}</div>`
+            },
+            knowVal(){
+                let gain = global.race['cataclysm'] || global.race['orbit_decayed'] ? 2000 : 750;
+                if ((global.race['cataclysm'] || global.race['orbit_decayed']) && global.tech['supercollider']){
+                    let ratio = global.tech['tp_particles'] || (global.tech['particles'] && global.tech['particles'] >= 3) ? 5: 10;
+                    gain *= (global.tech['supercollider'] / ratio) + 1;
+                }
+                return gain
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -420,12 +424,16 @@ const spaceProjects = {
                 if (global.race['cataclysm']){
                     prof = `<div>${loc('city_university_effect',[jobScale(1)])}</div>`;
                 }
+                let gain = actions.space.spc_moon.observatory.knowVal()
+                let synergy = global.race['cataclysm'] ? `<div>${loc('space_moon_observatory_cata_effect',[25])}</div>` : `<div>${loc('space_moon_observatory_effect',[5])}</div>`;
+                return `<div class="has-text-caution">${loc('space_used_support',[loc('space_moon_info_name')])}</div>${prof}<div>${loc('plus_max_resource',[gain,global.resource.Knowledge.name])}</div>${synergy}`;
+            },
+            knowVal(){
                 let gain = 5000;
                 if (global.race['cataclysm'] && global.space['satellite'] && global.space.satellite.count > 0){
                     gain *= 1 + (global.space.satellite.count * 0.25);
                 }
-                let synergy = global.race['cataclysm'] ? `<div>${loc('space_moon_observatory_cata_effect',[25])}</div>` : `<div>${loc('space_moon_observatory_effect',[5])}</div>`;
-                return `<div class="has-text-caution">${loc('space_used_support',[loc('space_moon_info_name')])}</div>${prof}<div>${loc('plus_max_resource',[gain,global.resource.Knowledge.name])}</div>${synergy}`;
+                return gain
             },
             s_type: 'moon',
             support(){ return -1; },
@@ -1247,7 +1255,21 @@ const spaceProjects = {
                 Elerium(offset){ return spaceCostMultiplier('exotic_lab', offset, 20, 1.28) - 4; }
             },
             effect(wiki){
-                let sci = 500;
+                let sci = actions.space.spc_red.exotic_lab.knowVal(wiki)
+                let elerium = spatialReasoning(10);
+
+                let scientist = '';
+                let lab = '';
+                if (global.race['cataclysm'] || global.race['orbit_decayed']){
+                    scientist = `<div>${loc('city_wardenclyffe_effect1',[jobScale(1), global.civic.scientist.name])}</div>`;
+                    if (global.tech.science >= 15){
+                        lab = `<div>${loc('city_wardenclyffe_effect4',[2])}</div>`;
+                    }
+                }
+                return `<div class="has-text-caution">${loc('space_used_support',[planetName().red])}</div>${scientist}${lab}<div>${loc('space_red_exotic_lab_effect1',[+(sci).toFixed(0)])}</div><div>${loc('plus_max_resource',[elerium,global.resource.Elerium.name])}</div>`;
+            },
+            knowVal(wiki){
+                let sci=500;
                 if (global.tech['science'] >= 13 && global.interstellar['laboratory']){
                     let num_lab_on = wiki ? global.interstellar.laboratory.on : int_on['laboratory'];
                     sci += num_lab_on * 25;
@@ -1255,28 +1277,27 @@ const spaceProjects = {
                 if (global.tech['ancient_study'] && global.tech['ancient_study'] >= 2){
                     sci += templeCount(true) * 15;
                 }
-                let num_mass_driver_on = wiki ? (global.city?.mass_driver?.on ?? 0) : p_on['mass_driver'];
-                if (global.tech.mass >= 2 && num_mass_driver_on > 0){
-                    sci += highPopAdjust(num_mass_driver_on * global.civic.scientist.workers);
+                if (global.tech.mass >= 2){
+                    let brain = workerScale(global.civic.scientist.workers,'scientist');
+                    if (global.race['high_pop']){
+                        brain = highPopAdjust(brain);
+                    }
+                    let num_mass_on=wiki ? global.city.mass_driver.on : p_on['mass_driver']
+                    sci += num_mass_on * brain;
                 }
                 if (global.tech['science'] >= 21){
                     sci *= 1.45;
                 }
+                if (global.race['cataclysm'] && support_on['observatory']){
+                    sci *= 1 + (wiki ? global.space.observatory.on : support_on['observatory']) * 0.25;
+                }
+                if ((global.race['cataclysm'] || global.race['orbit_decayed']) && global.portal['sensor_drone'] && global.tech['science'] >= 14){
+                    sci *= 1 + (wiki ? global.portal.sensor_drone.on : p_on['sensor_drone']) * 0.02;
+                }
                 if (global.race['high_pop']){
                     sci = highPopAdjust(sci);
                 }
-                let elerium = spatialReasoning(10);
-
-                let scientist = '';
-                let lab = '';
-                if (global.race['cataclysm'] || global.race['orbit_decayed']){
-                    scientist = `<div>${loc('city_wardenclyffe_effect1',[jobScale(1), global.civic.scientist.name])}</div>`;
-                    sci *= 1 + (wiki ? global.space.observatory.on : support_on['observatory']) * 0.25;
-                    if (global.tech.science >= 15){
-                        lab = `<div>${loc('city_wardenclyffe_effect4',[2])}</div>`;
-                    }
-                }
-                return `<div class="has-text-caution">${loc('space_used_support',[planetName().red])}</div>${scientist}${lab}<div>${loc('space_red_exotic_lab_effect1',[+(sci).toFixed(0)])}</div><div>${loc('plus_max_resource',[elerium,global.resource.Elerium.name])}</div>`;
+                return sci
             },
             s_type: 'red',
             support(){ return -1; },
