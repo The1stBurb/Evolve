@@ -8741,6 +8741,7 @@ function midLoop(){
         let space_home=actions.space.spc_home, space_titan=actions.space.spc_titan, space_red=actions.space.spc_red;
         let portal=actions.portal;
         let inter=actions.interstellar;
+        let gxy=actions.galaxy;
         let eden=actions.eden;
         let tau_home=actions.tauceti.tau_home;
         let s_name=global.race.species;
@@ -9154,112 +9155,119 @@ function midLoop(){
         // Population
         {
             if (global.tauceti['tauceti_casino']){
+                let j_count=jobScale(global.tauceti.tauceti_casino.count)
                 if (global.tech['theatre'] && !global.race['joyless']){
-                    lCaps['entertainer'] += jobScale(global.tauceti.tauceti_casino.count);
+                    lCaps['entertainer'] += j_count;
                 }
                 if (global.tech['isolation']){
-                    lCaps['banker'] += jobScale(global.tauceti.tauceti_casino.count);
+                    lCaps['banker'] += j_count;
 
-                    let pop = p_on['tauceti_casino'] * actions.tauceti.tau_home.tauceti_casino.citizens();
-                    caps[global.race.species] += pop;
-                    breakdown.c[global.race.species][structName('casino')] = pop + 'v';
+                    let pop = p_on['tauceti_casino'] * tau_home.tauceti_casino.citizens();
+                    caps[s_name] += pop;
+                    breakdown.c[s_name][structName('casino')] = pop + 'v';
                 }
             }
             if (global.city['basic_housing']){
-                let pop = global.city.basic_housing.count * actions.city.basic_housing.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][housingLabel('small')] = pop + 'v';
+                let pop = global.city.basic_housing.count * city.basic_housing.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][housingLabel('small')] = pop + 'v';
             }
             if (global.tauceti['tau_housing'] && global.tech['isolation']){
-                let pop = global.tauceti.tau_housing.count * actions.tauceti.tau_home.tau_housing.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][housingLabel('small')] = pop + 'v';
+                let pop = global.tauceti.tau_housing.count * tau_home.tau_housing.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][housingLabel('small')] = pop + 'v';
             }
             if (global.city['cottage']){
-                let pop = global.city.cottage.count * actions.city.cottage.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][housingLabel('medium')] = pop + 'v';
+                let c_count=global.city.cottage.count;
+                let pop = c_count * actions.city.cottage.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][housingLabel('medium')] = pop + 'v';
                 if (global.tech['home_safe']){
-                    let gain = (global.city['cottage'].count * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 5000 : 2000) : 1000));
+                    let gain = (c_count * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 5000 : 2000) : 1000));
                     caps['Money'] += gain;
                     breakdown.c.Money[housingLabel('medium')] = gain+'v';
                 }
             }
             if (global.city['apartment']){
-                let pop = p_on['apartment'] * actions.city.apartment.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][housingLabel('large')] = pop + 'v';
+                let a_count=p_on['apartment'];
+                let pop = a_count * city.apartment.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][housingLabel('large')] = pop + 'v';
                 if (global.tech['home_safe']){
-                    let gain = (p_on['apartment']  * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 10000 : 5000) : 2000));
+                    let gain = (a_count  * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 10000 : 5000) : 2000));
                     caps['Money'] += gain;
                     breakdown.c.Money[housingLabel('large')] = gain+'v';
                 }
             }
             if (global.eden['rectory']){
-                let pop = p_on['rectory'] * actions.eden.eden_asphodel.rectory.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][loc(`eden_rectory_title`)] = pop + 'v';
+                let pop = p_on['rectory'] * eden.eden_asphodel.rectory.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][loc(`eden_rectory_title`)] = pop + 'v';
             }
-            if (p_on['s_gate'] && global.galaxy['consulate'] && global.galaxy.consulate.count >= 1){
-                let pop = actions.galaxy.gxy_alien1.consulate.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][loc('galaxy_consulate')] = pop + 'v';
+            let s_gate_on=p_on['s_gate'];
+            if (s_gate_on && global.galaxy['consulate'] && global.galaxy.consulate.count >= 1){
+                let pop = gxy.gxy_alien1.consulate.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][loc('galaxy_consulate')] = pop + 'v';
             }
-            if (p_on['s_gate'] && p_on['embassy'] && global.tech.xeno >= 11){
-                let pop = actions.galaxy.gxy_gorddon.embassy.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][loc('galaxy_embassy')] = pop + 'v';
+            if (s_gate_on && p_on['embassy'] && global.tech.xeno >= 11){
+                let pop = gxy.gxy_gorddon.embassy.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][loc('galaxy_embassy')] = pop + 'v';
             }
-            if (p_on['s_gate'] && p_on['embassy'] && global.galaxy['dormitory']){
-                let pop = p_on['dormitory'] * actions.galaxy.gxy_gorddon.dormitory.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][loc('galaxy_dormitory')] = pop + 'v';
+            if (s_gate_on && p_on['embassy'] && global.galaxy['dormitory']){
+                let pop = p_on['dormitory'] * gxy.gxy_gorddon.dormitory.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][loc('galaxy_dormitory')] = pop + 'v';
             }
             if (global.space['living_quarters']){
-                let gain = Math.round(support_on['living_quarters'] * actions.space.spc_red.living_quarters.citizens());
-                caps[global.race.species] += gain;
-                lCaps['colonist'] += jobScale(support_on['living_quarters']);
-                breakdown.c[global.race.species][`${planetName().red}`] = gain + 'v';
+                let l_count=support_on['living_quarters'];
+                let gain = Math.round(l_count * space_red.living_quarters.citizens());
+                caps[s_name] += gain;
+                lCaps['colonist'] += jobScale(l_count);
+                breakdown.c[s_name][`${planetName().red}`] = gain + 'v';
 
-                if ((global.race['cataclysm'] || global.race['orbit_decayed']) && global.tech['home_safe']){
-                    let gain = (support_on['living_quarters'] * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 100000 : 50000) : 25000));
+                if (cata_orbit && global.tech['home_safe']){
+                    let gain = (l_count * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 100000 : 50000) : 25000));
                     caps['Money'] += gain;
                     breakdown.c.Money[loc('space_red_living_quarters_title')] = gain+'v';
                 }
             }
             if (global.space['titan_quarters']){
-                let gain = Math.round(support_on['titan_quarters'] * actions.space.spc_titan.titan_quarters.citizens());
-                caps[global.race.species] += gain;
-                lCaps['titan_colonist'] += jobScale(support_on['titan_quarters']);
-                breakdown.c[global.race.species][`${planetName().titan}`] = gain + 'v';
+                let t_count=support_on['titan_qaurters']
+                let gain = Math.round(l_count * space_titan.titan_quarters.citizens());
+                caps[s_name] += gain;
+                lCaps['titan_colonist'] += jobScale(l_count);
+                breakdown.c[s_name][`${planetName().titan}`] = gain + 'v';
             }
             if (global.interstellar['habitat'] && p_on['habitat']){
-                let pop = p_on['habitat'] * actions.interstellar.int_alpha.habitat.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][loc('interstellar_habitat_title')] = pop + 'v';
+                let pop = p_on['habitat'] * inter.int_alpha.habitat.citizens();
+                caps[s_name] += pop;
+                breakdown.c[s_name][loc('interstellar_habitat_title')] = pop + 'v';
             }
             if (global.interstellar['luxury_condo'] && p_on['luxury_condo']){
-                let cit = p_on['luxury_condo'] * actions.interstellar.int_alpha.luxury_condo.citizens();
-                caps[global.race.species] += cit;
-                breakdown.c[global.race.species][loc('tech_luxury_condo')] = cit + 'v';
-                let gain = (p_on['luxury_condo']  * spatialReasoning(750000));
+                let l_count=p_on['luxury_condo'];
+                let cit = l_count * inter.int_alpha.luxury_condo.citizens();
+                caps[s_name] += cit;
+                breakdown.c[s_name][loc('tech_luxury_condo')] = cit + 'v';
+                let gain = (l_count  * spatialReasoning(750000));
                 caps['Money'] += gain;
                 breakdown.c.Money[loc('tech_luxury_condo')] = gain+'v';
             }
             if (global.city['lodge']){
-                let cit = global.city.lodge.count * actions.city.lodge.citizens();
-                caps[global.race.species] += cit;
-                breakdown.c[global.race.species][loc('city_lodge')] = cit + 'v';
+                let cit = global.city.lodge.count * city.lodge.citizens();
+                caps[s_name] += cit;
+                breakdown.c[s_name][loc('city_lodge')] = cit + 'v';
             }
             if (global.portal['hovel']){
-                let cit = global.portal.hovel.count * actions.portal.prtl_wasteland.hovel.citizens();
-                caps[global.race.species] += cit;
-                breakdown.c[global.race.species][loc('portal_hovel_title')] = cit + 'v';
+                let cit = global.portal.hovel.count * portal.prtl_wasteland.hovel.citizens();
+                caps[s_name] += cit;
+                breakdown.c[s_name][loc('portal_hovel_title')] = cit + 'v';
             }
             if (global.portal['dig_demon'] && global.race['warlord']){
-                let demons = global.portal.dig_demon.on * actions.portal.prtl_wasteland.dig_demon.citizens();
-                caps[global.race.species] += demons;
-                breakdown.c[global.race.species][loc('portal_dig_demon_title')] = demons + 'v';
+                let demons = global.portal.dig_demon.on * portal.prtl_wasteland.dig_demon.citizens();
+                caps[s_name] += demons;
+                breakdown.c[s_name][loc('portal_dig_demon_title')] = demons + 'v';
                 lCaps['miner'] += demons;
                 global.civic.miner.max = demons;
                 global.civic.miner.workers = demons;
@@ -9267,8 +9275,8 @@ function midLoop(){
             }
         }
         if (global.race['lone_survivor']){
-            breakdown.c[global.race.species][loc('base')] = '1v';
-            caps[global.race.species] = 1;
+            breakdown.c[s_name][loc('base')] = '1v';
+            caps[s_name] = 1;
         }
         // Slave
             if (global.race['slaver'] && global.tech['slaves'] && global.city['slave_pen']) {
