@@ -889,34 +889,34 @@ function fastLoop(){
     }
 
     const date = new Date();
-    const astroSign = astrologySign();
+    const astroSign = astrologySign();// not needed?
     breakdown.p['Global'] = {};
     var global_multiplier = 1;
-    let applyPlasmid = false;
-    let pBonus = plasmidBonus('raw');
+    let applyPlasmid = false;// not needed?
+    let pBonus = plasmidBonus('raw');// not needed?
     if (global.prestige.Plasmid.count > 0 && ((global.race.universe !== 'antimatter') || (global.genes['bleed'] && global.race.universe === 'antimatter'))){
         breakdown.p['Global'][loc('resource_Plasmid_name')] = (pBonus[1] * 100) + '%';
         applyPlasmid = true;
-    }
+    }// not needed?
     if (global.prestige.AntiPlasmid.count > 0 && ((global.race.universe === 'antimatter') || (global.genes['bleed'] && global.genes['bleed'] >= 2 && global.race.universe !== 'antimatter'))){
         breakdown.p['Global'][loc('resource_AntiPlasmid_name')] = (pBonus[2] * 100) + '%';
         applyPlasmid = true;
-    }
+    }// not needed?
     if (applyPlasmid){
         global_multiplier += pBonus[0];
-    }
+    }// not needed?
     if (global.prestige.Supercoiled.count > 0){
         let bonus = (global.prestige.Supercoiled.count / (global.prestige.Supercoiled.count + 5000));
         breakdown.p['Global'][loc('resource_Supercoiled_short')] = +(bonus * 100).toFixed(2) + '%';
         global_multiplier *= (1 + bonus);
-    }
+    }// not needed?
     if (global.race['no_plasmid'] || global.race.universe === 'antimatter'){
         if (faithTempleCount()){
             let faith = faithBonus();
             breakdown.p['Global'][loc('faith')] = (faith * 100) + '%';
             global_multiplier *= (1 + faith);
         }
-    }
+    }// not needed?
     if (global.race.universe === 'evil' && global.resource.Authority.display){
         if (global.resource.Authority.amount < 100){
             let malus = (100 - global.resource.Authority.amount) * 0.0035;
@@ -929,12 +929,10 @@ function fastLoop(){
             global_multiplier *= (1 + bonus);
         }
     }
-    if (global.race['untapped']){
-        if (global.race['untapped'] > 0){
-            let untapped = +(global.race.untapped / (global.race.untapped + 20) / 10 + 0.00024).toFixed(4);
-            breakdown.p['Global'][loc('trait_untapped_bd')] = `${untapped * 100}%`;
-            global_multiplier *= 1 + (untapped);
-        }
+    if (global.race['untapped'] && global.race['untapped'] > 0){
+        let untapped = +(global.race.untapped / (global.race.untapped + 20) / 10 + 0.00024).toFixed(4);
+        breakdown.p['Global'][loc('trait_untapped_bd')] = `${untapped * 100}%`;
+        global_multiplier *= 1 + (untapped);
     }
     if (global.race['rainbow_active'] && global.race['rainbow_active'] > 1){
         breakdown.p['Global'][loc('trait_rainbow_bd')] = `${traits.rainbow.vars()[0]}%`;
@@ -961,7 +959,7 @@ function fastLoop(){
         }
         breakdown.p['Global'][loc('tech_unification')] = `${bonus}%`;
         global_multiplier *= 1 + (bonus / 100);
-    }
+    }// not needed?
     else {
         let occupy = 0;
         for (let i=0; i<3; i++){
@@ -973,26 +971,26 @@ function fastLoop(){
             breakdown.p['Global'][loc('civics_garrison_occupy')] = `${occupy}%`;
             global_multiplier *= 1 + (occupy / 100);
         }
-    }
+    }// not needed?
     if (global.genes['challenge'] && global.genes.challenge >= 2){
         let mastery = calc_mastery();
         breakdown.p['Global'][loc('mastery')] = mastery + '%';
         global_multiplier *= 1 + (mastery / 100);
-    }
+    }// not needed?
     if (global['pillars']){
         let harmonic = calcPillar();
         breakdown.p['Global'][loc('harmonic')] = `${(harmonic[0] - 1) * 100}%`;
         global_multiplier *= harmonic[0];
-    }
+    }// not needed?
     if (global.race['ascended']){
         breakdown.p['Global'][loc('achieve_ascended_name')] = `5%`;
         global_multiplier *= 1.05;
-    }
+    }// not needed?
     if (global.race['corruption']){
         let corruption = global.race['corruption'] * 2;
         breakdown.p['Global'][loc('achieve_corrupted_name')] = `${corruption}%`;
         global_multiplier *= 1 + (corruption / 100);
-    }
+    }// not needed?
     if (global.race['rejuvenated']){
         let decay = global.stats.days < 996 ? (1000 - global.stats.days) / 2000 : 0.02;
         breakdown.p['Global'][loc('rejuvenated')] = `${decay * 100}%`;
@@ -1009,7 +1007,7 @@ function fastLoop(){
         }
         breakdown.p['Global'][loc('trait_suction_grip_bd')] = bonus+'%';
         global_multiplier *= 1 + (bonus / 100);
-    }
+    }// not needed?
 
     let cyclopsFathom = fathomCheck('cyclops');
     if (global.race['intelligent'] || cyclopsFathom > 0){
@@ -1025,7 +1023,7 @@ function fastLoop(){
         }
         breakdown.p['Global'][loc('trait_intelligent_bd')] = bonus+'%';
         global_multiplier *= 1 + (bonus / 100);
-    }
+    }// not needed?
     if (global.race['slaver'] && global.city['slave_pen'] && global.city['slave_pen']){
         let bonus = (global.resource.Slave.amount * traits.slaver.vars()[0]);
         breakdown.p['Global'][loc('trait_slaver_bd')] = bonus+'%';
@@ -1048,7 +1046,7 @@ function fastLoop(){
             breakdown.p['Global'][jobName('scavenger')] = bonus+'%';
             global_multiplier *= 1 + (bonus / 100);
         }
-    }
+    }// not needed (maybe)?
     if (global.race['unfathomable'] && global.city['surfaceDwellers'] && global.city['captive_housing']){
         let thralls = 0;
         let rank = global.stats.achieve['nightmare'] && global.stats.achieve.nightmare['mg'] ? global.stats.achieve.nightmare.mg : 0;
@@ -1073,12 +1071,12 @@ function fastLoop(){
     if (global.city.ptrait.includes('mellow')){
         breakdown.p['Global'][loc('planet_mellow_bd')] = '-' + (100 - (planetTraits.mellow.vars()[2] * 100)) + '%';
         global_multiplier *= planetTraits.mellow.vars()[2];
-    }
+    }// not needed?
     if (global.city.ptrait.includes('ozone') && global.city['sun']){
         let uv = global.city['sun'] * planetTraits.ozone.vars()[0];
         breakdown.p['Global'][loc('planet_ozone_bd')] = `-${uv}%`;
         global_multiplier *= 1 - (uv / 100);
-    }
+    }// not needed?
     let phoenixFathom = fathomCheck('phoenix');
     if ((global.race['smoldering'] || phoenixFathom > 0) && global.city['hot']){
         let heat = 0;
@@ -1181,7 +1179,7 @@ function fastLoop(){
             breakdown.p['Global'][loc('unsuited')] = `-${Math.round((1 - unsuited) * 100)}%`;
             global_multiplier *= unsuited;
         }
-    }
+    }// not needed (maybe)?
 
     if (global.race['hibernator'] && global.city.calendar.season === 3){
         global_multiplier *= 1 - (traits.hibernator.vars()[1] / 100);
@@ -1201,7 +1199,7 @@ function fastLoop(){
         'Bolognium','Vitreloy','Orichalcum','Asphodel_Powder','Elysanite','Unobtainium','Quantium',
         'Plywood','Brick','Wrought_Iron','Sheet_Metal','Mythril','Aerogel','Nanoweave','Scarletite',
         'Cipher','Nanite','Mana','Authority'
-    ];
+    ];// not needed?
 
     breakdown.p['consume'] = {};
     resList.forEach(function(res){
@@ -8100,7 +8098,7 @@ function fastLoop(){
         }
         updateDebugData();
     }
-
+    
     let easter = eventActive('easter');
     if (easter.active){
         for (i=1; i<=18; i++){
@@ -8109,7 +8107,7 @@ function fastLoop(){
                 $(`#egg${i}`).addClass('binded');
             }
         }
-    }
+    }// not needed?
 
     let halloween = eventActive('halloween');
     if (halloween.active){
@@ -8125,7 +8123,7 @@ function fastLoop(){
                 $(`#trick${i}`).addClass('binded');
             }
         }
-    }
+    }// not needed?
 
     firstRun = false;
 }
@@ -9051,7 +9049,7 @@ function midLoop(){
                 }
             }
         }
-        // Money -HERE
+        // Money
         let cata_orbit=global.race['cataclysm'] || global.race['orbit_decayed'];
         {
             if (global.city['bank'] || (global.race['cataclysm'] && p_on['spaceport'])){
@@ -9280,11 +9278,12 @@ function midLoop(){
         }
         // Slave
             if (global.race['slaver'] && global.tech['slaves'] && global.city['slave_pen']) {
-                caps['Slave'] = global.city.slave_pen.count * 4;
-                breakdown.c.Slave[loc('city_slave_housing',[global.resource.Slave.name])] = global.city.slave_pen.count * 4 + 'v';
+                let s_count=global.city.slave_pen.count*4;
+                caps['Slave'] = s_count;
+                breakdown.c.Slave[loc('city_slave_housing',[global.resource.Slave.name])] = s_count + 'v';
 
-                if (caps['Slave'] < global.resource.Slave.amount){
-                    global.resource.Slave.amount = caps['Slave'];
+                if (s_count < global.resource.Slave.amount){
+                    global.resource.Slave.amount = s_count;
                 }
             }
         // Captive Race / Cattle
@@ -9299,7 +9298,7 @@ function midLoop(){
                 caps['Nanite'] += gain;
                 breakdown.c.Nanite[loc('city_nanite_factory')] = gain+'v';
             }
-        // Knowledge
+        // Knowledge -HERE
         {
             if (shrineBonusActive()){
                 let getShrineResult = getShrineBonus('know');
