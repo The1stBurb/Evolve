@@ -9826,13 +9826,13 @@ function midLoop(){
                 }
             }
             if (global.portal['pumpjack']){
-                let gain = (global.portal.pumpjack.count * spatialReasoning(500));
-                caps['Oil'] += gain;
-                breakdown.c.Oil[loc('portal_pumpjack_title')] = gain+'v';
+                let o_gain = (global.portal.pumpjack.count * spatialReasoning(500));
+                caps['Oil'] += o_gain;
+                breakdown.c.Oil[loc('portal_pumpjack_title')] = o_gain+'v';
 
-                let gain = (global.portal.pumpjack.count * spatialReasoning(250));
-                caps['Helium_3'] += gain;
-                breakdown.c.Helium_3[loc('portal_pumpjack_title')] = gain+'v';
+                let h_gain = (global.portal.pumpjack.count * spatialReasoning(250));
+                caps['Helium_3'] += h_gain;
+                breakdown.c.Helium_3[loc('portal_pumpjack_title')] = h_gain+'v';
             }
         }
         // Uranium
