@@ -8874,7 +8874,7 @@ function midLoop(){
             // Crates Only
         {
             if (global.city['wharf']){                
-                let wharf_count=global.city.wharf.count * city.wharf.contVal();
+                let wharf_count=global.city.wharf.count * city.wharf.contCap();
 
                 caps['Crates'] += wharf_count;
                 breakdown.c.Crates[loc('city_wharf')] = (wharf_count) + 'v';
@@ -8889,7 +8889,7 @@ function midLoop(){
                 breakdown.c.Containers[loc('tech_munitions_depot')] = vol + 'v';
             }
             if (global.city['storage_yard']){
-                let stor_count=global.city['storage_yard'].count * city.storage_yard.crateVal()
+                let stor_count=global.city['storage_yard'].count * city.storage_yard.crateCap()
                 caps['Crates'] += stor_count;
                 breakdown.c.Crates[loc('city_storage_yard')] = stor_count + 'v';
             }
@@ -8933,7 +8933,7 @@ function midLoop(){
         }
             // Containers Only
             if (global.city['warehouse']){
-                let w_count=(global.city['warehouse'].count * city.warehouse.contVal())
+                let w_count=(global.city['warehouse'].count * city.warehouse.contCap())
                 caps['Containers'] += w_count;
                 breakdown.c.Containers[loc('city_warehouse')] = w_count + 'v';
             }
@@ -9274,7 +9274,7 @@ function midLoop(){
                 caps['Nanite'] += gain;
                 breakdown.c.Nanite[loc('city_nanite_factory')] = gain+'v';
             }
-        // Knowledge -HERE
+        // Knowledge
         {
             if (shrineBonusActive()){
                 let getShrineResult = getShrineBonus('know');
@@ -9285,7 +9285,7 @@ function midLoop(){
             if (global.city['university']){
                 let univCount=global.city.university.count;
 
-                let gain = city.university.knowVal() * univCount;
+                let gain = city.university.knowCap() * univCount;
                 lCaps['professor'] += jobScale(univCount);
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('city_university')] = gain+'v';
@@ -9323,18 +9323,18 @@ function midLoop(){
                 }
             }
             if (global.city['biolab']){
-                let gain = p_on['biolab'] * city.biolab.knowVal()
+                let gain = p_on['biolab'] * city.biolab.knowCap()
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('city_biolab')] = gain+'v';
             }
             let space=actions.space;
             if (global.space['satellite']){
-                let gain = global.space.satellite.count * space.spc_home.satellite.knowVal()//;
+                let gain = global.space.satellite.count * space.spc_home.satellite.knowCap()//;
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('space_home_satellite_title')] = gain+'v';
             }
             if (global.space['observatory'] && global.space.observatory.count > 0){
-                let gain = support_on['observatory'] * space.spc_moon.observatory.knowVal();
+                let gain = support_on['observatory'] * space.spc_moon.observatory.knowCap();
 
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('space_moon_observatory_title')] = gain+'v';
@@ -9349,7 +9349,7 @@ function midLoop(){
                 caps['Elerium'] += el_gain;
                 breakdown.c.Elerium[loc('space_red_exotic_lab_bd')] = el_gain+'v';
                 
-                let sci = space.spc_red.exotic_lab.knowVal()
+                let sci = space.spc_red.exotic_lab.knowCap()
                 let gain = exo_support * workerScale(global.civic.colonist.workers,'colonist') * sci;
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('tech_exotic_bd')] = gain+'v';
@@ -9650,13 +9650,16 @@ function midLoop(){
         }
         // Zen
             if (global.race['calm'] && global.city['meditation']) {
-                caps['Zen'] = global.city.meditation.count * traits.calm.vars()[0];
-                breakdown.c.Zen[loc('city_meditation')] = global.city.meditation.count * traits.calm.vars()[0] + 'v';
-                global.resource.Zen.amount = (global.resource[global.race.species].amount * 2) + global.civic.garrison.workers;
-                if (global.resource.Zen.amount > global.resource.Zen.max){
-                    global.resource.Zen.amount = global.resource.Zen.max;
+                let m_zen=city.meditation.zenCap() * global.city.meditation.count;
+                caps['Zen'] = m_zen;
+                breakdown.c.Zen[loc('city_meditation')] = zen + 'v';
+
+                let zen=city.meditation.zenVal();
+                if (zen > m_zen){
+                    zen = m_zen;
                 }
-                let zen = global.resource.Zen.amount / (global.resource.Zen.amount + 5000);
+                global.resource.Zen.amount = zen
+                zen = city.meditation.dispVal();
                 breakdown.c.Zen[loc('trait_calm_desc')] = `+${(zen * 100).toFixed(2)}%`;
             }
         // Mana
@@ -9668,11 +9671,11 @@ function midLoop(){
                     name = 'space_red_pylon';
                 }
                 else if (global.tech['isolation'] && global.tauceti['pylon']){
-                    gain = spatialReasoning(2) * global.tauceti.pylon.count;;
+                    gain = spatialReasoning(2) * global.tauceti.pylon.count;
                     name = 'tau_home_pylon';
                 }
                 else if (global.city['pylon']){
-                    gain = spatialReasoning(5) * global.city.pylon.count;;
+                    gain = city.pylon.manaCap() * global.city.pylon.count;
                 }
 
                 caps['Mana'] += gain;
@@ -9701,29 +9704,29 @@ function midLoop(){
                 breakdown.c.Food[loc('tau_home_tau_farm')] = gain+'v';
             }
             if (global.city['silo']){
-                let gain = BHStorageMulti(global.city['silo'].count * spatialReasoning(500));
+                let gain = city.silo(global.city['silo'].count);
                 caps['Food'] += gain;
                 breakdown.c.Food[loc('city_silo')] = gain+'v';
             }
             if (global.city['compost']){
-                let gain = BHStorageMulti(global.city['compost'].count * spatialReasoning(200));
+                let gain = city.compost.foodCap(global.city['compost'].count);
                 caps['Food'] += gain;
                 breakdown.c.Food[loc('city_compost_heap')] = gain+'v';
             }
             if (global.city['soul_well']){
-                let gain = BHStorageMulti(global.city['soul_well'].count * spatialReasoning(500));
+                let gain = city.soul_well.foodCap(global.city['soul_well'].count);
                 caps['Food'] += gain;
                 breakdown.c.Food[loc('city_soul_well')] = gain+'v';
             }
             if (global.city['smokehouse']){
-                let gain = BHStorageMulti(global.city['smokehouse'].count * spatialReasoning(100));
+                let gain = city.smokehouse.foodCap(global.city['smokehouse'].count);
                 caps['Food'] += gain;
                 breakdown.c.Food[loc('city_smokehouse')] = gain+'v';
             }
         }
         // Stone / Chrysotile
             if (global.city['rock_quarry']){
-                let gain = BHStorageMulti(global.city.rock_quarry.count * spatialReasoning(100));
+                let gain = city.rock_quarry.stoneCap(global.city.rock_quarry.count);
                 caps['Stone'] += gain;
                 breakdown.c.Stone[loc('city_rock_quarry')] = gain+'v';
 
@@ -9733,12 +9736,12 @@ function midLoop(){
         // Lumber
         {
             if (global.city['lumber_yard']){
-                let gain = BHStorageMulti(global.city.lumber_yard.count * spatialReasoning(100));
+                let gain = city.lumber_yard.lumberCap(global.city.lumber_yard.count);
                 caps['Lumber'] += gain;
                 breakdown.c.Lumber[loc('city_lumber_yard')] = gain+'v';
             }
             else if (global.city['graveyard']){
-                let gain = BHStorageMulti(global.city.graveyard.count * spatialReasoning(100));
+                let gain = city.graveyard.lumberCap(global.city.graveyard.count);
                 caps['Lumber'] += gain;
                 breakdown.c.Lumber[loc('city_graveyard')] = gain+'v';
             }

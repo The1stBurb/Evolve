@@ -1597,8 +1597,11 @@ export const actions = {
                 Stone(offset){ return costMultiplier('smokehouse', offset, 50, 1.36); }
             },
             effect(){
-                let food = BHStorageMulti(spatialReasoning(100));
+                let food = actions.city.smokehouse.foodCap();
                 return `<div>${loc('plus_max_resource',[food, global.resource.Food.name])}</div><div>${loc('city_smokehouse_effect',[10])}</div>`;
+            },
+            foodCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(100));
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -1636,10 +1639,14 @@ export const actions = {
                 Stone(offset){ return costMultiplier('soul_well', offset, 10, 1.36); }
             },
             effect(){
-                let souls = BHStorageMulti(spatialReasoning(500));
+                let souls = actions.city.soul_well.foodCap()
                 let production = global.race['ghostly'] ? (2 + traits.ghostly.vars()[1]) : 2;
                 return `<div>${loc('city_soul_well_effect',[production])}</div><div>${loc('plus_max_resource',[souls, loc('resource_Souls_name')])}</div>`;
             },
+            foodCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(500))
+            },
+            foodVal(){},
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('soul_well','city');
@@ -1813,10 +1820,14 @@ export const actions = {
                 generated *= global.city.biome === 'hellscape' ? biomes.hellscape.vars()[0] : 1;
                 generated *= global.city.ptrait.includes('trashed') ? planetTraits.trashed.vars()[0] : 1;
                 generated = +(generated).toFixed(2);
-                let store = BHStorageMulti(spatialReasoning(200));
+                let store = actions.city.compost.foodCap();
                 let wood = global.race['kindling_kindred'] || global.race['smoldering'] ? `` : `<div class="has-text-caution">${loc('city_compost_heap_effect2',[0.5,global.resource.Lumber.name])}</div>`;
                 return `<div>${loc('city_compost_heap_effect',[generated])}</div><div>${loc('city_compost_heap_effect3',[store])}</div>${wood}`;
             },
+            foodCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(200));
+            },
+            foodVal(){},
             switchable(){ return true; },
             action(args){
                 if (payCosts($(this)[0])){
@@ -1939,8 +1950,11 @@ export const actions = {
                 Iron(offset){ return ((global.city.silo ? global.city.silo.count : 0) + (offset || 0)) >= 4 && global.city.ptrait.includes('unstable') ? costMultiplier('silo', offset, 10, 1.36) : 0; }
             },
             effect(){
-                let food = BHStorageMulti(spatialReasoning(500));
+                let food = actions.city.silo.foodCap();
                 return loc('plus_max_resource',[food, global.resource.Food.name]);
+            },
+            foodCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(500))
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2257,7 +2271,7 @@ export const actions = {
                     return loc('plus_max_resource',[cap,global.resource.Crates.name]);
                 }
             },
-            crateVal(){
+            crateCap(){
                 let cap = global.tech.container >= 3 ? 20 : 10;
                 if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 1){
                     cap += 10;
@@ -2316,7 +2330,7 @@ export const actions = {
                 let cap = actions.city.warehouse.contVal()
                 return loc('plus_max_resource',[cap,global.resource.Containers.name]);
             },
-            contVal(){
+            contCap(){
                 let cap = global.tech.steel_container >= 2 ? 20 : 10;
                 if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
                     cap += 10;
@@ -2422,10 +2436,14 @@ export const actions = {
                 Crystal(offset){ return costMultiplier('pylon', offset, 8, 1.42) - 3; }
             },
             effect(){
-                let max = spatialReasoning(5);
+                let max = actions.city.pylon.manaCap();
                 let mana = +(0.01 * darkEffect('magic')).toFixed(3);
                 return `<div>${loc('gain',[mana,global.resource.Mana.name])}</div><div>${loc('plus_max_resource',[max,global.resource.Mana.name])}</div>`;
             },
+            manaCap(){
+                return spatialReasoning(5);
+            },
+
             special(){ return global.tech['magic'] && global.tech.magic >= 3 ? true : false; },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2493,8 +2511,11 @@ export const actions = {
                 Stone(offset){ return costMultiplier('graveyard', offset, 6, 1.9); }
             },
             effect(){
-                let lum = BHStorageMulti(spatialReasoning(100));
+                let lum = actions.city.graveyard.lumberCap();
                 return `<div>${loc('city_graveyard_effect',[8])}</div><div>${loc('plus_max_resource',[lum,global.resource.Lumber.name])}</div>`;
+            },
+            lumberCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(100));
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2532,8 +2553,11 @@ export const actions = {
                 Stone(offset){ return costMultiplier('lumber_yard', offset, 2, 1.95); }
             },
             effect(){
-                let lum = BHStorageMulti(spatialReasoning(100));
+                let lum = actions.city.lumber_yard.lumberCap();
                 return `<div>${loc('production',[2,global.resource.Lumber.name])}</div><div>${loc('plus_max_resource',[lum,global.resource.Lumber.name])}</div>`;
+            },
+            lumberCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(100));
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2618,7 +2642,7 @@ export const actions = {
                 Stone(offset){ return costMultiplier('rock_quarry', offset, 10, 1.36); }
             },
             effect(){
-                let stone = BHStorageMulti(spatialReasoning(100));
+                let stone = actions.city.rock_quarry.stoneCap();
                 let asbestos = global.race['smoldering'] ? `<div>${loc('plus_max_resource',[stone,global.resource.Chrysotile.name])}</div>` : '';
                 if (global.tech['mine_conveyor']){
                     return `<div>${loc('city_rock_quarry_effect1',[2])}</div><div>${loc('plus_max_resource',[stone,global.resource.Stone.name])}</div>${asbestos}<div class="has-text-caution">${loc('city_rock_quarry_effect2',[4,$(this)[0].powered()])}</div>`;
@@ -2626,6 +2650,9 @@ export const actions = {
                 else {
                     return `<div>${loc('city_rock_quarry_effect1',[2])}</div><div>${loc('plus_max_resource',[stone,global.resource.Stone.name])}</div>${asbestos}`;
                 }
+            },
+            stoneCap(count){
+                return BHStorageMulti((count??1) * spatialReasoning(100));
             },
             special(){ return global.race['smoldering'] ? true : false; },
             powered(){ return powerCostMod(1); },
@@ -3213,7 +3240,7 @@ export const actions = {
                 let containers=actions.city.wharf.ContVal()
                 return `<div>${loc('city_trade_effect',[2])}</div><div>${loc('city_wharf_effect')}</div><div>${loc('plus_max_crates',[containers])}</div><div>${loc('plus_max_containers',[containers])}</div>`;
             },
-            contVal(){
+            contCap(){
                 let vol = global.tech['world_control'] ? 15 : 10;
                 if (global.tech['particles'] && global.tech['particles'] >= 2){
                     vol *= 2;
@@ -3673,7 +3700,7 @@ export const actions = {
                 let gain = +($(this)[0].knowVal(wiki)).toFixed(0);
                 return `<div>${loc('city_university_effect',[jobScale(1)])}</div><div>${loc('city_max_knowledge',[gain.toLocaleString()])}</div>`;
             },
-            knowVal(wiki){
+            knowCap(wiki){
                 let multiplier = 1;
                 let base = global.tech['science'] && global.tech['science'] >= 8 ? 700 : 500;
                 if (global.city.ptrait.includes('permafrost')){
@@ -3951,7 +3978,7 @@ export const actions = {
                 gain = +(gain).toFixed(0);
                 return `<span>${loc('city_max_knowledge',[gain.toLocaleString()])}</span>, <span class="has-text-caution">${loc('minus_power',[$(this)[0].powered()])}</span>`;
             },
-            knowVal(wiki){
+            knowCap(wiki){
                 let gain=3000;
                 if (global.portal['sensor_drone'] && global.tech['science'] >= 14){
                     gain *= 1 + (wiki ? global.portal.sensor_drone.on : p_on['sensor_drone']) * 0.02;
@@ -5096,8 +5123,18 @@ export function buildTemplate(key, region){
                     Furs(offset){ return costMultiplier('meditation', offset, 8, 1.2); }
                 },
                 effect(){
-                    let zen = global.resource.Zen.amount / (global.resource.Zen.amount + 5000);
+                    let zen = actions.city.meditation.zenDisp();
                     return `<div>${loc(`city_meditation_effect`,[traits.calm.vars()[0]])}</div><div class="has-text-special">${loc(`city_meditation_effect2`,[2])}</div><div class="has-text-special">${loc(`city_meditation_effect3`,[1])}</div><div>${loc(`city_meditation_effect4`,[`${(zen * 100).toFixed(2)}%`])}</div>`;
+                },
+                zenCap(){
+                    return traits.calm.vars()[0]
+                },
+                zenVal(){
+                    return (global.resource[global.race.species].amount * 2) + global.civic.garrison.workers;
+                    
+                },
+                zenDisp(){
+                    return global.resource.Zen.amount / (global.resource.Zen.amount + 5000);
                 },
                 action(args){
                     if (payCosts($(this)[0])){
