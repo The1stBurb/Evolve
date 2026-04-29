@@ -7,7 +7,7 @@ import { defineGovernor, govActive } from './governor.js';
 import { drawTech } from  './actions.js';
 import { soulForgeSoldiers } from './portal.js';
 import { jobScale } from './jobs.js';
-import { templeCount } from './actions.js';
+import { templeCount, closeModalAnim } from './actions.js';
 import { astrologySign, astroVal } from './seasons.js';
 import { warhead } from './resets.js';
 
@@ -321,9 +321,7 @@ function government(govern){
                     hasModalCard: false,
                     customClass: 'evolve-modal',
                     content: '<div id="modalBox" class="modalBox"></div>',
-                    onCancel: () => {
-                        // Modal closed
-                    }
+                    onCancel: () => closeModalAnim() // Modal closed
                 });
 
                 var checkExist = setInterval(function() {
@@ -654,9 +652,7 @@ export function foreignGov(){
                         hasModalCard: false,
                         customClass: 'evolve-modal',
                         content: '<div id="modalBox" class="modalBox"></div>',
-                        onCancel: () => {
-                            // Modal closed
-                        }
+                        onCancel: () => closeModalAnim()
                     });
 
                     var checkExist = setInterval(function() {

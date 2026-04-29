@@ -6355,7 +6355,8 @@ export function setAction(c_action,action,type,old,prediction){
                 else {
                     this.$buefy.modal.open({
                         hasModalCard: false,
-                        content: '<div id="modalBox" class="modalBox"></div>'
+                        content: '<div id="modalBox" class="modalBox"></div>',
+                        onCancel: () => closeModalAnim()
                     });
 
                     let checkExist = setInterval(function(){
@@ -7932,6 +7933,17 @@ function drawModal(c_action,type){
             loadIndustry('mech_station',body);
             break;
     }
+}
+
+export function closeModalAnim() {
+    const modalEl = document.querySelector('.modal.is-active');
+    if (!modalEl) return;
+
+    const ghost = modalEl.cloneNode(true);
+    ghost.classList.add('is-leaving');
+    ghost.style.pointerEvents = 'none';
+    document.body.appendChild(ghost);
+    setTimeout(() => ghost.remove(), 200);
 }
 
 function starDockModal(modal){

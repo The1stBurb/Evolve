@@ -1,7 +1,7 @@
 import { global, tmp_vars, keyMultiplier, breakdown, sizeApproximation, p_on, support_on, active_rituals } from './vars.js';
 import { vBind, clearElement, modRes, flib, calc_mastery, calcPillar, eventActive, easterEgg, trickOrTreat, popover, harmonyEffect, darkEffect, hoovedRename, messageQueue } from './functions.js';
 import { traits, fathomCheck } from './races.js';
-import { templeCount, actions } from './actions.js';
+import { templeCount, actions, closeModalAnim } from './actions.js';
 import { workerScale } from './jobs.js';
 import { hellSupression } from './portal.js';
 import { syndicate } from './truepath.js';
@@ -962,9 +962,7 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
                     hasModalCard: false,
                     customClass: 'evolve-modal',
                     content: '<div id="modalBox" class="modalBox"></div>',
-                    onCancel: () => {
-                        // Modal closed
-                    }
+                    onCancel: () => closeModalAnim() // Modal closed
                 });
                 
                 var checkExist = setInterval(function(){
