@@ -8130,6 +8130,19 @@ function fastLoop(){
     firstRun = false;
 }
 
+function ifExist(main,...args){
+    for(let i in args){
+        let cur_a=args[i]
+        if(main.hasOwnProperty(cur_a)){
+            main=main[cur_a]
+        }
+        else{
+            return null
+        }
+    }
+    return main
+}
+
 function midLoop(){
     const astroSign = astrologySign();
     if (global.race.species === 'protoplasm'){
@@ -9038,15 +9051,16 @@ function midLoop(){
             }
         }
         // Money -HERE
+        let cata_orbit=global.race['cataclysm'] || global.race['orbit_decayed'];
         {
             if (global.city['bank'] || (global.race['cataclysm'] && p_on['spaceport'])){
-                let vault = global.race['cataclysm'] || global.race['orbit_decayed'] ? bank_vault() * 4 : bank_vault();
-                let banks = global.race['cataclysm'] || global.race['orbit_decayed'] ? p_on['spaceport'] : global.city['bank'].count;
+                let vault = cata_orbit ? bank_vault() * 4 : bank_vault();
+                let banks = cata_orbit ? p_on['spaceport'] : global.city['bank'].count;
 
                 let gain = (banks * spatialReasoning(vault));
                 caps['Money'] += gain;
 
-                if (global.race['cataclysm'] || global.race['orbit_decayed']){
+                if (cata_orbit){
                     breakdown.c.Money[loc('space_red_spaceport_title')] = gain+'v';
                 }
                 else {
@@ -9077,15 +9091,12 @@ function midLoop(){
                 if (global.race['warlord'] && global.eden['corruptor'] && global.tech.asphodel >= 12){
                     vault *= 1 + (p_on['corruptor'] || 0) * 0.08;
                 }
-                let banks = global.eden.eternal_bank.count;
-                let gain = (banks * spatialReasoning(vault));
+                let gain = (global.eden.eternal_bank.count * spatialReasoning(vault));
                 caps['Money'] += gain;
                 breakdown.c.Money[loc('eden_eternal_bank_title')] = gain+'v';
             }
             if (global.space['titan_bank']){
-                let vault = bank_vault() * 2;
-                let banks = global.space.titan_bank.count;
-                let gain = (banks * spatialReasoning(vault));
+                let gain = (global.space.titan_bank.count * spatialReasoning(vault));
                 caps['Money'] += gain;
                 breakdown.c.Money[`${planetName().titan} ${loc('city_bank')}`] = gain+'v';
             }
@@ -9121,8 +9132,10 @@ function midLoop(){
             }
             if (global.tech['banking'] >= 4){
                 let cm = 250;
+                let title='tech_bonds'
                 if (global.tech.banking >= 14){
                     cm = 1000000;
+                    title='tech_crypto_currency'
                 }
                 else if (global.tech.banking >= 11){
                     cm = 1000;
@@ -9130,12 +9143,12 @@ function midLoop(){
                 else if (global.tech.banking >= 6){
                     cm = 600;
                 }
-                let gain = cm * (global.resource[global.race.species].amount + global.civic.garrison.workers);
+                let gain = cm * (global.resource[s_name].amount + global.civic.garrison.workers);
                 if (global.race['high_pop']){
                     gain = highPopAdjust(gain);
                 }
                 caps['Money'] += gain;
-                breakdown.c.Money[global.tech.banking >= 14 ? loc('tech_crypto_currency') : loc('tech_bonds')] = gain+'v';
+                breakdown.c.Money[loc(title)] = gain+'v';
             }
         }
         // Population
