@@ -2249,6 +2249,15 @@ export const actions = {
                 Wrought_Iron(offset){ return costMultiplier('storage_yard', offset, 5, bananaPerk(1.35)); }
             },
             effect(){
+                let cap = actions.city.storage_yard.crateVal()
+                if (global.tech['trade'] && global.tech['trade'] >= 3){
+                    return `<div>${loc('plus_max_resource',[cap,global.resource.Crates.name])}</div><div>${loc('city_trade_effect',[1])}</div>`;
+                }
+                else {
+                    return loc('plus_max_resource',[cap,global.resource.Crates.name]);
+                }
+            },
+            crateVal(){
                 let cap = global.tech.container >= 3 ? 20 : 10;
                 if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 1){
                     cap += 10;
@@ -2259,12 +2268,7 @@ export const actions = {
                 if (global.tech['particles'] && global.tech['particles'] >= 2){
                     cap *= 2;
                 }
-                if (global.tech['trade'] && global.tech['trade'] >= 3){
-                    return `<div>${loc('plus_max_resource',[cap,global.resource.Crates.name])}</div><div>${loc('city_trade_effect',[1])}</div>`;
-                }
-                else {
-                    return loc('plus_max_resource',[cap,global.resource.Crates.name]);
-                }
+                return cap
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2309,6 +2313,10 @@ export const actions = {
                 Sheet_Metal(offset){ return costMultiplier('warehouse', offset, 25, bananaPerk(1.25)); }
             },
             effect(){
+                let cap = actions.city.warehouse.contVal()
+                return loc('plus_max_resource',[cap,global.resource.Containers.name]);
+            },
+            contVal(){
                 let cap = global.tech.steel_container >= 2 ? 20 : 10;
                 if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
                     cap += 10;
@@ -2319,7 +2327,7 @@ export const actions = {
                 if (global.tech['particles'] && global.tech['particles'] >= 2){
                     cap *= 2;
                 }
-                return loc('plus_max_resource',[cap,global.resource.Containers.name]);
+                return cap
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -3202,11 +3210,15 @@ export const actions = {
                 Oil(offset){ return costMultiplier('wharf', offset, 750, 1.32); }
             },
             effect(){
-                let containers = global.tech['world_control'] ? 15 : 10;
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    containers *= 2;
-                }
+                let containers=actions.city.wharf.ContVal()
                 return `<div>${loc('city_trade_effect',[2])}</div><div>${loc('city_wharf_effect')}</div><div>${loc('plus_max_crates',[containers])}</div><div>${loc('plus_max_containers',[containers])}</div>`;
+            },
+            contVal(){
+                let vol = global.tech['world_control'] ? 15 : 10;
+                if (global.tech['particles'] && global.tech['particles'] >= 2){
+                    vol *= 2;
+                }
+                return vol
             },
             action(args){
                 if (payCosts($(this)[0])){

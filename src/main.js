@@ -8873,12 +8873,8 @@ function midLoop(){
         // Crates & Containters
             // Crates Only
         {
-            if (global.city['wharf']){
-                let vol = global.tech['world_control'] ? 15 : 10;
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    vol *= 2;
-                }
-                let wharf_count=global.city.wharf.count*vol;
+            if (global.city['wharf']){                
+                let wharf_count=global.city.wharf.count * city.wharf.contVal();
 
                 caps['Crates'] += wharf_count;
                 breakdown.c.Crates[loc('city_wharf')] = (wharf_count) + 'v';
@@ -8893,17 +8889,7 @@ function midLoop(){
                 breakdown.c.Containers[loc('tech_munitions_depot')] = vol + 'v';
             }
             if (global.city['storage_yard']){
-                let size = global.tech.container >= 3 ? 20 : 10;
-                if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 1){
-                    size += 10;
-                }
-                if (global.tech['world_control']){
-                    size += 10;
-                }
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    size *= 2;
-                }
-                let stor_count=global.city['storage_yard'].count * size
+                let stor_count=global.city['storage_yard'].count * city.storage_yard.crateVal()
                 caps['Crates'] += stor_count;
                 breakdown.c.Crates[loc('city_storage_yard')] = stor_count + 'v';
             }
@@ -8947,17 +8933,7 @@ function midLoop(){
         }
             // Containers Only
             if (global.city['warehouse']){
-                let volume = global.tech['steel_container'] >= 2 ? 20 : 10;
-                if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
-                    volume += 10;
-                }
-                if (global.tech['world_control']){
-                    volume += 10;
-                }
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    volume *= 2;
-                }
-                let w_count=(global.city['warehouse'].count * volume)
+                let w_count=(global.city['warehouse'].count * city.warehouse.contVal())
                 caps['Containers'] += w_count;
                 breakdown.c.Containers[loc('city_warehouse')] = w_count + 'v';
             }
