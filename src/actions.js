@@ -2327,21 +2327,23 @@ export const actions = {
                 Sheet_Metal(offset){ return costMultiplier('warehouse', offset, 25, bananaPerk(1.25)); }
             },
             effect(){
-                let cap = actions.city.warehouse.contVal()
+                let cap = $(this)[0].caps.Container()
                 return loc('plus_max_resource',[cap,global.resource.Containers.name]);
             },
-            contCap(){
-                let cap = global.tech.steel_container >= 2 ? 20 : 10;
-                if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
-                    cap += 10;
+            caps:{
+                Container(count){
+                    let cap = global.tech.steel_container >= 2 ? 20 : 10;
+                    if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
+                        cap += 10;
+                    }
+                    if (global.tech['world_control']){
+                        cap += 10;
+                    }
+                    if (global.tech['particles'] && global.tech['particles'] >= 2){
+                        cap *= 2;
+                    }
+                    return cap*(count??1)
                 }
-                if (global.tech['world_control']){
-                    cap += 10;
-                }
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    cap *= 2;
-                }
-                return cap
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2388,8 +2390,7 @@ export const actions = {
                 Iron(offset){ return ((global.city['bank'] ? global.city.bank.count : 0) + (offset || 0)) >= 2 && global.city.ptrait.includes('unstable') ? costMultiplier('bank', offset, traitCostMod('untrustworthy',30), 1.3) : 0; }
             },
             effect(){
-                let vault = bank_vault();
-                vault = spatialReasoning(vault);
+                let vault = $(this)[0].caps.Money()
                 vault = (+(vault).toFixed(0)).toLocaleString();
 
                 if (global.tech['banking'] >= 2){
@@ -2397,6 +2398,11 @@ export const actions = {
                 }
                 else {
                     return loc('plus_max_resource',[`\$${vault}`,loc('resource_Money_name')]);
+                }
+            },
+            caps:{
+                Money(count){
+                    return spatialReasoning(bank_vault()) * (count ?? 1)
                 }
             },
             action(args){
@@ -3237,15 +3243,20 @@ export const actions = {
                 Oil(offset){ return costMultiplier('wharf', offset, 750, 1.32); }
             },
             effect(){
-                let containers=actions.city.wharf.ContVal()
+                let containers=$(this)[0].caps.Containers()
                 return `<div>${loc('city_trade_effect',[2])}</div><div>${loc('city_wharf_effect')}</div><div>${loc('plus_max_crates',[containers])}</div><div>${loc('plus_max_containers',[containers])}</div>`;
             },
-            contCap(){
-                let vol = global.tech['world_control'] ? 15 : 10;
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    vol *= 2;
-                }
-                return vol
+            caps:{
+                Containers(count){
+                    let vol = global.tech['world_control'] ? 15 : 10;
+                    if (global.tech['particles'] && global.tech['particles'] >= 2){
+                        vol *= 2;
+                    }
+                    return vol*(count??1)
+                },
+                Crate(count){
+                    return $(this)[0].caps.Containers(count)
+                },
             },
             action(args){
                 if (payCosts($(this)[0])){
