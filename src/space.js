@@ -950,6 +950,12 @@ const spaceProjects = {
                 desc = desc + '</div>';
                 return desc;
             },
+            caps:{
+                Containers(count){
+                    let g_count=0
+                    return g_count * (count ?? 1)
+                },
+            },
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('garage');

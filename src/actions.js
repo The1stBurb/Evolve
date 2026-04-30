@@ -1402,6 +1402,11 @@ export const actions = {
                 let pop = $(this)[0].citizens();
                 return global.race['sappy'] ? `<div>${loc('plus_max_resource',[pop,loc('citizen')])}</div><div>${loc('city_grove_effect',[2.5])}</div>` : loc('plus_max_resource',[pop,loc('citizen')]);
             },
+            caps:{
+                Pop(count){
+                    return actions.city.basic_housing.citizens()*(count ?? 1)
+                },
+            },
             action(args){
                 if (payCosts($(this)[0])){
                     global['resource'][global.race.species].display = true;
@@ -1454,6 +1459,11 @@ export const actions = {
                 else {
                     return loc('plus_max_citizens',[pop]);
                 }
+            },
+            caps:{
+                Pop(count){
+                    return actions.city.cottage.citizens() * (count ?? 1)
+                },
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -1511,6 +1521,11 @@ export const actions = {
                     return `${loc('plus_max_citizens',[pop])}. <span class="has-text-caution">${loc('minus_power',[$(this)[0].powered()])}</span>`;
                 }
             },
+            caps:{
+                Pop(count){
+                    return actions.city.apartment.citizens() * (count ?? 1)
+                }
+            },
             powered(){
                 let extraVal = govActive('extravagant',1);
                 return powerCostMod(extraVal ? extraVal : 1);
@@ -1560,6 +1575,11 @@ export const actions = {
                 let pop = $(this)[0].citizens();
                 return global.race['carnivore'] && !global.race['artifical'] ? `<div>${loc('plus_max_resource',[pop,loc('citizen')])}</div><div>${loc('city_lodge_effect',[5])}</div>` : loc('plus_max_resource',[pop,loc('citizen')]);
             },
+            caps:{
+                Pop(count){
+                    return actions.city.lodge.citizens() * (count ?? 1)
+                }
+            },
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('lodge','city');
@@ -1600,8 +1620,10 @@ export const actions = {
                 let food = actions.city.smokehouse.foodCap();
                 return `<div>${loc('plus_max_resource',[food, global.resource.Food.name])}</div><div>${loc('city_smokehouse_effect',[10])}</div>`;
             },
-            foodCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(100));
+            caps:{
+                Food(count){
+                    return BHStorageMulti((count??1) * spatialReasoning(100));
+                }
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -1643,8 +1665,10 @@ export const actions = {
                 let production = global.race['ghostly'] ? (2 + traits.ghostly.vars()[1]) : 2;
                 return `<div>${loc('city_soul_well_effect',[production])}</div><div>${loc('plus_max_resource',[souls, loc('resource_Souls_name')])}</div>`;
             },
-            foodCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(500))
+            caps:{
+                Food(count){
+                    return BHStorageMulti((count??1) * spatialReasoning(500))
+                }
             },
             foodVal(){},
             action(args){
@@ -1677,7 +1701,12 @@ export const actions = {
                 Nanite(offset){ return global.race['deconstructor'] ? costMultiplier('slave_pen', offset, 4, 1.36) : 0; },
             },
             effect(){
-                return `<div>${loc('plus_max_resource',[4,global.resource.Slave.name])}</div>`;
+                return `<div>${loc('plus_max_resource',[$(this)[0].caps.Slave(),global.resource.Slave.name])}</div>`;
+            },
+            caps:{
+                Slave(count){
+                    return 4 * (count ?? 1)
+                }
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -1757,6 +1786,11 @@ export const actions = {
                 let pop = $(this)[0].citizens();
                 return global.tech['farm'] ? `<div>${loc('city_farm_effect')}</div><div>${loc('plus_max_resource',[pop,loc('citizen')])}</div>` : loc('city_farm_effect');
             },
+            caps:{
+                Pop(count){
+                    return actions.city.farm.citizens() * (count ?? 1)
+                }
+            },
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('farm','city');
@@ -1824,8 +1858,10 @@ export const actions = {
                 let wood = global.race['kindling_kindred'] || global.race['smoldering'] ? `` : `<div class="has-text-caution">${loc('city_compost_heap_effect2',[0.5,global.resource.Lumber.name])}</div>`;
                 return `<div>${loc('city_compost_heap_effect',[generated])}</div><div>${loc('city_compost_heap_effect3',[store])}</div>${wood}`;
             },
-            foodCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(200));
+            caps:{
+                Food(count){
+                    return BHStorageMulti((count??1) * spatialReasoning(200));
+                }
             },
             foodVal(){},
             switchable(){ return true; },
@@ -1953,8 +1989,10 @@ export const actions = {
                 let food = actions.city.silo.foodCap();
                 return loc('plus_max_resource',[food, global.resource.Food.name]);
             },
-            foodCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(500))
+            caps:{
+                Food(count){
+                    return BHStorageMulti((count ?? 1) * spatialReasoning(500))
+                },
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2263,7 +2301,7 @@ export const actions = {
                 Wrought_Iron(offset){ return costMultiplier('storage_yard', offset, 5, bananaPerk(1.35)); }
             },
             effect(){
-                let cap = actions.city.storage_yard.crateVal()
+                let cap = actions.city.storage_yard.caps.Crates()
                 if (global.tech['trade'] && global.tech['trade'] >= 3){
                     return `<div>${loc('plus_max_resource',[cap,global.resource.Crates.name])}</div><div>${loc('city_trade_effect',[1])}</div>`;
                 }
@@ -2271,18 +2309,20 @@ export const actions = {
                     return loc('plus_max_resource',[cap,global.resource.Crates.name]);
                 }
             },
-            crateCap(){
-                let cap = global.tech.container >= 3 ? 20 : 10;
-                if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 1){
-                    cap += 10;
+            caps:{
+                Crates(count){
+                    let cap = global.tech.container >= 3 ? 20 : 10;
+                    if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 1){
+                        cap += 10;
+                    }
+                    if (global.tech['world_control']){
+                        cap += 10;
+                    }
+                    if (global.tech['particles'] && global.tech['particles'] >= 2){
+                        cap *= 2;
+                    }
+                    return cap * (count ?? 1)
                 }
-                if (global.tech['world_control']){
-                    cap += 10;
-                }
-                if (global.tech['particles'] && global.tech['particles'] >= 2){
-                    cap *= 2;
-                }
-                return cap
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2327,11 +2367,11 @@ export const actions = {
                 Sheet_Metal(offset){ return costMultiplier('warehouse', offset, 25, bananaPerk(1.25)); }
             },
             effect(){
-                let cap = $(this)[0].caps.Container()
+                let cap = $(this)[0].caps.Containers()
                 return loc('plus_max_resource',[cap,global.resource.Containers.name]);
             },
             caps:{
-                Container(count){
+                Containers(count){
                     let cap = global.tech.steel_container >= 2 ? 20 : 10;
                     if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
                         cap += 10;
@@ -2402,6 +2442,9 @@ export const actions = {
             },
             caps:{
                 Money(count){
+                    if(global.race['cataclysm'] && global.space.spaceport.on){
+                        return 0
+                    }
                     return spatialReasoning(bank_vault()) * (count ?? 1)
                 }
             },
@@ -2517,11 +2560,13 @@ export const actions = {
                 Stone(offset){ return costMultiplier('graveyard', offset, 6, 1.9); }
             },
             effect(){
-                let lum = actions.city.graveyard.lumberCap();
+                let lum = actions.city.graveyard.caps.Lumber();
                 return `<div>${loc('city_graveyard_effect',[8])}</div><div>${loc('plus_max_resource',[lum,global.resource.Lumber.name])}</div>`;
             },
-            lumberCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(100));
+            caps:{
+                Lumber(count){
+                    return BHStorageMulti((count??1) * spatialReasoning(100));
+                }
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2562,8 +2607,10 @@ export const actions = {
                 let lum = actions.city.lumber_yard.lumberCap();
                 return `<div>${loc('production',[2,global.resource.Lumber.name])}</div><div>${loc('plus_max_resource',[lum,global.resource.Lumber.name])}</div>`;
             },
-            lumberCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(100));
+            caps:{
+                Lumber(count){
+                    return BHStorageMulti((count??1) * spatialReasoning(100));
+                }
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -2595,7 +2642,7 @@ export const actions = {
             },
             effect(){
                 let impact = global.tech['saw'] >= 2 ? 8 : 5;
-                let lum = BHStorageMulti(spatialReasoning(200));
+                let lum = actions.city.sawmill.caps.Lumber();
                 let desc = `<div>${loc('plus_max_resource',[lum,global.resource.Lumber.name])}</div><div>${loc('production',[impact,global.resource.Lumber.name])}</div>`;
                 if (global.tech['foundry'] && global.tech['foundry'] >= 4){
                     desc = desc + `<div>${loc('crafting',[2,global.resource.Plywood.name])}</div>`;
@@ -2604,6 +2651,11 @@ export const actions = {
                     desc = desc + `<div class="has-text-caution">${loc('city_sawmill_effect3',[4,$(this)[0].powered()])}</div>`;
                 }
                 return desc;
+            },
+            caps:{
+                Lumber(count){
+                    return BHStorageMulti(spatialReasoning(200) * (count ?? 1));
+                }
             },
             powered(){ return powerCostMod(1); },
             powerBalancer(){
@@ -2657,8 +2709,13 @@ export const actions = {
                     return `<div>${loc('city_rock_quarry_effect1',[2])}</div><div>${loc('plus_max_resource',[stone,global.resource.Stone.name])}</div>${asbestos}`;
                 }
             },
-            stoneCap(count){
-                return BHStorageMulti((count??1) * spatialReasoning(100));
+            caps:{
+                Stone(count){
+                    return BHStorageMulti((count??1) * spatialReasoning(100));
+                },
+                Chrysotile(count){
+                    return actions.city.rock_quarry.caps.Stone(count)
+                },
             },
             special(){ return global.race['smoldering'] ? true : false; },
             powered(){ return powerCostMod(1); },
@@ -3115,6 +3172,9 @@ export const actions = {
                 }
                 return desc;
             },
+            caps:{
+                Oil(count){},
+            },
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('oil_well','city');
@@ -3254,8 +3314,8 @@ export const actions = {
                     }
                     return vol*(count??1)
                 },
-                Crate(count){
-                    return $(this)[0].caps.Containers(count)
+                Crates(count){
+                    return actions.city.wharf.caps.Containers(count)
                 },
             },
             action(args){
@@ -4778,8 +4838,13 @@ export function buildTemplate(key, region){
                     Steel(offset){ return costMultiplier('nanite_factory', offset, 1000, dirt_adjust(1.25)); }
                 },
                 effect(){
-                    let val = spatialReasoning(2500);
+                    let val = $(this)[0].caps.Nanite()
                     return `<div>${loc('city_nanite_factory_effect',[global.resource.Nanite.name])}</div><div>${loc('plus_max_resource',[val,global.resource.Nanite.name])}.</div>`;
+                },
+                caps:{
+                    Nanite(count){
+                        return spatialReasoning(2500) * (count ?? 1);
+                    }
                 },
                 special: true,
                 action(args){
