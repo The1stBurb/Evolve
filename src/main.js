@@ -8848,6 +8848,7 @@ function midLoop(){
             let inc=capsIncrease[i]
             inc.calc();
             let is_true=inc.is_true, resource=inc.resource, name=inc.name, title=inc.title;
+
             if(!is_true||!name)break
             let struct_count=p_on[name] != undefined? p_on[name] : (support_on[name] != undefined ? support_on[name] != undefined : global[loci][name].count)
             resource.forEach(res=>{
@@ -9713,7 +9714,7 @@ function midLoop(){
         }
         // Zen
             if (global.race['calm'] && global.city['meditation']) {
-                let m_zen=city.meditation.zenCap() * global.city.meditation.count;
+                let m_zen=city.meditation.caps.Zen(global.city.meditation.count);
                 caps['Zen'] = m_zen;
                 breakdown.c.Zen[loc('city_meditation')] = zen + 'v';
 

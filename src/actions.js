@@ -2443,7 +2443,7 @@ export const actions = {
             caps:{
                 Money(count){
                     if(global.race['cataclysm'] && global.space.spaceport.on){
-                        return 0
+                        return
                     }
                     return spatialReasoning(bank_vault()) * (count ?? 1)
                 }
@@ -3173,7 +3173,9 @@ export const actions = {
                 return desc;
             },
             caps:{
-                Oil(count){},
+                Oil(count){
+                    return (count ?? 1) * spatialReasoning(500)
+                },
             },
             action(args){
                 if (payCosts($(this)[0])){
@@ -5202,8 +5204,10 @@ export function buildTemplate(key, region){
                     let zen = actions.city.meditation.zenDisp();
                     return `<div>${loc(`city_meditation_effect`,[traits.calm.vars()[0]])}</div><div class="has-text-special">${loc(`city_meditation_effect2`,[2])}</div><div class="has-text-special">${loc(`city_meditation_effect3`,[1])}</div><div>${loc(`city_meditation_effect4`,[`${(zen * 100).toFixed(2)}%`])}</div>`;
                 },
-                zenCap(){
-                    return traits.calm.vars()[0]
+                caps:{
+                    Zen(count){
+                        return traits.calm.vars()[0] * (count ?? 1);
+                    },
                 },
                 zenVal(){
                     return (global.resource[global.race.species].amount * 2) + global.civic.garrison.workers;
