@@ -9275,6 +9275,7 @@ function psychicKill(parent){
                     }
                     if (global.stats.psykill === 10){
                         renderPsychicPowers();
+                        drawTech();
                     }
                 }
             },
