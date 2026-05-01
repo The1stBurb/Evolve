@@ -35,7 +35,6 @@ class AMOUNT{
             if its anything else (so a list) -> its good
         
         */
-        
         if(typeof this.resource === 'string'){
             this.resource=[resource]
         }
