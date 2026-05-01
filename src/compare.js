@@ -24,74 +24,45 @@ const actions={
 }
 // Here is the class (will explain)
 class AMOUNT{
-    constructor(loci,name,is_true,resource,title,count){
-        this.loci=loci//location
+    constructor(action,globl,name,is_true,resource,title,count){
         this.name=name//name of struct
         this.resource=null
-        this.tempRes=true
+        this.action=action
+        this.global=globl
         /* 
             If the cap name is a string -> make it a list because then we can remove other checks later
             if its undefined -> we can just get it from the actions struct (this will be updated later for reasons that i cant remember, imma think on that lol)
             if its anything else (so a list) -> its good
         
         */
+        
         if(typeof this.resource === 'string'){
             this.resource=[resource]
-            this.tempRes=false
         }
         else if(resource === undefined){
-            this.resource=[]
-            this.tempRes=true
+            this.resource=Object.keys(this.action.caps)
         }
         else{
             this.resource=resource
-            this.tempRes=false
         }
         this.is_true=is_true//can we actually add the caps?
         this.title=title//whats its name
+
     }
     calc(){
-        let act=this.findAct()
-        if(this.tempRes){
-            this.resource=Object.keys(act[this.name].caps)// get all the resources to cap
-        }
-        this.is_true=this.findGlob().hasOwnProperty(this.name)//make sure it works still
-        this.title=typeof act[this.name].title ==="string"?act[this.name].title : act[this.name].title()//get title, with in case of function
-    }
-    findAct(){
-        //if its a string then one location
-        if(typeof this.loci == "string"){
-            return actions[this.loci]
-        }
-        else{
-            //otherwise get the levels (probably a more efficint way to do this)
-            let main=actions[this.loci[0]]
-            for(let i=1; i<this.loci.length; i++){
-                main=main[this.loci[i]]
-            }
-            return main
-        }
-    }
-    findGlob(){
-        //the global (so far) has only used th first thing 
-        //so like space.spc_home is just space
-        if(typeof this.loci == "string"){
-            return global[this.loci]
-        }
-        else{
-            return global[this.loci[0]]
-        }
+        this.is_true=this.global.hasOwnProperty(this.name)//make sure it works still
+        this.title=typeof this.action.title ==="string"?this.action.title : this.action.title()//get title, with in case of function
     }
 }
 
-function Amount(loci,name,resource,is_true,title){
-    return new AMOUNT(loci,name,resource,is_true,title)
+function Amount(action,globl,name,resource,is_true,title){
+    return new AMOUNT(action,globl,name,resource,is_true,title)
 }
 function c_Amount(name,resource,is_true,title){
-    return new AMOUNT('city',name,resource,is_true,title)
+    return new AMOUNT(actions.city[name],global.city,name,resource,is_true,title)
 }
 function sh_Amount(name,resource,is_true,title){
-    return new AMOUNT(['space',"spc_home"],name,resource,is_true,title)
+    return new AMOUNT(actions.space.spc_home[name],global.space,name,resource,is_true,title)
 }
 //the list
 let capsIncrease=[
@@ -109,9 +80,9 @@ for(let i in capsIncrease){
 
     if(!is_true||!name)break//if its false or doesnt have a name dont add anything
     //checks first if it has anything on, then any support on, then finally just uses the struct count
-    let struct_count=p_on[name] != undefined? p_on[name] : (support_on[name] != undefined ? support_on[name] != undefined : global[loci][name].count)
+    let struct_count=p_on[name] != undefined? p_on[name] : (support_on[name] != undefined ? support_on[name] != undefined : inc.global[name].count)
     resource.forEach(res=>{
-        let gain=inc.findAct()[name].caps[res](struct_count);// get the gain per resource
+        let gain=inc.action.caps[res](struct_count);// get the gain per resource
         if(res=='Pop'){
             res=global.race.species
         }

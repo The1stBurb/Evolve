@@ -8850,9 +8850,9 @@ function midLoop(){
             let is_true=inc.is_true, resource=inc.resource, name=inc.name, title=inc.title;
 
             if(!is_true||!name)break
-            let struct_count=p_on[name] != undefined? p_on[name] : (support_on[name] != undefined ? support_on[name] != undefined : global[loci][name].count)
+            let struct_count=p_on[name] != undefined? p_on[name] : (support_on[name] != undefined ? support_on[name] != undefined : inc.global[name].count)
             resource.forEach(res=>{
-                let gain=inc.findAct()[name].caps[res](struct_count);
+                let gain=inc.action.caps[res](struct_count);
                 if(res=='Pop'){
                     res=global.race.species
                 }
