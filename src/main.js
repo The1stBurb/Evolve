@@ -9317,7 +9317,7 @@ function midLoop(){
             if (global.city['university']){
                 let univCount=global.city.university.count;
 
-                let gain = city.university.knowCap() * univCount;
+                let gain = city.university.knowVal(univCount);
                 lCaps['professor'] += jobScale(univCount);
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('city_university')] = gain+'v';
@@ -9355,7 +9355,7 @@ function midLoop(){
                 }
             }
             if (global.city['biolab']){
-                let gain = p_on['biolab'] * city.biolab.knowCap()
+                let gain = p_on['biolab'] * city.biolab.knowVal()
                 caps['Knowledge'] += gain;
                 breakdown.c.Knowledge[loc('city_biolab')] = gain+'v';
             }

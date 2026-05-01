@@ -3729,7 +3729,7 @@ export const actions = {
                 let gain = +($(this)[0].knowVal(wiki)).toFixed(0);
                 return `<div>${loc('city_university_effect',[jobScale(1)])}</div><div>${loc('city_max_knowledge',[gain.toLocaleString()])}</div>`;
             },
-            knowCap(wiki){
+            knowVal(wiki){
                 let multiplier = 1;
                 let base = global.tech['science'] && global.tech['science'] >= 8 ? 700 : 500;
                 if (global.city.ptrait.includes('permafrost')){
@@ -4007,7 +4007,7 @@ export const actions = {
                 gain = +(gain).toFixed(0);
                 return `<span>${loc('city_max_knowledge',[gain.toLocaleString()])}</span>, <span class="has-text-caution">${loc('minus_power',[$(this)[0].powered()])}</span>`;
             },
-            knowCap(wiki){
+            knowVal(wiki){
                 let gain=3000;
                 if (global.portal['sensor_drone'] && global.tech['science'] >= 14){
                     gain *= 1 + (wiki ? global.portal.sensor_drone.on : p_on['sensor_drone']) * 0.02;
