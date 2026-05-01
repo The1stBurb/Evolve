@@ -19,6 +19,15 @@ import { cancelSearchIndexing, search } from './search.js';
 $('body').empty();
 initPage();
 
+function MenuItem(value,submenu){
+    let item={}
+    item.key=value
+    if(submenu){
+        item.submenu=submenu
+    }
+    return item
+}
+
 function initPage(){
     $('body').append($(`<h1 class="is-sr-only">${loc('wiki_menu_evolve')}</h1>`));
 
