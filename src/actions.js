@@ -1410,7 +1410,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     global['resource'][global.race.species].display = true;
-                    global['resource'][global.race.species].max += $(this)[0].citizens();
                     incrementStruct($(this)[0]);
                     global.settings.showCivic = true;
                     return true;
@@ -1473,7 +1472,6 @@ export const actions = {
             },
             action(args){
                 if (payCosts($(this)[0])){
-                    global['resource'][global.race.species].max += $(this)[0].citizens();
                     incrementStruct('cottage','city');
                     return true;
                 }
@@ -1538,9 +1536,7 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('apartment','city');
-                    if (powerOnNewStruct($(this)[0])){
-                        global['resource'][global.race.species].max += $(this)[0].citizens();
-                    }
+                    powerOnNewStruct($(this)[0])
                     return true;
                 }
                 return false;
@@ -1589,7 +1585,6 @@ export const actions = {
                 if (payCosts($(this)[0])){
                     incrementStruct('lodge','city');
                     global['resource'][global.race.species].display = true;
-                    global['resource'][global.race.species].max += 1;
                     global.settings.showCivic = true;
                     return true;
                 }
@@ -1633,7 +1628,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('smokehouse','city');
-                    global['resource']['Food'].max += BHStorageMulti(spatialReasoning(100));
                     return true;
                 }
                 return false;
@@ -1675,11 +1669,9 @@ export const actions = {
                     return BHStorageMulti((count??1) * spatialReasoning(500))
                 }
             },
-            foodVal(){},
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('soul_well','city');
-                    global['resource']['Food'].max += BHStorageMulti(spatialReasoning(500));
                     return true;
                 }
                 return false;
@@ -1808,7 +1800,6 @@ export const actions = {
                     }
                     if (global.tech['farm']){
                         global['resource'][global.race.species].display = true;
-                        global['resource'][global.race.species].max += $(this)[0].citizens();
                         global.settings.showCivic = true;
                     }
                     return true;
@@ -1868,13 +1859,11 @@ export const actions = {
                     return BHStorageMulti((count??1) * spatialReasoning(200));
                 }
             },
-            foodVal(){},
             switchable(){ return true; },
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('compost','city');
                     global.city.compost.on++;
-                    global['resource']['Food'].max += BHStorageMulti(spatialReasoning(200));
                     return true;
                 }
                 return false;
@@ -2002,7 +1991,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('silo','city');
-                    global['resource']['Food'].max += BHStorageMulti(spatialReasoning(500));
                     return true;
                 }
                 return false;
@@ -2276,12 +2264,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('shed','city');
-                    let multiplier = storageMultipler();
-                    for (const res of $(this)[0].res()){
-                        if (global.resource[res].display){
-                            global.resource[res].max += (spatialReasoning($(this)[0].val(res) * multiplier));
-                        }
-                    };
                     return true;
                 }
                 return false;
@@ -2332,17 +2314,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('storage_yard','city');
-                    let cap = global.tech.container >= 3 ? 20 : 10;
-                    if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 1){
-                        cap += 10;
-                    }
-                    if (global.tech['world_control']){
-                        cap += 10;
-                    }
-                    if (global.tech['particles'] && global.tech['particles'] >= 2){
-                        cap *= 2;
-                    }
-                    global.resource.Crates.max += cap;
                     // A freight yard is always required, so this is the only struct that can unlock crates
                     // Any scenario where a freight yard is unnecessary will begin with crates unlocked
                     if (!global.resource.Crates.display){
@@ -2393,17 +2364,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('warehouse','city');
-                    let cap = global.tech['steel_container'] >= 2 ? 20 : 10;
-                    if (global.stats.achieve['pathfinder'] && global.stats.achieve.pathfinder.l >= 2){
-                        cap += 10;
-                    }
-                    if (global.tech['world_control']){
-                        cap += 10;
-                    }
-                    if (global.tech['particles'] && global.tech['particles'] >= 2){
-                        cap *= 2;
-                    }
-                    global.resource.Containers.max += cap;
                     if (!global.resource.Containers.display){
                         unlockContainers();
                     }
@@ -2455,7 +2415,6 @@ export const actions = {
             },
             action(args){
                 if (payCosts($(this)[0])){
-                    global['resource']['Money'].max += spatialReasoning(1800);
                     incrementStruct('bank','city');
                     global.civic.banker.max = jobScale(global.city.bank.count);
                     return true;
@@ -2494,15 +2453,15 @@ export const actions = {
                 let mana = +(0.01 * darkEffect('magic')).toFixed(3);
                 return `<div>${loc('gain',[mana,global.resource.Mana.name])}</div><div>${loc('plus_max_resource',[max,global.resource.Mana.name])}</div>`;
             },
-            manaCap(){
-                return spatialReasoning(5);
+            caps:{
+                Mana(count){
+                    return (count ?? 1) * spatialReasoning(5);
+                },
             },
-
             special(){ return global.tech['magic'] && global.tech.magic >= 3 ? true : false; },
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('pylon','city');
-                    global.resource.Mana.max += spatialReasoning(5);
                     return true;
                 }
                 return false;
@@ -2576,7 +2535,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('graveyard','city');
-                    global['resource']['Lumber'].max += BHStorageMulti(spatialReasoning(100));
                     return true;
                 }
                 return false;
@@ -2621,7 +2579,6 @@ export const actions = {
                 if (payCosts($(this)[0])){
                     incrementStruct('lumber_yard','city');
                     global.civic.lumberjack.display = true;
-                    global['resource']['Lumber'].max += BHStorageMulti(spatialReasoning(100));
                     return true;
                 }
                 return false;
@@ -2671,7 +2628,6 @@ export const actions = {
             action(args){
                 if (payCosts($(this)[0])){
                     incrementStruct('sawmill','city');
-                    global['resource']['Lumber'].max += BHStorageMulti(spatialReasoning(200));
                     powerOnNewStruct($(this)[0]);
                     return true;
                 }
@@ -2741,15 +2697,10 @@ export const actions = {
                 if (payCosts($(this)[0])){
                     incrementStruct('rock_quarry','city');
                     global.civic.quarry_worker.display = true;
-                    let stone = BHStorageMulti(spatialReasoning(100));
-                    global['resource']['Stone'].max += stone;
-                    if (global.race['smoldering'] && global.resource.Chrysotile.display){
-                        global['resource']['Chrysotile'].max += stone;
-                        if (global.city.rock_quarry.count === 1){
-                            global.settings.showCivic = true;
-                            global.settings.showIndustry = true;
-                            defineIndustry();
-                        }
+                    if (global.race['smoldering'] && global.resource.Chrysotile.display && global.city.rock_quarry.count === 1){
+                        global.settings.showCivic = true;
+                        global.settings.showIndustry = true;
+                        defineIndustry();
                     }
                     powerOnNewStruct($(this)[0]);
                     return true;
@@ -5913,7 +5864,7 @@ export function BHStorageMulti(val){
     if (global.stats.achieve['blackhole']){
         val *= 1 + global.stats.achieve.blackhole.l * 0.05;
     }
-    return Math.round(val);
+    return val;
 }
 
 export function storageMultipler(scale = 1, wiki = false){
@@ -5937,9 +5888,6 @@ export function storageMultipler(scale = 1, wiki = false){
     if (global.tech['shelving'] && global.tech.shelving >= 3){
         multiplier *= 1.5;
     }
-    if (global.stats.achieve['blackhole']){
-        multiplier *= 1 + global.stats.achieve.blackhole.l * 0.05;
-    }
     multiplier *= global.tech['world_control'] ? 3 : 1;
     if (global.race['ascended']){
         multiplier *= 1.1;
@@ -5950,7 +5898,7 @@ export function storageMultipler(scale = 1, wiki = false){
     if (global.tech['storage'] >= 7 && global.interstellar['cargo_yard']){
         multiplier *= 1 + ((global.interstellar['cargo_yard'].count * get_qlevel(wiki)) / 100);
     }
-    return multiplier * scale;
+    return BHStorageMulti(multiplier) * scale;
 }
 
 export function checkCityRequirements(action){

@@ -6,7 +6,7 @@ import { spatialReasoning, unlockContainers, drawResourceTab, atomic_mass } from
 import { loadFoundry, jobScale } from './jobs.js';
 import { defineIndustry, addSmelter } from './industry.js';
 import { garrisonSize, describeSoldier, checkControlling, govTitle } from './civics.js';
-import { actions, payCosts, powerOnNewStruct, initStruct, setAction, setPlanet, storageMultipler, drawTech, bank_vault, updateDesc, actionDesc, templeEffect, templeCount, casinoEffect, wardenLabel, buildTemplate, structName } from './actions.js';
+import { actions, payCosts, powerOnNewStruct, initStruct, setAction, setPlanet, storageMultipler, drawTech, bank_vault, updateDesc, actionDesc, templeEffect, templeCount, casinoEffect, wardenLabel, buildTemplate, structName, BHStorageMulti } from './actions.js';
 import { outerTruthTech, syndicate, drawShipYard } from './truepath.js';
 import { production, highPopAdjust } from './prod.js';
 import { defineGovernor, govActive } from './governor.js';
@@ -923,7 +923,7 @@ const spaceProjects = {
                 if (global.tech['shelving'] && global.tech.shelving >= 3){
                     multiplier *= 1.5;
                 }
-                multiplier *= global.stats.achieve['blackhole'] ? 1 + (global.stats.achieve.blackhole.l * 0.05) : 1;
+                multiplier = BHStorageMulti(multiplier);
                 if (h){
                     return global.tech['shelving'] && global.tech.shelving >= 2 ? multiplier * 3 : multiplier;
                 }
@@ -6622,11 +6622,8 @@ export function gatewayStorage(){
     if (global.race['pack_rat']){
         multiplier *= 1.05;
     }
-    if (global.stats.achieve['blackhole']){
-        multiplier *= 1 + global.stats.achieve.blackhole.l * 0.05;
-    }
     multiplier *= global.tech['world_control'] ? 2 : 1;
-    return multiplier;
+    return BHStorageMulti(multiplier);
 }
 
 const structDefinitions = {

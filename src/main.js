@@ -8141,73 +8141,44 @@ function ifExist(main,...args){
     return main
 }
 class AMOUNT{
-    constructor(loci,name,is_true,resource,title,count){
-        this.loci=loci
-        this.name=name
+    constructor(action,globl,name,is_true,resource,title,count){
+        this.name=name//name of struct
         this.resource=null
-        this.tempRes=true
+        this.action=action
+        this.global=globl
+        /* 
+            If the cap name is a string -> make it a list because then we can remove other checks later
+            if its undefined -> we can just get it from the actions struct (this will be updated later for reasons that i cant remember, imma think on that lol)
+            if its anything else (so a list) -> its good
+        
+        */
         if(typeof this.resource === 'string'){
             this.resource=[resource]
-            this.tempRes=false
         }
         else if(resource === undefined){
-            this.resource=Object.keys(actions['city'][name].caps)
-            this.rempRes=true
+            this.resource=Object.keys(this.action.caps)
         }
         else{
             this.resource=resource
-            this.tempRes=false
         }
-        this.is_true=is_true
-        this.title=title
-        this.count=count
-        this.works=true
+        this.is_true=is_true//can we actually add the caps?
+        this.title=title//whats its name
+
     }
     calc(){
-        let act=this.findAct()
-        if(this.tempRes){
-            this.resource=Object.keys(act[this.name].caps)
-            this.rempRes=true
-        }
-        this.is_true=this.findGlob().hasOwnProperty(this.name)
-        // console.log(title)
-        this.title=typeof act[this.name].title ==="string"?act[this.name].title : act[this.name].title()
-    }
-    findAct(){
-        if(typeof this.loci == "string"){
-            return actions[this.loci]
-        }
-        else{
-            let main=actions[this.loci[0]]
-            for(let i=1; i<this.loci.length; i++){
-                main=main[this.loci[i]]
-            }
-            return main
-        }
-    }
-    findGlob(){
-        if(typeof this.loci == "string"){
-            return global[this.loci]
-        }
-        else{
-            return global[this.loci[0]]
-        }
+        this.is_true=this.global.hasOwnProperty(this.name)//make sure it works still
+        this.title=typeof this.action.title ==="string"?this.action.title : this.action.title()//get title, with in case of function
     }
 }
-function Amount(loci,name,resource,is_true,title){
-    return new AMOUNT(loci,name,resource,is_true,title)
+
+function Amount(action,globl,name,resource,is_true,title){
+    return new AMOUNT(action,globl,name,resource,is_true,title)
 }
 function c_Amount(name,resource,is_true,title){
-    return Amount('city',name,resource,is_true,title)
+    return new AMOUNT(actions.city[name],global.city,name,resource,is_true,title)
 }
 function sh_Amount(name,resource,is_true,title){
-    return Amount(['space',"spc_home"],name,resource,is_true,title)
-}
-function st_Amount(name,resource,is_true,title){
-    return Amount(['space',"spc_titan"],name,resource,is_true,title)
-}
-function sr_Amount(name,resource,is_true,title){
-    return Amount(['space',"spc_red"],name,resource,is_true,title)
+    return new AMOUNT(actions.space.spc_home[name],global.space,name,resource,is_true,title)
 }
 let capsIncrease=[
     c_Amount('wharf'),
@@ -8846,17 +8817,19 @@ function midLoop(){
         let loci='city'
         for(let i in capsIncrease){
             let inc=capsIncrease[i]
-            inc.calc();
-            let is_true=inc.is_true, resource=inc.resource, name=inc.name, title=inc.title;
-
-            if(!is_true||!name)break
+            inc.calc();//make sure everything is correct
+            let is_true=inc.is_true, resource=inc.resource, name=inc.name, title=inc.title;//relic of creation of this, will remove when its finished
+            if(!is_true||!name)continue//if its false or doesnt have a name dont add anything
+            //checks first if it has anything on, then any support on, then finally just uses the struct count
             let struct_count=p_on[name] != undefined? p_on[name] : (support_on[name] != undefined ? support_on[name] != undefined : inc.global[name].count)
             resource.forEach(res=>{
-                let gain=inc.action.caps[res](struct_count);
+                let gain=inc.action.caps[res](struct_count);// get the gain per resource
                 if(res=='Pop'){
                     res=global.race.species
                 }
-                if(gain){
+                //if it isn't undefined or null, add stuff in
+                //this is because somethings have other conditions, banks only give money if you dont have cataclysm and a spaceport on
+                if(gain!=undefined && gain !=null){
                     caps[res]+=gain;
                     breakdown.c[res][title]=gain+'v';
                 }
@@ -9178,7 +9151,7 @@ function midLoop(){
                 breakdown.c.Money[loc(title)] = gain+'v';
             }
             //when not bank vv
-            if (global.city['bank'] || (global.race['cataclysm'] && p_on['spaceport'])){
+            if ((global.race['cataclysm'] && p_on['spaceport'])){
                 let vault = cata_orbit ? bank_vault() * 4 : bank_vault();
                 let banks = cata_orbit ? p_on['spaceport'] : global.city['bank'].count;
 
@@ -9229,11 +9202,6 @@ function midLoop(){
                 let vault = casinos * casino_vault();
                 caps['Money'] += vault;
                 breakdown.c.Money[structName('casino')] = vault+'v';
-            }
-            if (global.city['cottage'] && global.tech['home_safe']){
-                let gain = (global.city['cottage'].count * spatialReasoning(global.tech.home_safe >= 2 ? (global.tech.home_safe >= 3 ? 5000 : 2000) : 1000));
-                caps['Money'] += gain;
-                breakdown.c.Money[housingLabel('medium')] = gain+'v';
             }
         }
         // Population

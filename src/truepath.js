@@ -5,7 +5,7 @@ import { spatialReasoning, unlockContainers } from './resources.js';
 import { armyRating, garrisonSize, soldierDeath } from './civics.js';
 import { jobScale, job_desc, loadFoundry, limitCraftsmen } from './jobs.js';
 import { production, highPopAdjust } from './prod.js';
-import { actions, payCosts, powerOnNewStruct, setAction, drawTech, bank_vault, buildTemplate, casinoEffect, housingLabel, structName, initStruct } from './actions.js';
+import { actions, payCosts, powerOnNewStruct, setAction, drawTech, bank_vault, buildTemplate, casinoEffect, housingLabel, structName, initStruct, BHStorageMulti } from './actions.js';
 import { fuel_adjust, int_fuel_adjust, spaceTech, renderSpace, checkRequirements, incrementStruct, planetName } from './space.js';
 import { defineGovernor, removeTask, govActive } from './governor.js';
 import { defineIndustry, nf_resources, addSmelter, setupRituals, cancelRituals } from './industry.js';
@@ -5498,9 +5498,6 @@ export function tpStorageMultiplier(type,heavy,wiki){
     if (global.race['pack_rat']){
         multiplier *= 1 + (traits.pack_rat.vars()[1] / 100);
     }
-    if (global.stats.achieve['blackhole']){
-        multiplier *= 1 + global.stats.achieve.blackhole.l * 0.05;
-    }
     if (global.tech['world_control']){
         multiplier *= 3;
     }
@@ -5529,7 +5526,7 @@ export function tpStorageMultiplier(type,heavy,wiki){
         }
         break;
     }
-    return multiplier;
+    return BHStorageMulti(multiplier);
 }
 
 export function jumpGateShutdown(){
