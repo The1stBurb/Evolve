@@ -9,6 +9,7 @@ import { govActive, defineGovernor } from './governor.js';
 import { govEffect } from './civics.js';
 import { highPopAdjust, production, teamster } from './prod.js';
 import { loc } from './locale.js';
+import { astroVal } from './seasons.js';
 
 export const resource_values = {
     Food: 5,
