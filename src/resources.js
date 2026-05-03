@@ -175,13 +175,28 @@ export const supplyValue = {
     Scarletite: { in: 35, out: 250 }
 };
 
-const resourceTabOrder = {
+const resourceTabOrder = Vue.reactive({
     market: [],
     storage: [],
     ejector: [],
     supply: [],
-    alchemy: []
-};
+    alchemy: [],
+    sidebar: []
+});
+
+/**
+ * shared helper function for determining reactive zebra striping in resource lists
+ * returns 'prime' to match the theme's primary color, or 'alt' to use an alternate color
+ * the order array needs to be created with Vue.reactive() for this to work properly
+ */
+function computeZebraStripe(orderArray, name) {
+    let visibleIndex = 0;
+    for (const resName of orderArray) {
+        if (resName === name) break;
+        if (global.resource[resName]?.display === true) visibleIndex++;
+    }
+    return visibleIndex % 2 === 1 ? 'alt' : 'prime';
+}
 
 export function craftCost(manual=false){
     let costs = {
@@ -571,7 +586,7 @@ export function initResourceTabs(tab) {
     const tabsToInit = tab ? [tab] : ['market', 'storage', 'ejector', 'supply', 'alchemy'];
 
     // clear each of the order arrays for tabs we're about to rebuild
-    tabsToInit.forEach(currentTab => {
+    tabsToInit.forEach((currentTab) => {
         switch (currentTab) {
             case 'market':
                 resourceTabOrder.market = [];
@@ -597,7 +612,7 @@ export function initResourceTabs(tab) {
 
     // create/update resource elements
     if (tmp_vars.hasOwnProperty('resource')) {
-        Object.keys(tmp_vars.resource).forEach(name => {
+        Object.keys(tmp_vars.resource).forEach((name) => {
             if (!global.resource[name]) return;
 
             const color = tmp_vars.resource[name].color;
@@ -605,49 +620,85 @@ export function initResourceTabs(tab) {
             const stackable = tmp_vars.resource[name].stackable;
 
             // make sure we dynamically handle unlocking containers while crates already exist
-            if (stackable) {
+            if (stackable && tabsToInit.includes('storage')) {
                 const elementId = `stack-${name}`;
                 const exists = $(`#${elementId}`).length > 0;
+
+                resourceTabOrder.storage.push(name);
 
                 if (!exists) {
                     // first time; create the element
                     resourceTabOrder.storage.push(name);
                     containerItem('#resStorage', name, color);
                 } else {
-                    // element exists - check if we need to update for containers
-                    // Vue will handle showing/hiding the container controls with v-show
-                    // but if we just unlocked containers, we need to rebuild the template
-                    if (global.resource.Containers?.display && $(`#${elementId} .trade`).length < 2) {
-                        // containers just unlocked, gotta rebuild
+                    // element exists; validate controls
+                    const currentControls = $(`#${elementId} .trade`).length;
+                    const expectedControls =
+                        (global.resource.Crates?.display ? 1 : 0) +
+                        (global.resource.Containers?.display ? 1 : 0);
+
+                    // clean rebuild if needed
+                    if (expectedControls > currentControls) {
                         $(`#${elementId}`).remove();
                         containerItem('#resStorage', name, color);
                     }
                 }
-            } 
-            
-            if (tradable && $(`#market-${name}`).length === 0) {
-                resourceTabOrder.market.push(name);
-                marketItem('#market', name, color, true);
             }
 
-            if (atomic_mass[name] && $(`#eject${name}`).length === 0) {
+            const inMarketList = $(`#market-${name}`).length > 0;
+            // add resource to market tab if needed
+            if (tradable && tabsToInit.includes('market')) {
+                resourceTabOrder.market.push(name);
+                if (!inMarketList) {
+                    marketItem('#market', name, color, true);
+                } else {
+                    // if it's already in the market list, validate it's trade route controls state
+                    const shouldHaveRoutes =
+                        (global.tech['trade'] && !global.race['terrifying']) ||
+                        (global.race['banana'] && name === 'Food');
+                    const hasRouteControls = $(`#market-${name} .trade`).length > 0;
+
+                    // clean rebuild if it should have controls but doesn't
+                    if (shouldHaveRoutes && !hasRouteControls) {
+                        $(`#market-${name}`).remove();
+                        marketItem('#market', name, color, true);
+                    }
+                }
+            }
+
+            const inEjectorList = $(`#eject${name}`).length > 0;
+            // add resource to mass ejector tab if needed
+            if (atomic_mass[name] && tabsToInit.includes('ejector')) {
                 resourceTabOrder.ejector.push(name);
-                loadEjector(name, color);
+                if (!inEjectorList) {
+                    loadEjector(name, color);
+                }
             }
-            if (supplyValue[name] && $(`#supply${name}`).length === 0) {
+
+            const inSupplyList = $(`#supply${name}`).length > 0;
+            // add resource to supply tab if needed
+            if (supplyValue[name] && tabsToInit.includes('supply')) {
                 resourceTabOrder.supply.push(name);
-                loadSupply(name, color);
+                if (!inSupplyList) {
+                    loadSupply(name, color);
+                }
             }
-            if (tradeRatio[name] && global.race.universe === 'magic' && name !== 'Crystal' && $(`#alchemy${name}`).length === 0) {
-                global['resource'][name]['basic'] = tradable;
-                resourceTabOrder.alchemy.push(name);  // u cannot alchemize crystal
-                loadAlchemy(name, color, tradable);
+
+            const inAlchemyList = $(`#alchemy${name}`).length > 0;
+            const canAlchemise = global.race.universe === 'magic' && name !== 'Crystal';
+            // and add resource to alchemy tab if needed
+            if (tradeRatio[name] && canAlchemise && tabsToInit.includes('alchemy')) {
+                resourceTabOrder.alchemy.push(name);
+                if (!inAlchemyList) {
+                    global['resource'][name]['basic'] = tradable;
+                    loadAlchemy(name, color, tradable);
+                }
             }
         });
     }
 
     // initialize tab footers, IE counters and galactic trade
-    tabsToInit.forEach(currentTab => {
+    tabsToInit.forEach((currentTab) => {
         switch (currentTab) {
             case 'market':
                 loadRouteCounter();
@@ -661,7 +712,7 @@ export function initResourceTabs(tab) {
 
     // update resource names
     if (tmp_vars.hasOwnProperty('resource')) {
-        Object.keys(tmp_vars.resource).forEach(name => {
+        Object.keys(tmp_vars.resource).forEach((name) => {
             if (global.resource[name]) {
                 setResourceName(name);
             }
@@ -698,6 +749,8 @@ export function drawResourceTab(tab) {
 
 // Sets up resource definitions
 export function defineResources(wiki){
+    resourceTabOrder.sidebar = []; // clear left sidebar so we don't get duplicates on new evolutions
+
     if (global.race.species === 'protoplasm'){
         let base = 100;
         if (global.stats.achieve['mass_extinction'] && global.stats.achieve['mass_extinction'].l > 1){
@@ -859,11 +912,33 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
 
     var res_container;
     if (global.resource[name].max === -1 || global.resource[name].max === -2) {
-        res_container = $(`<div class="resource crafted" v-show="display"><div><h3 class="res has-text-${color}">{{ namespace(name) }}</h3><span id="cnt${name}" class="count">{{ diffSize(amount) }}</span></div></div>`);
+        res_container = $(/*html*/ `
+            <div class="resource crafted" v-show="display">
+                <div>
+                    <h3 class="res has-text-${color}">
+                        {{ namespace(name) }}
+                    </h3>
+                    <span id="cnt${name}" class="count">
+                    {{ diffSize(amount) }}
+                    </span>
+                </div>
+            </div>
+        `);
     } else {
         // zebra striping for left sidebar resources
         // handle showBar in :style only instead of :class
-        res_container = $(`<div class="resource" v-show="display" :class="zebraClass" :style="barStyle"><div><h3 class="res has-text-${color} bar" @click="toggle('${name}')">{{ namespace(name) }}</h3><span id="cnt${name}" class="count">{{ size(amount) }} / {{ size(max) }}</span></div></div>`);
+        res_container = $(/*html*/ `
+            <div class="resource" v-show="display" :class="[stripeClass, { showBar: bar && max > 0 }]" :style="barStyle">
+                <div>
+                    <h3 class="res has-text-${color} bar" @click="toggle('${name}')">
+                        {{ namespace(name) }}
+                    </h3>
+                    <span id="cnt${name}" class="count">
+                        {{ size(amount) }} / {{ size(max) }}
+                    </span>
+                </div>
+            </div>
+        `);
     }
     var bind_container = $(`<div id="res${name}"></div>`);
     bind_container.append(res_container);
@@ -898,37 +973,16 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
     }
     
     $('#resources').append(bind_container);
+    resourceTabOrder.sidebar.push(name);
     
     vBind({
         el: `#res${name}`,
         data: global['resource'][name],
         computed: {
-            // computed zebra class for left sidebar, either 'prime' or 'alt', with optional 'showBar'
-            zebraClass() {
-                let classes = [];
-
-                // determine base stripe (prime = light, alt = dark)
-                let visibleIndex = 0;
-                const allResources = $('#resources .resource').toArray();
-                for (const el of allResources) {
-                    if (el === this.$el) break;
-                    if ($(el).is(':visible')) {
-                        visibleIndex++;
-                    }
-                }
-
-                if (visibleIndex % 2 === 1) {
-                    classes.push('alt');
-                } else {
-                    classes.push('prime');
-                }
-
-                // add showBar class if resource progress bars are enabled for this resource
-                if (this.bar) {
-                    classes.push('showBar');
-                }
-
-                return classes.join(' ');
+            // left sidebar striping
+            stripeClass() {
+                if (!this.display) return 'prime';
+                return computeZebraStripe(resourceTabOrder.sidebar, name);
             },
 
             barStyle() {
@@ -1009,14 +1063,11 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
                 }
                 return costs;
             },
-            toggle(res) {
-                if (global.settings.resBar[res]) {
-                    global.settings.resBar[res] = false;
-                } else {
-                    global.settings.resBar[res] = true;
-                }
-                global.resource[name]['bar'] = global.settings.resBar[name];
-            }
+            toggle() {
+                const newValue = !global.settings.resBar[name];
+                global.settings.resBar[name] = newValue;
+                global.resource[name].bar = newValue;
+            },
         }
     });
 
@@ -1473,7 +1524,7 @@ export function marketItem(container, name, color, full) {
     }
 
     if (full && ((global.tech['trade'] && !global.race['terrifying']) || (global.race['banana'] && name === 'Food'))) {
-        template += `<span class="trade" v-show="isMarketActive">`;
+        template += `<span class="trade" v-show="hasRoutes">`;
         template += `<span class="has-text-warning">${loc('resource_market_routes')}</span>`;
         template += `<b-tooltip :label="autoSellTooltip" position="is-bottom" size="is-small" multilined animated>`;
         template += `<span role="button" aria-label="export ${global.resource[name].name}" class="sub has-text-danger" @click="autoSell"><span>-</span></span>`;
@@ -1503,26 +1554,15 @@ export function marketItem(container, name, color, full) {
 
             // reactive zebra striping, accounts for differring resource visibility in different tabs
             zebraClass() {
-                if (!this.display) return 'prime';
-
-                let visibleIndex = 0;
-                for (const resName of resourceTabOrder.market) {
-                    if (resName === name) break;
-                    // only count visible resources before this one
-                    if (global.resource[resName]?.display) {
-                        visibleIndex++;
-                    }
-                }
-
-                return visibleIndex % 2 === 1 ? 'alt' : 'prime';
+                return computeZebraStripe(resourceTabOrder.market, name);
             },
 
             displayName() {
                 return this.name.replace("_", " ");
             },
 
-            isMarketActive() {
-                return global.city.market.active;
+            hasRoutes() {
+                return global.city.market.mtrade > 0;
             },
 
             buyPrice() {
@@ -2056,18 +2096,7 @@ export function containerItem(container, name, color) {
 
             // reactive zebra striping for storage tab
             zebraClass() {
-                if (!this.display) return 'prime';
-
-                let visibleIndex = 0;
-                for (const resName of resourceTabOrder.storage) {
-                    if (resName === name) break;
-                    // only count displayed resources
-                    if (global.resource[resName]?.display) {
-                        visibleIndex++;
-                    }
-                }
-
-                return visibleIndex % 2 === 1 ? 'alt' : 'prime';
+                return computeZebraStripe(resourceTabOrder.storage, name);
             },
 
             crateDisplay() {
@@ -2504,17 +2533,7 @@ function loadRouteCounter(){
         computed: {
             // computed property using reactive data
             footerZebraClass() {
-                let visibleCount = 0;
-
-                for (const resName of resourceTabOrder.market) {
-                    // only counts displayed resources for this tab, updates reactively
-                    if (global.resource[resName]?.display) {
-                        visibleCount++;
-                    }
-                }
-
-                // counter should alternate from last resource
-                return visibleCount % 2 === 1 ? 'alt' : 'prime';
+                return computeZebraStripe(resourceTabOrder.market, null); // null will just count all visible
             }
         },
         methods: {
@@ -2535,7 +2554,7 @@ function loadRouteCounter(){
                 return count;
             }
         },
-        template: `<div class="market-item" v-show="active" :class="footerZebraClass">
+        template: `<div class="market-item" v-show="mtrade > 0" :class="footerZebraClass">
             <div id="tradeTotalPopover">
                 <span class="tradeTotal${no_market}">
                     <span class="has-text-caution">${loc('resource_market_trade_routes')}</span>&nbsp; 
@@ -2582,18 +2601,7 @@ function loadContainerCounter(){
         },
         computed: {
             footerZebraClass() {
-                let visibleCount = 0;
-
-                // use the same reactive array that storage resources use
-                for (const resName of resourceTabOrder.storage) {
-                    // only count displayed resources for this tab
-                    if (global.resource[resName]?.display) {
-                        visibleCount++;
-                    }
-                }
-
-                // counter should alternate from last resource
-                return visibleCount % 2 === 1 ? 'alt' : 'prime';
+                return computeZebraStripe(resourceTabOrder.storage, null); // null will just count all visible
             }
         },
         template: `<div class="market-item" :class="footerZebraClass">
@@ -3087,17 +3095,7 @@ export function loadEjector(name,color){
 
                 // reactive zebra striping for ejector tab
                 zebraClass() {
-                    if (!this.display) return '';
-
-                    let visibleIndex = 0;
-                    for (const resName of resourceTabOrder.ejector) {
-                        if (resName === name) break;
-                        if (global.resource[resName]?.display) {
-                            visibleIndex++;
-                        }
-                    }
-
-                    return visibleIndex % 2 === 1 ? 'alt' : '';
+                    return computeZebraStripe(resourceTabOrder.ejector, name);
                 },
 
                 ejectAmount() {
@@ -3195,18 +3193,7 @@ export function loadSupply(name, color) {
 
                 // reactive zebra striping for supply tab
                 zebraClass() {
-                    if (!this.display) return 'prime';
-
-                    let visibleIndex = 0;
-                    for (const resName of resourceTabOrder.supply) {
-                        if (resName === name) break;
-                        // only count displayed resources
-                        if (global.resource[resName]?.display) {
-                            visibleIndex++;
-                        }
-                    }
-
-                    return visibleIndex % 2 === 1 ? 'alt' : 'prime';
+                    return computeZebraStripe(resourceTabOrder.supply, name);
                 },
 
                 supplyAmount() {
@@ -3283,18 +3270,7 @@ export function loadAlchemy(name, color, basic) {
 
                 // reactive zebra striping for alchemy
                 zebraClass() {
-                    if (!this.display) return 'prime';
-
-                    let visibleIndex = 0;
-                    for (const resName of resourceTabOrder.alchemy) {
-                        if (resName === name) break;
-                        // only count displayed resources in the alchemy tab
-                        if (global.resource[resName]?.display) {
-                            visibleIndex++;
-                        }
-                    }
-
-                    return visibleIndex % 2 === 1 ? 'alt' : 'prime';
+                    return computeZebraStripe(resourceTabOrder.alchemy, name);
                 },
 
                 alchemyAmount() {
