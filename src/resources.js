@@ -628,7 +628,6 @@ export function initResourceTabs(tab) {
 
                 if (!exists) {
                     // first time; create the element
-                    resourceTabOrder.storage.push(name);
                     containerItem('#resStorage', name, color);
                 } else {
                     // element exists; validate controls
