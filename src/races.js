@@ -9439,7 +9439,7 @@ function psychicMindBreak(parent){
     parent.append(container);
 
     container.append($(`<div class="header">${loc('psychic_mind_break_title')}</div>`));
-    container.append(`<div><b-button v-html="break()" @click="breakMind()"></b-button></div>`);
+    container.append(`<div><b-button v-html="mindBreakLabel()" @click="breakMind()"></b-button></div>`);
 
     let cost = global.tech.psychic >= 5 ? 64 : 80;
     vBind({
@@ -9466,7 +9466,7 @@ function psychicMindBreak(parent){
                     }
                 }
             },
-            break(){
+            mindBreakLabel(){
                 return loc(`psychic_mind_break_button`,[cost]);
             }
         }
@@ -9486,7 +9486,7 @@ function psychicCapture(parent){
     parent.append(container);
 
     container.append($(`<div class="header">${loc('psychic_stun_title')}</div>`));
-    container.append(`<div><b-button v-html="break()" @click="stun()"></b-button></div>`);
+    container.append(`<div><b-button v-html="stunLabel()" @click="stun()"></b-button></div>`);
 
     let cost = global.tech.psychic >= 5 ? 80 : 100;
     vBind({
@@ -9511,7 +9511,7 @@ function psychicCapture(parent){
                     }
                 }
             },
-            break(){
+            stunLabel() {
                 return loc(`psychic_stun_button`,[cost]);
             }
         }
