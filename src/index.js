@@ -357,8 +357,11 @@ function updateQueueStyle(){
         });
 }
 
-export function initTabs(){
-    if (global.settings.tabLoad){
+export function initTabs() {
+    if (global.settings.tabLoad) {
+        if (global.race.species === 'protoplasm') {
+            drawEvolution();
+        }
         loadTab(`mTabCivil`);
         loadTab(`mTabCivic`);
         loadTab(`mTabResearch`);
@@ -366,14 +369,13 @@ export function initTabs(){
         loadTab(`mTabArpa`);
         loadTab(`mTabStats`);
         loadTab(`mTabObserve`);
-    }
-    else {
+    } else {
         loadTab(global.settings.civTabs);
     }
 }
 
 export function loadTab(tab){
-    if (!global.settings.tabLoad){
+    if (!global.settings.tabLoad) {
         clearResDrag();
         clearGrids();
         clearMechDrag();
@@ -384,7 +386,6 @@ export function loadTab(tab){
             clearTimeout(global.tabClearTimeout);
         }
         let tabsToClear = [
-            `evolution`,
             `mTabCivil`,
             `mTabCivic`,
             `mTabResearch`,
@@ -395,28 +396,25 @@ export function loadTab(tab){
         ];
         // identify the incoming tab so we can clear it immediately
         // and delay clearing all others to allow the outgoing animation to finish
-        let incoming = "mTabObserve";
+        let incoming = 'mTabObserve';
         switch (tab) {
-            case 0:
-                incoming = "evolution";
-                break;
             case 1:
-                incoming = "mTabCivil";
+                incoming = 'mTabCivil';
                 break;
             case 2:
-                incoming = "mTabCivic";
+                incoming = 'mTabCivic';
                 break;
             case 3:
-                incoming = "mTabResearch";
+                incoming = 'mTabResearch';
                 break;
             case 4:
-                incoming = "mTabResource";
+                incoming = 'mTabResource';
                 break;
             case 5:
-                incoming = "mTabArpa";
+                incoming = 'mTabArpa';
                 break;
             case 6:
-                incoming = "mTabStats";
+                incoming = 'mTabStats';
                 break;
         }
 
@@ -426,14 +424,15 @@ export function loadTab(tab){
         global.tabClearTimeout = setTimeout(() => {
             tabsToClear.forEach((t) => clearElement($(`#${t}`)));
         }, 350);
-    }
-    else {
-        tagEvent('page_view',{ page_title: `Evolve - All Tabs` });
+    } else {
+        tagEvent('page_view', { page_title: `Evolve - All Tabs` });
     }
     switch (tab){
         case 0:
-            if (!global.settings.tabLoad){
-                tagEvent('page_view',{ page_title: `Evolve - Evolution` });
+        case 'evolution':
+            if (!global.settings.tabLoad) {
+                global.settings.civTabs = 0;
+                tagEvent('page_view', { page_title: `Evolve - Evolution` });
                 drawEvolution();
             }
             break;
