@@ -39,124 +39,88 @@ function initPage(){
 
     let menuItems = [
         MenuItem('intro'),
-        {
-            key: 'faq',
-        },
-        {
-            key: 'gameplay',
-            submenu: [
-                { key: 'basics' },
-                { key: 'mechanics' },
-                { key: 'government' },
-                { key: 'governor' },
-                { key: 'combat' },
-                { key: 'challenges' },
-                { key: 'resets' },
-                { key: 'planets' },
-                { key: 'universes' },
-                { key: 'hell' }                
-            ]
-        },
-        {
-            key: 'prestige',
-            submenu: [
-                { key: 'resets' },
-                { key: 'resources' },
-                { key: 'crispr' },
-                { key: 'blood' },
-                { key: 'perks' }
-            ]
-        },
-        {
-            key: 'events',
-            submenu: [
-                { key: 'major' },
-                { key: 'minor' },
-                { key: 'progress' },
-                { key: 'special' }              
-            ]
-        },
-        {
-            key: 'species',
-            submenu: [
-                { key: 'races' },
-                { key: 'traits' },
-                { key: 'custom' }
-            ]
-        },
-        {
-            key: 'structures',
-            submenu: [
-                { key: 'prehistoric' },
-                { key: 'planetary' },
-                { key: 'space' },
-                { key: 'interstellar' },
-                { key: 'intergalactic' },
-                { key: 'hell' },
-                { key: 'edenic' }
-            ]
-        },
-        {
-            key: 'tech',
-            submenu: [
-                { key: 'primitive' },
-                { key: 'civilized' },
-                { key: 'discovery' },
-                { key: 'industrialized' },
-                { key: 'globalized' },
-                { key: 'early_space' },
-                { key: 'deep_space' },
-                { key: 'interstellar' },
-                { key: 'intergalactic' },
-                { key: 'dimensional' },
-                { key: 'existential' }
-            ]
-        },
-        {
-            key: 'tp_structures',
-            submenu: [
-                { key: 'prehistoric' },
-                { key: 'planetary' },
-                { key: 'space' },
-                { key: 'tauceti' }
-            ]
-        },
-        {
-            key: 'tp_tech',
-            submenu: [
-                { key: 'primitive' },
-                { key: 'civilized' },
-                { key: 'discovery' },
-                { key: 'industrialized' },
-                { key: 'globalized' },
-                { key: 'early_space' },
-                { key: 'deep_space' },
-                { key: 'solar' },
-                { key: 'tauceti' }
-            ]
-        },
-        {
-            key: 'arpa',
-            submenu: [
-                { key: 'projects' },
-                //{ key: 'genetics' },
-                { key: 'crispr' },
-                { key: 'blood' }
-            ]
-        },
-        {
-            key: 'achievements',
-            submenu: [
-                { key: 'list' },
-                { key: 'feats' }
-            ]
-        },
-        {
-            key: 'changelog',
-        },
-        {
-            key: 'search',
-        }
+        MenuItem('faq'),
+        MenuItem('gameplay',[
+            MenuItem('basics'),
+            MenuItem('mechanics'),
+            MenuItem('government'),
+            MenuItem('governor'),
+            MenuItem('combat'),
+            MenuItem('challenges'),
+            MenuItem('resets'),
+            MenuItem('planets'),
+            MenuItem('universes'),
+            MenuItem('hell'),
+        ]),
+        MenuItem('prestige',[
+            MenuItem('resets'),
+            MenuItem('resources'),
+            MenuItem('crispr'),
+            MenuItem('blood'),
+            MenuItem('perks'),
+        ]),
+        MenuItem('events',[
+            MenuItem('major'),
+            MenuItem('minor'),
+            MenuItem('progress'),
+            MenuItem('special'),
+        ]),
+        MenuItem('species',[
+            MenuItem('races'),
+            MenuItem('traits'),
+            MenuItem('custom'),
+        ]),
+        MenuItem('structures',[
+            MenuItem('prehistoric'),
+            MenuItem('planetary'),
+            MenuItem('space'),
+            MenuItem('interstellar'),
+            MenuItem('intergalactic'),
+            MenuItem('hell'),
+            MenuItem('edenic'),
+        ]),
+        MenuItem('tech',[
+            MenuItem('primitive'),
+            MenuItem('civilized'),
+            MenuItem('discovery'),
+            MenuItem('industrialized'),
+            MenuItem('globalized'),
+            MenuItem('early_space'),
+            MenuItem('deep_space'),
+            MenuItem('interstellar'),
+            MenuItem('intergalactic'),
+            MenuItem('dimensional'),
+            MenuItem('existential'),
+        ]),
+        MenuItem('tp_structures',[
+            MenuItem('prehistoric'),
+            MenuItem('planetary'),
+            MenuItem('space'),
+            MenuItem('tauceti'),
+        ]),
+        MenuItem('tp_tech',[
+            MenuItem('primitive'),
+            MenuItem('civilized'),
+            MenuItem('discovery'),
+            MenuItem('industrialized'),
+            MenuItem('globalized'),
+            MenuItem('early_space'),
+            MenuItem('deep_space'),
+            MenuItem('solar'),
+            MenuItem('tauceti'),
+        ]),
+        MenuItem('arpa',[
+            MenuItem('projects'),
+            // MenuItem('genetics'),
+            MenuItem('crispr'),
+            MenuItem('blood'),
+        ]),
+        MenuItem('achievements',[
+            MenuItem('list'),
+            MenuItem('feats'),
+        ]),
+        MenuItem('changelog'),
+        MenuItem('search')
     ];
 
     let wikiMenu = `<template><b-menu class="sticky has-text-caution"><b-menu-list label="${loc('wiki_menu_evolve')}">`;
