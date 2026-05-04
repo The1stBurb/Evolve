@@ -124,7 +124,7 @@ function initPage(){
     ];
 
     let wikiMenu = `<template><b-menu class="sticky has-text-caution"><b-menu-list label="${loc('wiki_menu_evolve')}">`;
-    wikiMenu = wikiMenu + buiildMenu(menuItems,true,false);
+    wikiMenu = wikiMenu + buildMenu(menuItems,true,false);
     wikiMenu = wikiMenu + `</b-menu-list></b-menu></template>`;
     menu.append(wikiMenu);
 
@@ -282,7 +282,7 @@ function setWindowHash(main,sub,frag){
     }
 }
 
-function buiildMenu(items,set,parent){
+function buildMenu(items,set,parent){
     let hash = window.location.hash ? window.location.hash.substring(1).split('-') : false;
 
     let menu = ``;
@@ -291,7 +291,7 @@ function buiildMenu(items,set,parent){
         if (items[i].hasOwnProperty('submenu')){
             let active = (!hash && set && i === 0) || (hash && hash.length > 1 && hash[1] === items[i].key) ? ` :active="true" expanded` : '';
             menu = menu + `<b-menu-item${active}><template slot="label" slot-scope="props">${loc(`wiki_menu_${items[i].key}`)}</template>`;
-            menu = menu + buiildMenu(items[i].submenu,false,items[i].key);
+            menu = menu + buildMenu(items[i].submenu,false,items[i].key);
             menu = menu + `</b-menu-item>`;
         }
         else {
