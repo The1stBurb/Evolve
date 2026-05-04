@@ -38,9 +38,7 @@ function initPage(){
     wiki.append(menu);
 
     let menuItems = [
-        {
-            key: 'intro',
-        },
+        MenuItem('intro'),
         {
             key: 'faq',
         },
