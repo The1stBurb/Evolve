@@ -1756,6 +1756,115 @@ export function calcPrestige(type,inputs){
     return gains;
 }
 
+function calcForRes(costs,res,creep_amount){
+    res.forEach(function(r_name){
+        if(costs.hasOwnProperty(r_name)){
+            costs[r_name]*=creep_amount
+        }
+    });
+    return costs
+}
+function calcCreep(c_action,offset,wiki){
+    let costs=c_action.cost || {};
+    if ((costs['RNA'] || costs['DNA']) && global.genes['evolve']){
+        var newCosts = {};
+        Object.keys(costs).forEach(function (res){
+            if (res === 'RNA' || res === 'DNA'){
+                newCosts[res] = 0.8;
+            }
+        });
+        return newCosts;
+    }
+    let costKeys=Object.keys(costs)
+    if (global.race['bloated']){
+        let adjustRate = 1 + (traits.bloated.vars()[0] / 100);
+        costs=calcForRes(costs,['Food','Lumber','Stone','Furs','Copper','Iron','Aluminium','Cement','Coal','Steel','Titanium','Alloy','Polymer','Iridium'],adjustRate);
+    }
+    if (global.race['lone_survivor']){
+        costKeys.forEach(function (res){
+            if (['Knowledge'].includes(res)){
+                costs[res] *=  0.5;
+            }
+            else if (['Money'].includes(res)){
+                costs[res] *= 0.22;
+            }
+            else if (['Plywood','Brick','Wrought_Iron','Sheet_Metal','Mythril','Quantium'].includes(res)){
+                costs[res] *= 0.14;
+            }
+            else if(!['Structs','Custom','Soul_Gem','Plasmid','Phage','Dark','Harmony','Blood_Stone','Artifact','Supercoiled','Corrupt_Gem','Codex','Demonic_Essence','Horseshoe'].includes(res)) {
+                newCosts[res] *= 0.28;
+            }
+        });
+    }
+    if ((wiki ? wiki.truepath : global.race['truepath']) && (!c_action.hasOwnProperty('path') || !c_action.path.includes('truepath'))){
+        costKeys.forEach(function (res){
+            if (res === 'Money'){
+                costs[res] *= 3;
+            }
+            else if (!['Structs','Knowledge','Custom','Soul_Gem','Plasmid','Phage','Dark','Harmony','Blood_Stone','Artifact','Supercoiled','Corrupt_Gem','Codex','Demonic_Essence','Horseshoe'].includes(res)){
+                costs[res] *= 2;
+            }
+        });
+    }
+    if (global.race['inflation']){
+        costs=calcForRes(costs,['Money'],1 + (global.race.inflation / 75));
+    }
+    let extraVal=govActive('extravagant',0);
+    if(extraVal){
+        costs=calcForRes(costs,['Money'],1 + (extraVal / 100))
+    }
+    if (global.civic.govern.type === 'technocracy'){
+        let adjust = 1 + (govEffect.technocracy()[1] / 100);
+        costKeys.forEach(function (res){
+            if (res === 'Knowledge'){
+                costs[res] *= (2 - adjust);//same as 1 - govEffect / 100
+            }
+            else if (!(res === 'Money' || res === 'Structs' || res === 'Custom')){
+                costs[res] *= adjust;
+            }
+        });
+    }
+    let pragVal = govActive('pragmatist',1);
+    let fathom = fathomCheck('gnome');
+    if ((global.race['smart'] || global.race['dumb'] || pragVal || fathom > 0) && costs['Knowledge']){
+        let cost = 1;
+        if (global.race['smart']){
+            cost *= 1 - (traits.smart.vars()[0] / 100);
+        }
+        if (fathom > 0){
+            cost *= 1 - (traits.smart.vars(1)[0] / 100 * fathom);
+        }
+        if (global.race['dumb']){
+            cost *= 1 + (traits.dumb.vars()[0] / 100);
+        }
+        if (pragVal){
+            cost *= 1 + (pragVal / 100);
+        }
+        costs['Knowledge'] *= cost
+    }
+    if (global.race['smoldering']){
+        costKey.forEach(function (res){
+            if (res === 'Lumber' || res === 'Plywood'){
+                let adjustRate = res === 'Plywood' ? 2 : 1;
+                costs['Chrysotile'] *= adjustRate;
+            }
+            else if (!['HellArmy','Army','Troops','Structs','Chrysotile','Knowledge','Custom','Soul_Gem','Plasmid','Phage','Dark','Harmony','Blood_Stone','Artifact','Supercoiled','Corrupt_Gem','Codex','Demonic_Essence','Horseshoe','Mana','Energy'].includes(res)){
+                newCosts[res] = function(){ return Math.round(costs[res](offset, wiki) * 0.9); }
+            }
+        });
+        
+    }
+
+
+
+    if (global.rac['smoldering'] && !costs.hasOwnProperty('Chrysotile') && costs.hasOwnProperty('Money') && global.tech['primitive'] && global.tech.primitive >= 3){
+            costs['Chrysotile'] = function(){
+                let money = costs['Money'](offset, wiki) || 0;
+                return money > 0 ? Math.round(money / 50) : 0;
+            }
+        }
+}
+
 export function adjustCosts(c_action, offset, wiki){
     let costs = c_action.cost || {};
     if ((costs['RNA'] || costs['DNA']) && global.genes['evolve']){
