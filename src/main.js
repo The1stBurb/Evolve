@@ -8171,45 +8171,29 @@ class AMOUNT{
     }
 }
 
-function Amount(action,globl,name,resource,is_true,title){
+function Amounts(action,globl,name,resource,is_true,title){
     return new AMOUNT(action,globl,name,resource,is_true,title)
 }
-function c_Amount(name,resource,is_true,title){
-    return new AMOUNT(actions.city[name],global.city,name,resource,is_true,title)
+function Amount(name,loci,resource,is_true,title){
+    switch(loci){
+        case 'city':
+            return new AMOUNT(actions.city[name],global.city,name,resource,is_true,title)
+        break
+        case 'space_red':
+            return new AMOUNT(actions.space.spc_red[name],global.space,name,resource,is_true,title)
+        break
+        case 'int_proxima':
+            return new AMOUNT(actions.interstellar.int_proxima[name],global.interstellar,name,resource,is_true,title)
+        break
+        case 'tau_home':
+            return new AMOUNT(actions.tauceti.tau_home[name],global.tauceti,name,resource,is_true,title)
+        break
+        default:
+            return new AMOUNT(actions.city[name],global.city,name,resource,is_true,title)
+        break
+    }
 }
-function sh_Amount(name,resource,is_true,title){
-    return new AMOUNT(actions.space.spc_home[name],global.space,name,resource,is_true,title)
-}
-let capsIncrease=[
-    c_Amount('wharf'),
-    c_Amount('storage_yard'),
-    c_Amount('warehouse'),
-    c_Amount('bank'),
-    c_Amount('farm'),
-    c_Amount('basic_housing'),
-    c_Amount('cottage'),
-    c_Amount('apartment'),
-    c_Amount('lodge'),
-    c_Amount('nanite_factory'),
-    c_Amount('slave_pen'),
-    c_Amount('silo'),
-    c_Amount('compost'),
-    c_Amount('soul_well'),
-    c_Amount('smokehouse'),
-    c_Amount('rock_quarry'),
-    c_Amount('lumber_yard'),
-    c_Amount('graveyard'),
-    c_Amount('sawmill'),
-    c_Amount('oil_well'),
-    // sr_Amount('garage'),
-    // sh_Amount(''),
-    // sh_Amount(''),
-    // sh_Amount(''),
-    // sh_Amount(''),
-    // sh_Amount(''),
-    // sh_Amount(''),
-    // // Amount('cottage','Money',null)
-]
+
 // MAKE SURE THE SLAVES HAVE CAP STILL!!!!!!!!!!!!
 function midLoop(){
     const astroSign = astrologySign();
@@ -8835,7 +8819,37 @@ function midLoop(){
                 }
             })
         }
+let capsIncrease=[
+    Amount('wharf'),
+    Amount('storage_yard'),
+    Amount('warehouse'),
+    Amount('bank'),
+    Amount('farm'),
+    Amount('basic_housing'),
+    Amount('cottage'),
+    Amount('apartment'),
+    Amount('lodge'),
+    Amount('nanite_factory'),
+    Amount('slave_pen'),
+    Amount('silo'),
+    Amount('compost'),
+    Amount('soul_well'),
+    Amount('smokehouse'),
+    Amount('rock_quarry'),
+    Amount('lumber_yard'),
+    Amount('graveyard'),
+    Amount('sawmill'),
+    Amount('oil_well'),
 
+    Amount('garage','space_red'),
+
+    Amount('cargo_yard','int_proxima'),
+
+    Amount('colony','tau_home'),
+    Amount('',''),
+    Amount('',''),
+    // Amount('',''),
+]
         //Res Caps ------------------
         // Storage - General
         {
@@ -8964,7 +8978,6 @@ function midLoop(){
             }
         }
         // Crates & Containters
-        
             // Crates Only
         {   
             if (global.space['munitions_depot']){
@@ -8974,19 +8987,6 @@ function midLoop(){
                 caps['Containers'] += vol;
                 breakdown.c.Containers[loc('tech_munitions_depot')] = vol + 'v';
             }
-            if (global.space['garage']){
-                let g_vol = global.tech['particles'] >= 4 ? 20 + global.tech['supercollider'] : 20;
-                if (global.tech['world_control'] || global.race['cataclysm']){
-                    g_vol += 10;
-                }
-                let g_count=(global.space.garage.count * g_vol)
-                caps['Containers'] += g_count;
-                breakdown.c.Containers[loc('space_red_garage_title')] = g_count + 'v';
-                if (global.race['cataclysm'] || global.race['orbit_decayed']){
-                    caps['Crates'] += g_count;
-                    breakdown.c.Crates[loc('space_red_garage_title')] = g_count + 'v';
-                }
-            }
             if (global.tech['tp_depot']){
                 let tp_count=(global.tech.tp_depot * 50)
                 caps['Containers'] += tp_count;
@@ -8994,25 +8994,7 @@ function midLoop(){
                 caps['Crates'] += tp_count;
                 breakdown.c.Crates[loc('galaxy_gateway_depot')] = tp_count + 'v';
             }
-            if (global.interstellar['cargo_yard']){
-                let cargo_count=global.interstellar.cargo_yard.count;
-                let c_count=cargo_count*50
-
-                caps['Crates'] += c_count;
-                breakdown.c.Crates[loc('interstellar_cargo_yard_title')] = c_count + 'v';
-                caps['Containers'] += c_count;
-                breakdown.c.Containers[loc('interstellar_cargo_yard_title')] = c_count + 'v';
-
-                let gain = (cargo_count * spatialReasoning(200));
-                caps['Neutronium'] += gain;
-                breakdown.c.Neutronium[loc('interstellar_cargo_yard_title')] = gain+'v';
-
-                gain = (cargo_count * spatialReasoning(150));
-                caps['Infernite'] += gain;
-                breakdown.c.Infernite[loc('interstellar_cargo_yard_title')] = gain+'v';
-            }
         }
-            // Containers Only
             //Both
         {
             if (p_on['arcology']){
@@ -9047,17 +9029,6 @@ function midLoop(){
                 let money = spatialReasoning(bank_vault() * sb_count / 3);
                 caps['Money'] += money;
                 breakdown.c.Money[loc('portal_bazaar_title')] = money+'v';
-            }
-            if (support_on['colony']){
-                let containers = support_on['colony'] * (global.tech['isolation'] ? 900 : 250);
-                caps['Containers'] += containers;
-                breakdown.c.Containers[loc('tau_home_colony')] = containers + 'v';
-                caps['Crates'] += containers;
-                breakdown.c.Crates[loc('tau_home_colony')] = containers + 'v';
-
-                let pop = support_on['colony'] * actions.tauceti.tau_home.colony.citizens();
-                caps[global.race.species] += pop;
-                breakdown.c[global.race.species][loc('tau_home_colony')] = pop + 'v';
             }
             if (global.galaxy['gateway_depot']){
                 let g_count=global.galaxy.gateway_depot.count

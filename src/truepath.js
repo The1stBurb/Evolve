@@ -1865,8 +1865,8 @@ const tauCetiModules = {
                 Brick(offset){ return tauEnabled() ? spaceCostMultiplier('colony', offset, wom_recycle(880000), 1.225, 'tauceti') : 0; },
             },
             effect(){
-                let pop = $(this)[0].citizens();
-                let containers = global.tech['isolation'] ? 900 : 250;
+                let pop = this.citizens();
+                let containers = this.caps.Containers();
                 let fuel = +($(this)[0].support_fuel().a).toFixed(1);
                 let desc = `<div class="has-text-caution">${loc('tau_new_support',[$(this)[0].support(), races[global.race.species].home])}</div>`;
                 
@@ -1902,6 +1902,17 @@ const tauCetiModules = {
                     desc += `<div class="has-text-caution">${loc('spend',[fuel,global.resource[$(this)[0].support_fuel().r].name])}</div>`;
                 }
                 return desc;
+            },
+            caps:{
+                Containers(count){
+                    return (global.tech['isolation'] ? 900 : 250) * (count ?? 1);
+                },
+                Crates(count){
+                    return this.Containers(count);
+                },
+                Pop(count){
+                    return actions.tauceti.tau_home.colony.citizens()* (count ?? 1);
+                },
             },
             s_type: 'tau_home',
             support(){ return -2; },

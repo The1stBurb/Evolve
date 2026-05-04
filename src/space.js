@@ -932,10 +932,7 @@ const spaceProjects = {
             effect(){
                 let multiplier = $(this)[0].multiplier(false);
                 let h_multiplier = $(this)[0].multiplier(true);
-                let containers = global.tech['particles'] >= 4 ? 20 + global.tech['supercollider'] : 20;
-                if (global.tech['world_control'] || global.race['cataclysm'] || global.race['orbit_decayed']){
-                    containers += 10;
-                }
+                let containers = this.caps.Containers()
                 let crate = global.race['cataclysm'] || global.race['orbit_decayed'] ? `<span>${loc('plus_max_resource',[containers,global.resource.Crates.name])}</span>` : ``;
 
                 let desc = '<div class="aTable">';
@@ -952,8 +949,17 @@ const spaceProjects = {
             },
             caps:{
                 Containers(count){
-                    let g_count=0
-                    return g_count * (count ?? 1)
+                    let containers = global.tech['particles'] >= 4 ? 20 + global.tech['supercollider'] : 20;
+                    if (global.tech['world_control'] || global.race['cataclysm'] || global.race['orbit_decayed']){
+                        containers += 10;
+                    }
+                    return containers * (count ?? 1)
+                },
+                Crate(count){
+                    if(!(global.race['cataclysm'] || global.race['obit_decayed'])){
+                        return
+                    }
+                    return this.Containers(count)
                 },
             },
             action(args){
@@ -3448,9 +3454,9 @@ const interstellarProjects = {
                 Mythril(offset){ return spaceCostMultiplier('cargo_yard', offset, 6000, 1.28, 'interstellar'); },
             },
             effect(wiki){
-                let containers = 50;
-                let neutronium = spatialReasoning(200);
-                let infernite = spatialReasoning(150);
+                let containers = this.caps.Containers();
+                let neutronium = this.caps.Neutronium();
+                let infernite = this.caps.Infernite();
                 let desc = `<div>${loc('plus_max_resource',[containers,global.resource.Crates.name])}</div><div>${loc('plus_max_resource',[containers,global.resource.Containers.name])}</div>`;
                 desc = desc + `<div>${loc('plus_max_resource',[neutronium,global.resource.Neutronium.name])}</div><div>${loc('plus_max_resource',[infernite,global.resource.Infernite.name])}</div>`;
                 if (global.tech['storage'] >= 7){
@@ -3458,6 +3464,20 @@ const interstellarProjects = {
                     desc = desc + `<div>${loc('interstellar_cargo_yard_effect',[boost])}</div>`;
                 }
                 return desc;
+            },
+            caps:{
+                Containers(count){
+                    return 50 * (count ?? 1);
+                },
+                Crates(count){
+                    return this.Containers(count);
+                },
+                Neutronium(count){
+                    return spatialReasoning(200) * (count ?? 1);
+                },
+                Infernite(count){
+                    return spatialReasoning(150) * (count ?? 1);
+                },
             },
             action(args){
                 if (payCosts($(this)[0])){
