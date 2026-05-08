@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>E</title>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+    <style>
+        :root{
+            --backgroundColor:#00f;
+            --textColor:#f00;
+            --someDivColor:#900;
+            --someOtherDivColor:#90f;
+        }
+        body{
+            background-color:var(--backgroundColor);
+            color:var(--textColor);
+        }
+        .someDiv{
+            background-color:var(--someDivColor);
+        }
+        .someOtherDiv{
+            background-color:var(--someOtherDivColor);
+        }
+    </style>
+</head>
+<body>
+    <p>Here is some text!</p>
+    <div class="someDiv">
+        <p>and someDiv is here!</p>
+    </div>
+    <div class="someOtherDiv">
+        <p>someOtherDiv happens to be here</p>
+    </div>
+    <div style="background-color:#fff;color:#000;">
+        <button onclick="set_theme('dark')">Dark Theme</button>
+        <button onclick="set_theme('light')">Light Theme</button>
+        <button onclick="set_theme('dracula')">Dracula</button>
+        <button onclick="set_theme('yin_yang')">Yin Yang</button>
+        <button onclick="set_theme('potato')">Potato</button>
+    </div>
+    <script>
+        const themes={
+            dark:{
+                'backgroundColor':'#000',
+                'textColor':'#fff',
+                'someDivColor':'#ff0',
+                'someOtherDivColor':'#0ff',
+            },
+            light:{
+                'backgroundColor':'#fff',
+                'textColor':'#82f',
+                'someOtherDivColor':'#0aa',
+            },
+            dracula:{
+                parent:['dark'],
+                'textColor':'#0f0',
+            },
+            yin_yang:{
+                parent:['light', 'dark'],
+                'textColor':'#af0',
+            },
+            potato:{
+                parent:['dracula'],
+                someDivColor:'#00f',
+            },
+        };
+        let theme='None';
+        function set_var(var_name,value){
+            document.documentElement.style.setProperty(`--${var_name}`,value);
+        }
+        function get_var(var_name){
+            let names=['backgroundColor','textColor','someDivColor','someOtherDivColor']
+            let style=getComputedStyle(document.documentElement)
+            names.forEach(name=>{
+                console.log(name,"->",style.getPropertyValue(`--${name}`))
+            })
+            console.log()
+        }
+        function set_theme(theme_name,has_set){
+            console.log(theme_name)
+            theme_dat = themes[theme_name]
+            has_set = has_set ?? [];
+            
+            for(let val in theme_dat){
+                if (has_set.includes(val)) continue
+                set_var(val, theme_dat[val])
+                has_set.push(val)
+            }
+            get_var()
+            if(theme_dat.hasOwnProperty('parent')){
+                theme_dat.parent.forEach(parent=>{
+                    has_set=set_theme(parent,has_set)
+                })
+            }
+            theme = theme_name;
+            return has_set
+        }
+        // set_theme('light');
+    </script>
+</body>
+</html>
