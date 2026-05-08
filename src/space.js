@@ -6,7 +6,7 @@ import { spatialReasoning, unlockContainers, drawResourceTab, atomic_mass } from
 import { loadFoundry, jobScale } from './jobs.js';
 import { defineIndustry, addSmelter } from './industry.js';
 import { garrisonSize, describeSoldier, checkControlling, govTitle } from './civics.js';
-import { actions, payCosts, powerOnNewStruct, initStruct, setAction, setPlanet, storageMultipler, drawTech, bank_vault, updateDesc, actionDesc, templeEffect, templeCount, casinoEffect, wardenLabel, buildTemplate, structName } from './actions.js';
+import { actions, payCosts, powerOnNewStruct, initStruct, setAction, setPlanet, storageMultipler, drawTech, bank_vault, updateDesc, actionDesc, templeEffect, templeCount, casinoEffect, wardenLabel, buildTemplate, structName, closeModalAnim } from './actions.js';
 import { outerTruthTech, syndicate, drawShipYard } from './truepath.js';
 import { production, highPopAdjust } from './prod.js';
 import { defineGovernor, govActive } from './governor.js';
@@ -7887,9 +7887,7 @@ export function ascendLab(hybrid,wiki){
                     hasModalCard: false,
                     customClass: 'evolve-modal',
                     content: '<div id="modalBox" class="modalBox"></div>',
-                    onCancel: () => {
-                        // Modal closed
-                    }
+                    onCancel: () => closeModalAnim(),
                 });
             
                 var checkExist = setInterval(function() {
@@ -7921,9 +7919,7 @@ export function ascendLab(hybrid,wiki){
                     hasModalCard: false,
                     customClass: 'evolve-modal',
                     content: '<div id="modalBox" class="modalBox"></div>',
-                    onCancel: () => {
-                        // Modal closed
-                    }
+                    onCancel: () => closeModalAnim(),
                 });
             
                 var checkExist = setInterval(function() {
