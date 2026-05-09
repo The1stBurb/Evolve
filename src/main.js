@@ -8156,6 +8156,7 @@ class AMOUNT{
             this.resource=[resource]
         }
         else if(resource === undefined){
+            // console.log(name,typeof this.action.title == "string" ? this.action.title : this.action.title())
             this.resource=Object.keys(this.action.caps)
         }
         else{
@@ -8193,7 +8194,37 @@ function Amount(name,loci,resource,is_true,title){
         break
     }
 }
+let capsIncrease=[
+    Amount('wharf'),
+    Amount('storage_yard'),
+    Amount('warehouse'),
+    Amount('bank'),
+    Amount('farm'),
+    Amount('basic_housing'),
+    Amount('cottage'),
+    Amount('apartment'),
+    Amount('lodge'),
+    Amount('nanite_factory'),
+    Amount('slave_pen'),
+    Amount('silo'),
+    Amount('compost'),
+    Amount('soul_well'),
+    Amount('smokehouse'),
+    Amount('rock_quarry'),
+    Amount('lumber_yard'),
+    Amount('graveyard'),
+    Amount('sawmill'),
+    Amount('oil_well'),
 
+    // Amount('garage','space_red'),
+
+    // Amount('cargo_yard','int_proxima'),
+
+    // Amount('colony','tau_home'),
+    // Amount('',''),
+    // Amount('',''),
+    // Amount('',''),
+]
 // MAKE SURE THE SLAVES HAVE CAP STILL!!!!!!!!!!!!
 function midLoop(){
     const astroSign = astrologySign();
@@ -8819,37 +8850,7 @@ function midLoop(){
                 }
             })
         }
-let capsIncrease=[
-    Amount('wharf'),
-    Amount('storage_yard'),
-    Amount('warehouse'),
-    Amount('bank'),
-    Amount('farm'),
-    Amount('basic_housing'),
-    Amount('cottage'),
-    Amount('apartment'),
-    Amount('lodge'),
-    Amount('nanite_factory'),
-    Amount('slave_pen'),
-    Amount('silo'),
-    Amount('compost'),
-    Amount('soul_well'),
-    Amount('smokehouse'),
-    Amount('rock_quarry'),
-    Amount('lumber_yard'),
-    Amount('graveyard'),
-    Amount('sawmill'),
-    Amount('oil_well'),
 
-    Amount('garage','space_red'),
-
-    Amount('cargo_yard','int_proxima'),
-
-    Amount('colony','tau_home'),
-    Amount('',''),
-    Amount('',''),
-    // Amount('',''),
-]
         //Res Caps ------------------
         // Storage - General
         {
@@ -10336,6 +10337,7 @@ let capsIncrease=[
             }
             if (global.city['garrison']){
                 lCaps['garrison'] += global.city.garrison.on * actions.city.garrison.soldiers();
+                // console.log(global.city.garrison.count,global.city.garrison.on)
             }
             if (global.space['space_barracks'] && !global.race['fasting']){
                 let soldiers = actions.space.spc_red.space_barracks.soldiers();
@@ -10549,7 +10551,7 @@ let capsIncrease=[
         ['Scarletite','Quantium'].forEach(function (res){
             limitCraftsmen(res);
         });
-
+        console.log(lCaps['garrison'])
         Object.keys(lCaps).forEach(function (job){
             global.civic[job].max = lCaps[job];
             if (global.civic[job].workers > global.civic[job].max && global.civic[job].max !== -1){
