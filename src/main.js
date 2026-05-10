@@ -22,6 +22,8 @@ import { index, mainVue, initTabs, loadTab } from './index.js';
 import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { enableDebug, updateDebugData } from './debug.js';
+import { set_theme } from './themes.js';
+
 
 {
     $(document).ready(function() {
@@ -203,7 +205,7 @@ if (global.queue.display){
 if (global.r_queue.display){
     calcRQueueMax();
 }
-
+set_theme(global.settings.theme);
 mainVue();
 
 if (global['new']){

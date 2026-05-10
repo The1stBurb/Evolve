@@ -14,6 +14,7 @@ import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObse
 import { renderEdenic } from './edenic.js';
 import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
+import { set_theme } from './themes.js';
 
 export function mainVue(){
     vBind({
@@ -136,6 +137,10 @@ export function mainVue(){
                 window.location.reload();
             },
             setTheme(theme){
+                set_theme(theme);
+                if(['custom','night'].includes(theme)){
+                    theme='none';
+                }
                 global.settings.theme = theme;
                 $('html').removeClass();
                 $('html').addClass(theme);
@@ -1317,6 +1322,7 @@ export function index(){
                 <b-dropdown-item v-on:click="setTheme('gruvboxDarkRG')">{{ 'theme_gruvboxDarkRG' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('orangeSoda')">{{ 'theme_orangeSoda' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('dracula')">{{ 'theme_dracula' | label }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setTheme('custom')">{{ 'theme_custom' | label }}</b-dropdown-item>
                 ${hideEgg}
             </b-dropdown>
 
