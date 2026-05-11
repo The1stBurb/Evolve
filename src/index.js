@@ -1324,6 +1324,7 @@ export function index(){
     for(let i in themes.dark){
         theme_variables+=`<b-dropdown-item v-on:click="setCurThemeVar('${i}',t)">{{ 'theme_var_${i}' | label }}</b-dropdown-item>`;
     }
+    console.log(Object.keys(themes.dark).length);
 
     let settings = $(`<b-tab-item id="settings" class="settings sticky">
         <template slot="header">
