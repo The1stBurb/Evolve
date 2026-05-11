@@ -151,7 +151,6 @@ export function mainVue(){
                 $('html').addClass(global.settings.font);
             },
             newCustomTheme(){
-                console.log('CREATE NEW CUSTOM THEME!')
                 createNewCustom()
             },
             setCurThemeVar(name,t){
@@ -1319,7 +1318,7 @@ export function index(){
 
     let custom_themes='';
     for(let i in global['custom_theme']){
-        custom_themes+=`<b-dropdown-item v-on:click="setTheme('${i}',true)">{{ '${i}' | label }}</b-dropdown-item>`;
+        custom_themes+=`<b-dropdown-item v-on:click="setTheme('${i}',true)">${i}</b-dropdown-item>`;
     }
     let theme_variables='';
     for(let i in themes.dark){
@@ -1348,7 +1347,7 @@ export function index(){
                 <b-dropdown-item v-on:click="setTheme('orangeSoda')">{{ 'theme_orangeSoda' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('dracula')">{{ 'theme_dracula' | label }}</b-dropdown-item>
                 ${custom_themes}
-                <b-dropdown-item v-on:click="newCustomTheme();setTheme('new_custom',true)">{{ 'theme_new_custom' | label }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="newCustomTheme();setTheme('new_theme',true)">{{ 'theme_new_custom' | label }}</b-dropdown-item>
                 ${hideEgg}
             </b-dropdown>
 

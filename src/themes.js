@@ -958,11 +958,10 @@ export function set_theme(theme_name,has_set){
 }
 
 export function createNewCustom(){
-    themes['new_custom']={
+    themes['new_theme']={
         parent:[global.settings.theme],
     }
-    global.custom_theme['new_custom']=themes['new_custom']
-    console.log(themes['new_custom'],global.custom_theme['new_custom'])
+    global.custom_theme['new_theme']=themes['new_theme']
 }
 
 export function getThemeVar(name,theme_name){
