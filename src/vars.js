@@ -1,3 +1,4 @@
+import { themes } from './themes.js';
 export var save = window.localStorage;
 export var global = {
     seed: 1,
@@ -1801,7 +1802,7 @@ if (!global.settings['queuestyle']){
 if (!global.settings['q_resize']){
     global.settings.q_resize = 'auto';
 }
-
+$('html').addClass('theme');
 $('html').addClass(global.settings.theme);
 $('html').addClass(global.settings.queuestyle);
 
@@ -2005,6 +2006,12 @@ global.settings.disableReset = false;
 
 if (global['arpa'] && global.arpa['launch_facility'] && global.arpa.launch_facility.rank > 0 && !global.tech['space']){
     global.tech['space'] = 1;
+}
+if(!global.hasOwnProperty("custom_theme")){
+    global['custom_theme']={}
+}
+for(let theme_name in global['custom_theme']){
+    themes[theme_name]=global['custom_theme'][theme_name]
 }
 
 function newGameData(){

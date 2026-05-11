@@ -14,13 +14,19 @@ import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObse
 import { renderEdenic } from './edenic.js';
 import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
-import { set_theme } from './themes.js';
+import { themes, set_theme, createNewCustom, getThemeVar, setThemeVar } from './themes.js';
 
 export function mainVue(){
     vBind({
         el: '#mainColumn div:first-child',
         data: {
-            s: global.settings
+            s: global.settings,
+            t:{
+                cur_theme:global.settings.theme,
+                curThemeVar:'html-background',
+                themeEditorOpen:false,
+                curThemeColor: getThemeVar('html-background'),
+            }
         },
         methods: {
             swapTab(tab){
@@ -136,15 +142,24 @@ export function mainVue(){
                 }
                 window.location.reload();
             },
-            setTheme(theme){
+            setTheme(theme,set_none){
                 set_theme(theme);
-                if(['custom','night'].includes(theme)){
-                    theme='none';
-                }
                 global.settings.theme = theme;
                 $('html').removeClass();
-                $('html').addClass(theme);
+                $('html').addClass('theme');
+                $('html').addClass(set_none ? 'none' : theme);
                 $('html').addClass(global.settings.font);
+            },
+            newCustomTheme(){
+                console.log('CREATE NEW CUSTOM THEME!')
+                createNewCustom()
+            },
+            setCurThemeVar(name,t){
+                t.curThemeVar=name;
+                t.curThemeColor=getThemeVar(name);
+            },
+            changeThemeColor(t){
+                setThemeVar(t.curThemeVar,t.curThemeColor);
             },
             numNotation(notation){
                 global.settings.affix = notation;
@@ -1301,6 +1316,16 @@ export function index(){
     }
 
     // Settings Tab
+
+    let custom_themes='';
+    for(let i in global['custom_theme']){
+        custom_themes+=`<b-dropdown-item v-on:click="setTheme('${i}',true)">{{ '${i}' | label }}</b-dropdown-item>`;
+    }
+    let theme_variables='';
+    for(let i in themes.dark){
+        theme_variables+=`<b-dropdown-item v-on:click="setCurThemeVar('${i}',t)">{{ 'theme_var_${i}' | label }}</b-dropdown-item>`;
+    }
+
     let settings = $(`<b-tab-item id="settings" class="settings sticky">
         <template slot="header">
             {{ 'tab_settings' | label }}
@@ -1314,7 +1339,7 @@ export function index(){
                 </button>
                 <b-dropdown-item v-on:click="setTheme('dark')">{{ 'theme_dark' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('light')">{{ 'theme_light' | label }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setTheme('night')">{{ 'theme_night' | label }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setTheme('night',true)">{{ 'theme_night' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('darkNight')">{{ 'theme_darkNight' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('redgreen')">{{ 'theme_redgreen' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('gruvboxLight')">{{ 'theme_gruvboxLight' | label }}</b-dropdown-item>
@@ -1322,7 +1347,8 @@ export function index(){
                 <b-dropdown-item v-on:click="setTheme('gruvboxDarkRG')">{{ 'theme_gruvboxDarkRG' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('orangeSoda')">{{ 'theme_orangeSoda' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('dracula')">{{ 'theme_dracula' | label }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setTheme('custom')">{{ 'theme_custom' | label }}</b-dropdown-item>
+                ${custom_themes}
+                <b-dropdown-item v-on:click="newCustomTheme();setTheme('new_custom',true)">{{ 'theme_new_custom' | label }}</b-dropdown-item>
                 ${hideEgg}
             </b-dropdown>
 
@@ -1467,6 +1493,21 @@ export function index(){
                             <button class="button right" :disabled="!s.disableReset" @click="reset()"><span class="settings3" aria-label="${loc('settings3')}">{{ 'reset_hard' | label }}</span></button>
                         </p>
                     </div>
+                </div>
+            </b-collapse>
+        </div>
+        <div class="themeEditor">
+            <b-collapse :open="true">
+                <b-switch v-model="t.themeEditorOpen" slot="trigger">{{ 'open_themeEditor' | label }}</b-switch>
+                <div class="colorPicker">
+                    <b-dropdown hoverable>
+                        <button class="button is-primary" slot="trigger">
+                            <span>{{ 'theme_var_' + t.curThemeVar | label }}</span>
+                            <i class="fas fa-sort-down"></i>
+                        </button>
+                        ${theme_variables}
+                    </b-dropdown>
+                    <b-input type="color" id="theme_color" name="theme_color" v-model="t.curThemeColor" :value="t.curThemeColor" @input="changeThemeColor(t)"></b-input>
                 </div>
             </b-collapse>
         </div>
