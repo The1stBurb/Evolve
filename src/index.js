@@ -399,21 +399,27 @@ export function loadTab(tab){
         let incoming = 'mTabObserve';
         switch (tab) {
             case 1:
+            case 'mTabCivil':
                 incoming = 'mTabCivil';
                 break;
             case 2:
+            case 'mTabCivic':
                 incoming = 'mTabCivic';
                 break;
             case 3:
+            case 'mTabResearch':
                 incoming = 'mTabResearch';
                 break;
             case 4:
+            case 'mTabResource':
                 incoming = 'mTabResource';
                 break;
             case 5:
+            case 'mTabArpa':
                 incoming = 'mTabArpa';
                 break;
             case 6:
+            case 'mTabStats':
                 incoming = 'mTabStats';
                 break;
         }
