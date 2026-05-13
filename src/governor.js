@@ -1208,7 +1208,7 @@ export const gov_tasks = {
         }
     },
     slave: { // Replace Slaves
-        name(){ return loc(`gov_task_slave`,[global.resource.Slave.name]); },
+        name(){ return loc(`gov_task_slave`,[global.resource?.Slave?.name]); },
         req(){
             return !global.race['orbit_decayed'] && checkCityRequirements('slave_market') && global.race['slaver'] && global.city['slave_pen'] ? true : false;
         },

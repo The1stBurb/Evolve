@@ -3205,7 +3205,7 @@ const techs = {
         era: 'civilized',
         reqs: { govern: 1 },
         condition(){
-            return global.genes['governor'] && global.civic.govern.type !== 'anarchy' ? true : false;
+            return global.genes['governor'] && global.civic?.govern?.type !== 'anarchy' ? true : false;
         },
         grant: ['governor',1],
         cost: {
@@ -5340,7 +5340,7 @@ const techs = {
         era: 'dimensional',
         reqs: { hell_spire: 10, b_stone: 2, waygate: 3 },
         condition(){
-            return global.resource.Demonic_Essence.amount >= 1 ? true : false;
+            return global.resource?.Demonic_Essence?.amount >= 1 ? true : false;
         },
         grant: ['waygate',4],
         not_trait: ['witch_hunter','fasting','warlord'],
@@ -5368,7 +5368,7 @@ const techs = {
         era: 'existential',
         reqs: { b_stone: 2, waygate: 3, edenic: 1 },
         condition(){
-            return global.resource.Demonic_Essence.amount >= 1 ? true : false;
+            return global.resource?.Demonic_Essence?.amount >= 1 ? true : false;
         },
         grant: ['edenic',2],
         not_trait: ['witch_hunter', 'fasting'],
