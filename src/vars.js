@@ -1,4 +1,4 @@
-import { themes } from './themes.js';
+// import { themes } from './themes.js';
 export var save = window.localStorage;
 export var global = {
     seed: 1,
@@ -2009,9 +2009,6 @@ if (global['arpa'] && global.arpa['launch_facility'] && global.arpa.launch_facil
 }
 if(!global.hasOwnProperty("custom_theme")){
     global['custom_theme']={}
-}
-for(let theme_name in global['custom_theme']){
-    themes[theme_name]=global['custom_theme'][theme_name]
 }
 
 function newGameData(){

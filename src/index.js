@@ -14,19 +14,14 @@ import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObse
 import { renderEdenic } from './edenic.js';
 import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
-import { themes, set_theme, createNewCustom, getThemeVar, setThemeVar } from './themes.js';
+import { themes, set_theme, createNewCustom, getThemeVar, setThemeVar, theme_settings, theme_variables, loadCustomThemeHTML } from './themes.js';
 
 export function mainVue(){
     vBind({
         el: '#mainColumn div:first-child',
         data: {
             s: global.settings,
-            t:{
-                cur_theme:global.settings.theme,
-                curThemeVar:'html-background',
-                themeEditorOpen:false,
-                curThemeColor: getThemeVar('html-background'),
-            }
+            t:theme_settings,
         },
         methods: {
             swapTab(tab){
@@ -150,15 +145,13 @@ export function mainVue(){
                 $('html').addClass(set_none ? 'none' : theme);
                 $('html').addClass(global.settings.font);
             },
-            newCustomTheme(){
-                createNewCustom()
-            },
-            setCurThemeVar(name,t){
-                t.curThemeVar=name;
-                t.curThemeColor=getThemeVar(name);
-            },
-            changeThemeColor(t){
-                setThemeVar(t.curThemeVar,t.curThemeColor);
+            openCloseThemeEditor(e){
+                // theme_settings.themeEditorOpen=!theme_settings.themeEditorOpen;
+                if(theme_settings.themeEditorOpen){
+                    // theme_settings.pos.x=e.clientX;
+                    // theme_settings.pos.y=e.clientY;
+                    console.log('setting pos to',theme_settings.pos,e)
+                }
             },
             numNotation(notation){
                 global.settings.affix = notation;
@@ -234,7 +227,6 @@ export function mainVue(){
             }
         }
     });
-
     ['1','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'].forEach(function(k){
         popover(`settings${k}`, function(){
                 return loc(`settings${k}`);
@@ -1317,14 +1309,9 @@ export function index(){
     // Settings Tab
 
     let custom_themes='';
-    for(let i in global['custom_theme']){
-        custom_themes+=`<b-dropdown-item v-on:click="setTheme('${i}',true)">${i}</b-dropdown-item>`;
+    for(let i=0; i<2; i++){
+        custom_themes+=`<b-dropdown-item v-on:click="setTheme('custom-${i+1}',true)">{{ 'theme_custom' + ${i+1} | label }}</b-dropdown-item>`;
     }
-    let theme_variables='';
-    for(let i in themes.dark){
-        theme_variables+=`<b-dropdown-item v-on:click="setCurThemeVar('${i}',t)">{{ 'theme_var_${i}' | label }}</b-dropdown-item>`;
-    }
-    console.log(Object.keys(themes.dark).length);
 
     let settings = $(`<b-tab-item id="settings" class="settings sticky">
         <template slot="header">
@@ -1348,7 +1335,6 @@ export function index(){
                 <b-dropdown-item v-on:click="setTheme('orangeSoda')">{{ 'theme_orangeSoda' | label }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('dracula')">{{ 'theme_dracula' | label }}</b-dropdown-item>
                 ${custom_themes}
-                <b-dropdown-item v-on:click="newCustomTheme();setTheme('new_theme',true)">{{ 'theme_new_custom' | label }}</b-dropdown-item>
                 ${hideEgg}
             </b-dropdown>
 
@@ -1497,19 +1483,7 @@ export function index(){
             </b-collapse>
         </div>
         <div class="themeEditor">
-            <b-collapse :open="true">
-                <b-switch v-model="t.themeEditorOpen" slot="trigger">{{ 'open_themeEditor' | label }}</b-switch>
-                <div class="colorPicker">
-                    <b-dropdown hoverable>
-                        <button class="button is-primary" slot="trigger">
-                            <span>{{ 'theme_var_' + t.curThemeVar | label }}</span>
-                            <i class="fas fa-sort-down"></i>
-                        </button>
-                        ${theme_variables}
-                    </b-dropdown>
-                    <b-input type="color" id="theme_color" name="theme_color" v-model="t.curThemeColor" :value="t.curThemeColor" @input="changeThemeColor(t)"></b-input>
-                </div>
-            </b-collapse>
+            <b-switch class="setting" v-model="t.themeEditorOpen" @click="openCloseThemeEditor">{{ 'open_themeEditor' | label }}</b-switch>
         </div>
     </b-tab-item>`);
 
@@ -1549,4 +1523,6 @@ export function index(){
             </span>
         </div>
     `);
+    loadCustomThemeHTML();
+        
 }

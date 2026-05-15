@@ -489,7 +489,7 @@ function drawGovModal(){
 export function foreignGov(){
     if ($('#foreign').length === 0 && !global.race['cataclysm'] && (!global.tech['world_control'] || global.race['truepath']) && !global.tech['isolation']){
         let foreign = $('<div id="foreign" v-show="vis()" class="government is-child"></div>');
-        foreign.append($(`<div class="header"><h2 class="has-text-warning">${loc('civics_foreign')}</h2></div>`));
+        foreign.append($(`<div class="header">eeepy<h2 class="has-text-warning">${loc('civics_foreign')}</h2></div>`));
         $('#r_govern0').append(foreign);
 
         var modal = {
@@ -1174,10 +1174,10 @@ function hireMerc(num){
 export function buildGarrison(garrison,full){
     clearElement(garrison);
     if (global.tech['world_control'] && !global.race['truepath']){
-        garrison.append($(`<div class="header"><h2 class="has-text-warning">${loc('civics_garrison')}</h2> - <span class="has-text-success"><span class="defenseRating">${loc('rating')} {{ g.workers | hell | rating }}</span> - <span class="soldierRating"><span class="has-text-warning">${loc(`civics_garrison_soldier_rating`)}</span> {{ g.workers | single | rating(true) }}</span></div>`));
+        garrison.append($(`<div class="header">eeepy<h2 class="has-text-warning">${loc('civics_garrison')}</h2> - <span class="has-text-success"><span class="defenseRating">${loc('rating')} {{ g.workers | hell | rating }}</span> - <span class="soldierRating"><span class="has-text-warning">${loc(`civics_garrison_soldier_rating`)}</span> {{ g.workers | single | rating(true) }}</span></div>`));
     }
     else {
-        garrison.append($(`<div class="header"><h2 class="has-text-warning">${loc('civics_garrison')}</h2> - <span class="has-text-success"><span class="defenseRating">${loc('rating')} {{ g.workers | hell | rating }}</span> / <span class="offenseRating">{{ g.raid | rating }}</span></span> - <span class="soldierRating"><span class="has-text-warning">${loc(`civics_garrison_soldier_rating`)}</span> {{ g.workers | single | rating }}</span></div>`));
+        garrison.append($(`<div class="header">eeepy<h2 class="has-text-warning">${loc('civics_garrison')}</h2> - <span class="has-text-success"><span class="defenseRating">${loc('rating')} {{ g.workers | hell | rating }}</span> / <span class="offenseRating">{{ g.raid | rating }}</span></span> - <span class="soldierRating"><span class="has-text-warning">${loc(`civics_garrison_soldier_rating`)}</span> {{ g.workers | single | rating }}</span></div>`));
     }
 
     var soliders = $(`<div></div>`);

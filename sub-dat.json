@@ -1,0 +1,285 @@
+{
+  "html-background": [
+    "\nhtml.theme .main .content .action a.button span.count ",
+    "\nhtml.theme .main .content .action div.special ",
+    "\nhtml.theme .main .content .action span.on ",
+    "\nhtml.theme .main .content .action span.off ",
+    "\nhtml.theme .main .content .divider h2 ",
+    "\nhtml.theme .modal .actionSpace ",
+    "\nhtml.theme .fileImport ",
+    "\nhtml.theme .star1 "
+  ],
+  "primary-border": [
+    "\nhtml.theme .basic-button ",
+    "\nhtml.theme .add,\nhtml.theme .sub ",
+    "\nhtml.theme .current ",
+    "\nhtml.theme .current.infoOnly ",
+    "\nhtml.theme .market-item .order "
+  ],
+  "secondary-border": [
+    "\nhtml.theme .popper .divide-line ",
+    "\nhtml.theme .main .government .header ",
+    "\nhtml.theme .main .garrison .header ",
+    "\nhtml.theme .main .market-header ",
+    "\nhtml.theme .main .galaxyTrade ",
+    "\nhtml.theme .gridHeader ",
+    "\nhtml.theme .modalBox p,\nhtml.theme .industry p ",
+    "\nhtml.theme .modalBox .market-item,\nhtml.theme .industry .market-item ",
+    "\nhtml.theme .modalBox .divide,\nhtml.theme .industry .divide ",
+    "\nhtml.theme .modalBox .smelting,\nhtml.theme .industry .smelting ",
+    "\nhtml.theme .industry .header ",
+    "\nhtml.theme.gruvboxDark .add,\nhtml.theme.gruvboxDark .sub ",
+    "\nhtml.theme.gruvboxDark .current ",
+    "\nhtml.theme.gruvboxDark .current.infoOnly ",
+    "\nhtml.theme.gruvboxDarkRG .add,\nhtml.theme.gruvboxDarkRG .sub ",
+    "\nhtml.theme.gruvboxDarkRG .current ",
+    "\nhtml.theme.gruvboxDarkRG .current.infoOnly ",
+    "\nhtml.theme.dracula .add,\nhtml.theme.dracula .sub ",
+    "\nhtml.theme.dracula .current ",
+    "\nhtml.theme.dracula .current.infoOnly "
+  ],
+  "primary-color": [
+    "\nhtml.theme body ",
+    "\nhtml.theme h2,\nhtml.theme h3 ",
+    "\nhtml.theme .tabs a,\nhtml.theme .msgQueueFilters span ",
+    "\nhtml.theme .button.is-light ",
+    "\nhtml.theme.darkNight input,\nhtml.theme.darkNight select,\nhtml.theme.darkNight textarea ",
+    "\nhtml.theme.gruvboxDark input,\nhtml.theme.gruvboxDark select,\nhtml.theme.gruvboxDark textarea,\nhtml.theme.gruvboxDark .notification ",
+    "\nhtml.theme.gruvboxDarkRG input,\nhtml.theme.gruvboxDarkRG select,\nhtml.theme.gruvboxDarkRG textarea,\nhtml.theme.gruvboxDarkRG .notification ",
+    "\nhtml.theme.orangeSoda input,\nhtml.theme.orangeSoda select,\nhtml.theme.orangeSoda textarea,\nhtml.theme.orangeSoda .notification ",
+    "\nhtml.theme.dracula input,\nhtml.theme.dracula select,\nhtml.theme.dracula textarea,\nhtml.theme.dracula .notification "
+  ],
+  "secondary-color": [
+    "\nhtml.theme.gruvboxLight input,\nhtml.theme.gruvboxLight select,\nhtml.theme.gruvboxLight textarea,\nhtml.theme.gruvboxLight .notification "
+  ],
+  "link": [
+    "\nhtml.theme a "
+  ],
+  "link-hover": [
+    "\nhtml.theme .tabs a:hover,\nhtml.theme .msgQueueFilters span:hover ",
+    "\nhtml.theme .text-button:hover "
+  ],
+  "enabled": [
+    "\nhtml.theme .buildList .hl-ca ",
+    "\nhtml.theme .main .content .action a.button.hl-ca .aTitle ",
+    "\nhtml.theme .main .content .action.cna a.button.hl-ca .aTitle ",
+    "\nhtml.theme .buttonList .is-selected "
+  ],
+  "disabled": [
+    "\nhtml.theme .buildList .hl-cna ",
+    "\nhtml.theme .main .content .action a.button.hl-cna .aTitle ",
+    "\nhtml.theme .main .content .action.cna a.button.hl-cna .aTitle "
+  ],
+  "has-text-advanced": [
+    "\nhtml.theme .button.has-text-advanced,\nhtml.theme .has-text-advanced ",
+    "\nhtml.theme .refresh svg "
+  ],
+  "has-text-alert": [
+    "\nhtml.theme .button.has-text-alert,\nhtml.theme .has-text-alert ",
+    "\nhtml.theme .popper .grad-from-left-warn "
+  ],
+  "has-text-caution": [
+    "\nhtml.theme .button.has-text-caution,\nhtml.theme .has-text-caution ",
+    "\nhtml.theme .main .content .orange ",
+    "\nhtml.theme .main .content .orange > span "
+  ],
+  "has-text-danger": [
+    "\nhtml.theme .button.has-text-danger,\nhtml.theme .has-text-danger ",
+    "\n  50% ",
+    "\nhtml.theme .popper .grad-from-left ",
+    "\nhtml.theme .pause ",
+    "\nhtml.theme .main .content .red ",
+    "\nhtml.theme .main .content .red > span ",
+    "\nhtml.theme .powerGrid .circuit .off ",
+    "\nhtml.theme.orangeSoda .pop-desc .has-text-caution "
+  ],
+  "has-text-fade": [
+    "\nhtml.theme .has-text-fade "
+  ],
+  "has-text-flair": [
+    "\nhtml.theme .has-text-flair "
+  ],
+  "has-text-label": [
+    "\nhtml.theme .has-text-label "
+  ],
+  "has-text-special": [
+    "\nhtml.theme .button.has-text-special,\nhtml.theme .has-text-special ",
+    "\nhtml.theme .main .content .purple ",
+    "\nhtml.theme .main .content .purple > span "
+  ],
+  "has-text-info": [
+    "\nhtml.theme .button.has-text-info,\nhtml.theme .has-text-info ",
+    "\nhtml.theme .main .content .blue,\nhtml.theme .main .content .precog ",
+    "\nhtml.theme .main .content .blue > span,\nhtml.theme .main .content .precog > span "
+  ],
+  "has-text-success": [
+    "\nhtml.theme .button.has-text-success,\nhtml.theme .has-text-success ",
+    "\nhtml.theme .challenge .simButton ",
+    "\nhtml.theme .sliderbar .is-primary .b-slider-fill ",
+    "\nhtml.theme .play ",
+    "\nhtml.theme .main .content .green,\nhtml.theme .main .content .synth ",
+    "\nhtml.theme .main .content .green > span,\nhtml.theme .main .content .synth > span ",
+    "\nhtml.theme .powerGrid .circuit .on "
+  ],
+  "has-text-warning": [
+    "\nhtml.theme .button.has-text-warning,\nhtml.theme .has-text-warning ",
+    "\nhtml.theme .has-text-danger-pulse ",
+    "\n  100% ",
+    "\nhtml.theme .main .content .yellow ",
+    "\nhtml.theme .main .content .yellow > span ",
+    "\nhtml.theme .modal-card-head p "
+  ],
+  "popper": [
+    "\nhtml.theme .popper .grad-from-right ",
+    "\nhtml.theme .main > div.popper .has-text-dark,\nhtml.theme body .modal > div.popper .has-text-dark "
+  ],
+  "popper-has-text-label": [
+    "\nhtml.theme .popper .has-text-label "
+  ],
+  "popper-has-text-success": [
+    "\nhtml.theme .popper .has-text-success "
+  ],
+  "popper-has-text-warning": [
+    "\nhtml.theme .popper .has-text-warning "
+  ],
+  "modal-child-popper-background": [
+    "\nhtml.theme .main > div.popper,\nhtml.theme body .modal > div.popper "
+  ],
+  "modal-child-popper-border": [
+    "\nhtml.theme .main > div.popper > div,\nhtml.theme body .modal > div.popper > div ",
+    "\nhtml.theme .main > div.popper .split > div:nth-of-type(2),\nhtml.theme body .modal > div.popper .split > div:nth-of-type(2) ",
+    "\nhtml.theme .shipPopper .divider "
+  ],
+  "tabs-li-is-active-link-border": [
+    "\nhtml.theme .tabs li.is-active a,\nhtml.theme .msgQueueFilters span.is-active "
+  ],
+  "tabs-li-is-active-link": [],
+  "button-background": [
+    "\nhtml.theme .button ",
+    "\nhtml.theme .main .content .enemyFortress "
+  ],
+  "button": [],
+  "button-hover-background": [
+    "\nhtml.theme .button.is-hovered,\nhtml.theme .button:hover ",
+    "\nhtml.theme .add:hover,\nhtml.theme .sub:hover "
+  ],
+  "button-hover": [],
+  "button-focus-border": [
+    "\nhtml.theme .button.is-focused,\nhtml.theme .button:focus "
+  ],
+  "basic-button-border-hover-background": [],
+  "basic-button-border-hover": [
+    "\nhtml.theme .basic-button:hover "
+  ],
+  "label": [
+    "\nhtml.theme .label "
+  ],
+  "checkbox-hover": [
+    "\nhtml.theme .checkbox:hover,\nhtml.theme .radio:hover "
+  ],
+  "dropdown-content-background": [
+    "\nhtml.theme .dropdown-content "
+  ],
+  "b-tooltip-accent": [
+    "\nhtml.theme .b-tooltip.is-right:before ",
+    "\nhtml.theme .b-tooltip.is-left:before ",
+    "\nhtml.theme .b-tooltip.is-bottom:before "
+  ],
+  "b-tooltip-is-primary-background": [
+    "\nhtml.theme .b-tooltip.is-primary .tooltip-content "
+  ],
+  "b-tooltip-is-primary-border": [],
+  "b-tooltip-is-primary": [],
+  "bars-background": [
+    "\nhtml.theme .topBar,\nhtml.theme .promoBar "
+  ],
+  "meter-low": [
+    "\nhtml.theme .meter.low "
+  ],
+  "meter-neutral": [
+    "\nhtml.theme .meter.neutral "
+  ],
+  "meter-high": [
+    "\nhtml.theme .meter.high "
+  ],
+  "div-special-border": [],
+  "div-special-gear-fill": [
+    "\nhtml.theme .msgQueue span.special .gear,\nhtml.theme .graphContainer span.special .gear ",
+    "\nhtml.theme .main .content .action div.special .gear "
+  ],
+  "div-special-hover-border": [
+    "\nhtml.theme .main .content .action div.special:hover "
+  ],
+  "div-special-hover-gear-fill": [
+    "\nhtml.theme .msgQueue span.special:hover .gear,\nhtml.theme .graphContainer span.special:hover .gear ",
+    "\nhtml.theme .main .content .action div.special:hover .gear "
+  ],
+  "span-on-border": [],
+  "span-on": [],
+  "span-on-warn": [
+    "\nhtml.theme .main .content .action span.on.warn,\nhtml.theme .main .content .action span.on.altwarn "
+  ],
+  "span-off-border": [],
+  "span-off": [],
+  "span-on-off-hover-border": [
+    "\nhtml.theme .main .content .action span.on:hover,\nhtml.theme .main .content .action span.off:hover "
+  ],
+  "hl-button-border": [
+    "\nhtml.theme .main .content .action.hl .button "
+  ],
+  "link-button-background": [
+    "\nhtml.theme .main .content .action.cna a.button "
+  ],
+  "special-on-off-border": [
+    "\nhtml.theme .main .content .action.cna .special,\nhtml.theme .main .content .action.cna .on,\nhtml.theme .main .content .action.cna .off "
+  ],
+  "oldTech": [
+    "\nhtml.theme .main .content .action.cna .oldTech span.aTitle "
+  ],
+  "cnam-aTitle": [
+    "\nhtml.theme .main .content .action.cnam span.aTitle "
+  ],
+  "fort-patrol-check-background": [
+    "\nhtml.theme .fort .patrol .check "
+  ],
+  "market-item-background": [
+    "\nhtml.theme .market-item.alt,\nhtml.theme .resource.alt ",
+    "\nhtml.theme .inactive-row "
+  ],
+  "market-item-order-hover-background": [],
+  "market-item-order-hover-border": [
+    "\nhtml.theme .market-item .order:hover "
+  ],
+  "resource-overlay-color": [
+    "\nhtml.theme .resource.showBar.prime "
+  ],
+  "resource-overlay-color-alt": [
+    "\nhtml.theme .resource.showBar.alt "
+  ],
+  "modalBox-background": [
+    "\nhtml.theme .modal-card-head,\nhtml.theme .modal-card-body,\nhtml.theme .modal-card-foot ",
+    "\nhtml.theme .modalBox,\nhtml.theme .industry "
+  ],
+  "star-2-fill": [
+    "\nhtml.theme .star1 path ",
+    "\nhtml.theme .star2 "
+  ],
+  "star-3-fill": [
+    "\nhtml.theme .star3 "
+  ],
+  "star-4-fill": [
+    "\nhtml.theme .star4 "
+  ],
+  "star-5-fill": [
+    "\nhtml.theme .star5 "
+  ],
+  "webkit-scrollbar-background": [
+    "\nhtml.theme .hscroll::-webkit-scrollbar-track,\nhtml.theme .vscroll::-webkit-scrollbar-track,\nhtml.theme .sticky::-webkit-scrollbar-track,\nhtml.theme .resTabs > section::-webkit-scrollbar-track,\nhtml.theme .resTabs > .tabs::-webkit-scrollbar-track,\nhtml.theme .bldQueue::-webkit-scrollbar-track,\nhtml.theme .dropdown-content::-webkit-scrollbar-track ",
+    "\nhtml.theme .vscroll::-webkit-scrollbar,\nhtml.theme .sticky::-webkit-scrollbar,\nhtml.theme .resTabs > section::-webkit-scrollbar,\nhtml.theme .resTabs > .tabs::-webkit-scrollbar,\nhtml.theme .bldQueue::-webkit-scrollbar,\nhtml.theme .dropdown-content::-webkit-scrollbar ",
+    "\nhtml.theme .hscroll::-webkit-scrollbar "
+  ],
+  "webkit-scrollbar-thumb-background": [
+    "\nhtml.theme .vscroll::-webkit-scrollbar-thumb,\nhtml.theme .hscroll::-webkit-scrollbar-thumb,\nhtml.theme .sticky::-webkit-scrollbar-thumb,\nhtml.theme .resTabs > section::-webkit-scrollbar-thumb,\nhtml.theme .resTabs > .tabs::-webkit-scrollbar-thumb,\nhtml.theme .bldQueue::-webkit-scrollbar-thumb,\nhtml.theme .dropdown-content::-webkit-scrollbar-thumb ",
+    "\nhtml.theme .vscroll,\nhtml.theme .hscroll,\nhtml.theme .sticky,\nhtml.theme .resTabs > section,\nhtml.theme .resTabs > .tabs,\nhtml.theme .bldQueue "
+  ]
+}

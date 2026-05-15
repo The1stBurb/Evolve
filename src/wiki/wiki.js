@@ -1,4 +1,5 @@
 import { global, setGlobal, save } from './../vars.js';
+import { set_theme, loadAllThemes, themes, theme_variables } from './../themes.js';
 import { loc } from './../locale.js';
 import {} from './init.js';
 import {} from './../achieve.js';
@@ -15,9 +16,26 @@ import { eventsPage } from './events.js';
 import { arpaPage } from './arpa.js';
 import { changeLog } from './change.js';
 import { cancelSearchIndexing, search } from './search.js';
+import { buildThemesPages } from './themes.js';
+
 
 $('body').empty();
+loadAllThemes();
+set_theme(global.settings.theme);
 initPage();
+
+function MenuItem(value,submenu,override_text){
+    let item={};
+    item.key=value;
+    if(submenu && submenu.length>0){
+        item.submenu=submenu;
+    }
+    if(override_text){
+        console.log(override_text)
+        item.override_text=override_text;
+    }
+    return item;
+}
 
 function initPage(){
     $('body').append($(`<h1 class="is-sr-only">${loc('wiki_menu_evolve')}</h1>`));
@@ -28,128 +46,102 @@ function initPage(){
     let menu = $(`<div id="menu" class="mainMenu"></div>`);
     wiki.append(menu);
 
+    for(let i in themes.dark){
+        Object.keys(theme_variables).forEach(theme_section=>{
+            if(i.includes(theme_section)){
+                theme_variables[theme_section].dat.push(i   )
+            }
+        });
+    }
+
     let menuItems = [
-        {
-            key: 'intro',
-        },
-        {
-            key: 'faq',
-        },
-        {
-            key: 'gameplay',
-            submenu: [
-                { key: 'basics' },
-                { key: 'mechanics' },
-                { key: 'government' },
-                { key: 'governor' },
-                { key: 'combat' },
-                { key: 'challenges' },
-                { key: 'resets' },
-                { key: 'planets' },
-                { key: 'universes' },
-                { key: 'hell' }                
-            ]
-        },
-        {
-            key: 'prestige',
-            submenu: [
-                { key: 'resets' },
-                { key: 'resources' },
-                { key: 'crispr' },
-                { key: 'blood' },
-                { key: 'perks' }
-            ]
-        },
-        {
-            key: 'events',
-            submenu: [
-                { key: 'major' },
-                { key: 'minor' },
-                { key: 'progress' },
-                { key: 'special' }              
-            ]
-        },
-        {
-            key: 'species',
-            submenu: [
-                { key: 'races' },
-                { key: 'traits' },
-                { key: 'custom' }
-            ]
-        },
-        {
-            key: 'structures',
-            submenu: [
-                { key: 'prehistoric' },
-                { key: 'planetary' },
-                { key: 'space' },
-                { key: 'interstellar' },
-                { key: 'intergalactic' },
-                { key: 'hell' },
-                { key: 'edenic' }
-            ]
-        },
-        {
-            key: 'tech',
-            submenu: [
-                { key: 'primitive' },
-                { key: 'civilized' },
-                { key: 'discovery' },
-                { key: 'industrialized' },
-                { key: 'globalized' },
-                { key: 'early_space' },
-                { key: 'deep_space' },
-                { key: 'interstellar' },
-                { key: 'intergalactic' },
-                { key: 'dimensional' },
-                { key: 'existential' }
-            ]
-        },
-        {
-            key: 'tp_structures',
-            submenu: [
-                { key: 'prehistoric' },
-                { key: 'planetary' },
-                { key: 'space' },
-                { key: 'tauceti' }
-            ]
-        },
-        {
-            key: 'tp_tech',
-            submenu: [
-                { key: 'primitive' },
-                { key: 'civilized' },
-                { key: 'discovery' },
-                { key: 'industrialized' },
-                { key: 'globalized' },
-                { key: 'early_space' },
-                { key: 'deep_space' },
-                { key: 'solar' },
-                { key: 'tauceti' }
-            ]
-        },
-        {
-            key: 'arpa',
-            submenu: [
-                { key: 'projects' },
-                //{ key: 'genetics' },
-                { key: 'crispr' },
-                { key: 'blood' }
-            ]
-        },
-        {
-            key: 'achievements',
-            submenu: [
-                { key: 'list' },
-                { key: 'feats' }
-            ]
-        },
-        {
-            key: 'changelog',
-        },
-        {
-            key: 'search',
-        }
+        MenuItem('intro'),
+        MenuItem('faq'),
+        MenuItem('gameplay',[
+            MenuItem('basics'),
+            MenuItem('mechanics'),
+            MenuItem('government'),
+            MenuItem('governor'),
+            MenuItem('combat'),
+            MenuItem('challenges'),
+            MenuItem('resets'),
+            MenuItem('planets'),
+            MenuItem('universes'),
+            MenuItem('hell'),
+        ]),
+        MenuItem('prestige',[
+            MenuItem('resets'),
+            MenuItem('resources'),
+            MenuItem('crispr'),
+            MenuItem('blood'),
+            MenuItem('perks'),
+        ]),
+        MenuItem('events',[
+            MenuItem('major'),
+            MenuItem('minor'),
+            MenuItem('progress'),
+            MenuItem('special'),
+        ]),
+        MenuItem('species',[
+            MenuItem('races'),
+            MenuItem('traits'),
+            MenuItem('custom'),
+        ]),
+        MenuItem('structures',[
+            MenuItem('prehistoric'),
+            MenuItem('planetary'),
+            MenuItem('space'),
+            MenuItem('interstellar'),
+            MenuItem('intergalactic'),
+            MenuItem('hell'),
+            MenuItem('edenic'),
+        ]),
+        MenuItem('tech',[
+            MenuItem('primitive'),
+            MenuItem('civilized'),
+            MenuItem('discovery'),
+            MenuItem('industrialized'),
+            MenuItem('globalized'),
+            MenuItem('early_space'),
+            MenuItem('deep_space'),
+            MenuItem('interstellar'),
+            MenuItem('intergalactic'),
+            MenuItem('dimensional'),
+            MenuItem('existential'),
+        ]),
+        MenuItem('tp_structures',[
+            MenuItem('prehistoric'),
+            MenuItem('planetary'),
+            MenuItem('space'),
+            MenuItem('tauceti'),
+        ]),
+        MenuItem('tp_tech',[
+            MenuItem('primitive'),
+            MenuItem('civilized'),
+            MenuItem('discovery'),
+            MenuItem('industrialized'),
+            MenuItem('globalized'),
+            MenuItem('early_space'),
+            MenuItem('deep_space'),
+            MenuItem('solar'),
+            MenuItem('tauceti'),
+        ]),
+        MenuItem('arpa',[
+            MenuItem('projects'),
+            // MenuItem('genetics'),
+            MenuItem('crispr'),
+            MenuItem('blood'),
+        ]),
+        MenuItem('achievements',[
+            MenuItem('list'),
+            MenuItem('feats'),
+        ]),
+        MenuItem('custom_themes',[
+            MenuItem('custom_themes_intro',[],'theme_section_intro'),
+            ...Object.keys(theme_variables).map(item=>MenuItem(`custom_themes_${item}`,[],`theme_section_${item}`))
+        ]),
+        MenuItem('changelog'),
+        MenuItem('search')
     ];
 
     let wikiMenu = `<template><b-menu class="sticky has-text-caution"><b-menu-list label="${loc('wiki_menu_evolve')}">`;
@@ -278,7 +270,10 @@ async function menuDispatch(main,sub,frag){
                 }
                 setWindowHash(main,sub,frag);
             break;
-
+        case 'custom_themes':
+            buildThemesPages(sub);
+            setWindowHash(main,sub,frag)
+            break;
         case 'changelog':
             changeLog();
             setWindowHash(main, sub, frag);
@@ -316,17 +311,17 @@ function buiildMenu(items,set,parent){
 
     let menu = ``;
     for (let i=0; i<items.length; i++){
-
+        let item_name=loc(items[i].hasOwnProperty('override_text') ? items[i].override_text : `wiki_menu_${items[i].key}`);
         if (items[i].hasOwnProperty('submenu')){
             let active = (!hash && set && i === 0) || (hash && hash.length > 1 && hash[1] === items[i].key) ? ` :active="true" expanded` : '';
-            menu = menu + `<b-menu-item${active}><template slot="label" slot-scope="props">${loc(`wiki_menu_${items[i].key}`)}</template>`;
+            menu = menu + `<b-menu-item${active}><template slot="label" slot-scope="props">${item_name}</template>`;
             menu = menu + buiildMenu(items[i].submenu,false,items[i].key);
             menu = menu + `</b-menu-item>`;
         }
         else {
             let active = (!hash && set && i === 0) || (hash && hash[0] === items[i].key) ? ` :active="true"` : '';
             let args = parent ? `'${parent}','${items[i].key}'` : `'${items[i].key}',false`;
-            menu = menu + `<b-menu-item${active} label="${loc(`wiki_menu_${items[i].key}`)}" @click="loadPage(${args})"></b-menu-item>`
+            menu = menu + `<b-menu-item${active} label="${item_name}" @click="loadPage(${args})"></b-menu-item>`
         }
     }
     return menu;

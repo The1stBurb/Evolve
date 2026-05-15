@@ -22,7 +22,7 @@ import { index, mainVue, initTabs, loadTab } from './index.js';
 import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { enableDebug, updateDebugData } from './debug.js';
-import { set_theme } from './themes.js';
+import { set_theme, loadAllThemes } from './themes.js';
 
 
 {
@@ -205,6 +205,8 @@ if (global.queue.display){
 if (global.r_queue.display){
     calcRQueueMax();
 }
+
+loadAllThemes();
 set_theme(global.settings.theme);
 mainVue();
 
@@ -11432,8 +11434,12 @@ function midLoop(){
                                 elm.addClass('has-text-danger');
                             }
                         }
-                        else if (elm.hasClass('has-text-danger') || elm.hasClass('has-text-alert')){
+                        else if (elm.hasClass('has-text-danger')){
                             elm.removeClass('has-text-danger');
+                            elm.addClass(avail);
+                        }
+                        else if(elm.hasClass('has-text-alert')){
+                            elm.removeClass('has-text-alert');
                             elm.addClass(avail);
                         }
                     }

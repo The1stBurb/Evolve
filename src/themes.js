@@ -1,4 +1,6 @@
 import { global } from './vars.js';
+import { loc } from './locale.js';
+import { vBind } from './functions.js';
 export var themes={
     variables:{
         // Named colors
@@ -896,36 +898,67 @@ export var themes={
         'webkit-scrollbar-thumb-background': 'var(--theme-primary-border)',
     },
 }
+export var theme_settings={
+    get cur_theme(){return global.settings.theme},
+    curThemeVar:'html-background',
+    themeSection:'button',
+    themeEditorOpen:false,
+    curThemeColor: '#00f',
+    pos:{
+        x:0,
+        y:0,
+    },
+}
+export let theme_variables={
+    'button':{drop:'',dat:[]},
+    'border':{drop:'',dat:[]},
+    'has-text':{drop:'',dat:[]},
+    'popper':{drop:'',dat:[]},
+    'hover':{drop:'',dat:[]},
+    'link':{drop:'',dat:[]},
+    'background':{drop:'',dat:[]},
+    'b-tooltip':{drop:'',dat:[]},
+    'meter':{drop:'',dat:[]},
+    'div':{drop:'',dat:[]},
+    'span':{drop:'',dat:[]},
+    'market':{drop:'',dat:[]},
+    'star':{drop:'',dat:[]},
+    'scrollbar':{drop:'',dat:[]},
+    'misc':{drop:'',dat:[]},
+};
+
+export function loadAllThemes(){
+    for(let theme_name in global['custom_theme']){
+        themes[theme_name]=global['custom_theme'][theme_name]
+    }
+}
+
 function set_var(var_name,value){
     document.documentElement.style.setProperty(`--theme-${var_name}`,value);
 }
-function get_var(val,theme_dat){
-    if(val[0]=="var(--theme-)"){
-        let new_val=get_key(theme_dat,val.slice(1));
-        return new_val;
-    }
-    console.log(val,"e")
-    return val;
-}
-function get_key(theme_dat,key_name){
-    console.log(`|${key_name}|`,theme_dat.hasOwnProperty(key_name),theme_dat[key_name]) 
-    if(theme_dat.hasOwnProperty(key_name)){
-        return get_var(theme_dat[key_name],theme_dat);
-    }
-    if(theme_dat.hasOwnProperty('parent')){
-        for(let parent in theme_dat.parent){
-            let par=theme_dat.parent[parent];
-            let pos_val=get_key(themes[par],key_name);
-            if(pos_val!==null){
-                return get_var(pos_val,theme_dat);
-            }
-        }
-    }
-    if(themes.variables.hasOwnProperty(key_name)){
-        return themes.variables[key_name];
-    }
-    return null;
-}
+// function get_var(val,theme_dat){
+//     // console.log(val,"e")
+//     return val;
+// }
+// function get_key(theme_dat,key_name){
+//     console.log(`|${key_name}|`,theme_dat.hasOwnProperty(key_name),theme_dat[key_name]) 
+//     if(theme_dat.hasOwnProperty(key_name)){
+//         return get_var(theme_dat[key_name],theme_dat);
+//     }
+//     if(theme_dat.hasOwnProperty('parent')){
+//         for(let parent in theme_dat.parent){
+//             let par=theme_dat.parent[parent];
+//             let pos_val=get_key(themes[par],key_name);
+//             if(pos_val!==null){
+//                 return get_var(pos_val,theme_dat);
+//             }
+//         }
+//     }
+//     if(themes.variables.hasOwnProperty(key_name)){
+//         return themes.variables[key_name];
+//     }
+//     return null;
+// }
 var theme='';
 export function set_theme(theme_name,has_set){
     let theme_dat = themes[theme_name]
@@ -964,7 +997,9 @@ export function createNewCustom(){
     global.custom_theme['new_theme']=themes['new_theme']
 }
 
+export let broke_color='#0ff00f';
 export function getThemeVar(name,theme_name){
+    if(!theme_name && !global.hasOwnProperty('settings')){return broke_color;}
     let theme_dat=themes[theme_name ?? global.settings.theme];
     if(theme_dat.hasOwnProperty(name)){
         return theme_dat[name];
@@ -973,15 +1008,139 @@ export function getThemeVar(name,theme_name){
         for(let i in theme_dat.parent){
             let parent=theme_dat.parent[i];
             let val=getThemeVar(name,parent)
-            if(val!='#000'){
+            if(val!=broke_color){
                 return val;
             }
         }
     }
-    return '#00f';
+    if(themes.variables.hasOwnProperty(name)){
+        return themes.variables[name]
+    }
+    return broke_color;
+}
+
+export let var_regx=/var\(--theme-(.*?)\)/;
+export function getVar(name,theme_name){
+    let val=getThemeVar(name,theme_name);
+    return val[0]=="#" ? val : getVar(val.match(var_regx)[1]);
 }
 
 export function setThemeVar(name,value){
     themes[global.settings.theme][name]=value;
     set_var(name,value)
+}
+
+export function loadCustomThemeHTML(){
+    let vals=Object.keys(themes.dark)//.slice(20)
+    for(let i in vals){
+        let var_dropdown=`<b-dropdown-item v-on:click="setCurThemeVar('${vals[i]}',t)">{{ 'theme_var_${vals[i]}' | label }}</b-dropdown-item>`
+        // theme_variables+=;
+        let added_any=false;
+        Object.keys(theme_variables).forEach(theme_section=>{
+            if(vals[i].includes(theme_section)){
+                theme_variables[theme_section].dat.push(var_dropdown)
+                added_any=true;
+            }
+        });
+        if(!added_any){
+            theme_variables['misc'].dat.push(var_dropdown)
+        }
+    }
+    let all_theme_sections='';
+    let theme_section_sel='';
+    Object.keys(theme_variables).forEach(theme_section=>{
+        let section_variables=theme_variables[theme_section].dat.join('');
+        //
+        all_theme_sections+=`<b-dropdown hoverable v-show="t.themeSection=='${theme_section}'">
+                <button class="button is-primary" slot="trigger">
+                    <span>{{ 'theme_var_' + t.curThemeVar | label }}</span>
+                    <i class="fas fa-sort-down"></i>
+                </button>
+                ${section_variables}
+            </b-dropdown>`
+        theme_section_sel+=`<b-dropdown-item v-on:click="t.themeSection='${theme_section}'">{{ 'theme_section_${theme_section}' | label }}</b-dropdown-item>`;
+    });
+    document.querySelector('body').insertAdjacentHTML('beforeend',
+    `<div id="themeColorPicker" class="themeColorPicker theme" v-show="t.themeEditorOpen" style="position: absolute;z-index: 999;cursor: move;user-select: none;padding-top:0.5rem;border:.06225rem solid;background:var(--theme-html-background);display:flex;align-items:center;flex-direction:column;" :style="{ top: t.pos.y + 'px', left: t.pos.x + 'px' }" @mousedown="startDrag">
+        <span class="has-text-success">Theme Editor</span>
+        <b-collapse :open="t.themeEditorOpen">
+            <div class="colorPicker" >
+                <b-dropdown hoverable>
+                    <button class="button is-primary" slot="trigger">
+                        <span>{{ 'theme_section_' + t.themeSection | label }}</span>
+                        <i class="fas fa-sort-down"></i>
+                    </button>
+                ${theme_section_sel}
+                </b-dropdown>
+                ${all_theme_sections}
+                <b-input type="color" id="theme_color" name="theme_color" v-model="t.curThemeColor" :value="t.curThemeColor" @input="changeThemeColor(t)"></b-input>
+            </div>
+        </b-collapse>
+    </div>`);
+
+    vBind({
+        el:'#themeColorPicker',
+        data:{
+            t:theme_settings,
+        },
+        methods:{
+            newCustomTheme(){
+                createNewCustom()
+            },
+            setCurThemeVar(name,t){
+                t.curThemeVar=name;
+                let val=getThemeVar(name);
+                if(val.includes('var')){
+                    let nval=val.match(/var\(([a-zA-Z-]+)\)/)[1];
+
+                    val=getComputedStyle(document.documentElement).getPropertyValue(nval).trim();
+                }
+                if(val.length==4){
+                    val=`#${val[1]}${val[1]}${val[2]}${val[2]}${val[3]}${val[3]}`
+                }
+                t.curThemeColor=val
+            },
+            changeThemeColor(t){
+                // console.log(t.curThemeVar,t.curThemeColor);
+                setThemeVar(t.curThemeVar,t.curThemeColor);
+            },
+            startDrag(e){
+                startDrag(e)
+            },
+        },
+        filters: {
+            label(lbl){
+                return loc(lbl);
+            },
+        }
+    });
+}
+
+let mouseX=0, mouseY=0;
+function startDrag(event) {
+    // Record initial mouse position
+    mouseX = event.clientX
+    mouseY = event.clientY
+    console.log("started!")
+
+    // Attach listeners to window so movement stays smooth even if mouse leaves the div
+    window.addEventListener('mousemove', drag)
+    window.addEventListener('mouseup', stopDrag)
+}
+function drag(event) {
+    // Calculate how far the mouse moved
+    const deltaX = event.clientX - mouseX
+    const deltaY = event.clientY - mouseY
+
+    // Update our reactive coordinates
+    theme_settings.pos.x += deltaX
+    theme_settings.pos.y += deltaY
+
+    // Reset initial mouse position for the next frame
+    mouseX = event.clientX
+    mouseY = event.clientY
+}
+function stopDrag() {
+    window.removeEventListener('mousemove', drag)
+    window.removeEventListener('mouseup', stopDrag)
 }

@@ -171,7 +171,7 @@ export function mechanicsPage(content){
             },
             data_color: {
                 2: ['danger'],
-                3: ['caution'],
+                3: ['alert'],
                 5: ['danger'],
             }
         });

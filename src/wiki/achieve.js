@@ -158,7 +158,7 @@ export function featPage(){
 
 function achieveDesc(achievement,showFlair,universe){
     let uAffix = universeAffix(universe || 'standard');
-    
+    showFlair=true;
     let flair = showFlair ? `<div class="has-text-flair">${achievements[achievement].flair}</div>` : ``;
     if (achievement === 'mass_extinction' || achievement === 'vigilante'){
         let killed = `<div class="flexed wide">`;
