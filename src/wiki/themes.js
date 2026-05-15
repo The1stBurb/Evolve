@@ -6,6 +6,7 @@ import { theme_variables, themes, getThemeVar, broke_color, var_regx, getVar } f
 
 import { sideMenu, infoBoxBuilder, createRevealSection, createCalcSection, getSolarName } from './functions.js';
 
+//testing testing
 let name_regx=/custom_themes_(.*?)$/;
 export function buildThemesPages(page_name){
     //get the actaul page name, not the wiki page name
