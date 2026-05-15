@@ -181,6 +181,7 @@ export function mainVue(){
                 $('html').addClass(global.settings.font);
             },
             openCloseThemeEditor(e){
+                console.log("open close theme editor!",theme_settings)
                 // theme_settings.themeEditorOpen=!theme_settings.themeEditorOpen;
                 if(theme_settings.themeEditorOpen){
                     // theme_settings.pos.x=e.clientX;
@@ -1404,7 +1405,7 @@ export function index(){
             </b-collapse>
         </div>
         <div class="themeEditor">
-            <b-switch class="setting" v-model="t.themeEditorOpen" @click="openCloseThemeEditor">{{ 'open_themeEditor' | label }}</b-switch>
+            <b-switch class="setting" v-model="t.themeEditorOpen" @click="openCloseThemeEditor"><span>{{ label('open_theme_editor')}}</span></b-switch>
         </div>
         </div>
     </b-tab-item>`);
