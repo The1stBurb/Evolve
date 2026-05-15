@@ -14,12 +14,14 @@ import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObse
 import { renderEdenic } from './edenic.js';
 import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
+import { themes, set_theme, createNewCustom, getThemeVar, setThemeVar, theme_settings, theme_variables, loadCustomThemeHTML } from './themes.js';
 
 export function mainVue(){
     vBind({
         el: '#mainColumn div.content',
         data: {
-            s: global.settings
+            s: global.settings,
+            t: theme_settings,
         },
         methods: {
             swapTab(tab) {
@@ -170,11 +172,21 @@ export function mainVue(){
                 }
                 window.location.reload();
             },
-            setTheme(theme){
+            setTheme(theme,set_none){
+                set_theme(theme);
                 global.settings.theme = theme;
                 $('html').removeClass();
-                $('html').addClass(theme);
+                $('html').addClass('theme');
+                $('html').addClass(set_none ? 'none' : theme);
                 $('html').addClass(global.settings.font);
+            },
+            openCloseThemeEditor(e){
+                // theme_settings.themeEditorOpen=!theme_settings.themeEditorOpen;
+                if(theme_settings.themeEditorOpen){
+                    // theme_settings.pos.x=e.clientX;
+                    // theme_settings.pos.y=e.clientY;
+                    console.log('setting pos to',theme_settings.pos,e)
+                }
             },
             numNotation(notation){
                 global.settings.affix = notation;
@@ -1241,7 +1253,7 @@ export function index(){
                 </template>
                 <b-dropdown-item v-on:click="setTheme('dark')">{{ label('theme_dark') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('light')">{{ label('theme_light') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setTheme('night')">{{ label('theme_night') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setTheme('night',true)">{{ label('theme_night') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('darkNight')">{{ label('theme_darkNight') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('redgreen')">{{ label('theme_redgreen') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('gruvboxLight')">{{ label('theme_gruvboxLight') }}</b-dropdown-item>
@@ -1249,6 +1261,8 @@ export function index(){
                 <b-dropdown-item v-on:click="setTheme('gruvboxDarkRG')">{{ label('theme_gruvboxDarkRG') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('orangeSoda')">{{ label('theme_orangeSoda') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="setTheme('dracula')">{{ label('theme_dracula') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setTheme('custom-1',true)">{{ label('theme_custom1') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setTheme('custom-2',true)">{{ label('theme_custom2') }}</b-dropdown-item>
                 ${hideEgg}
             </b-dropdown>
 
@@ -1388,6 +1402,9 @@ export function index(){
                     </div>
                 </div>
             </b-collapse>
+        </div>
+        <div class="themeEditor">
+            <b-switch class="setting" v-model="t.themeEditorOpen" @click="openCloseThemeEditor">{{ 'open_themeEditor' | label }}</b-switch>
         </div>
         </div>
     </b-tab-item>`);

@@ -1,3 +1,4 @@
+// import { themes } from './themes.js';
 export var save = window.localStorage;
 export var global = {
     seed: 1,
@@ -1802,6 +1803,7 @@ if (!global.settings['q_resize']){
     global.settings.q_resize = 'auto';
 }
 
+$('html').addClass('theme');
 $('html').addClass(global.settings.theme);
 $('html').addClass(global.settings.queuestyle);
 
@@ -2002,6 +2004,13 @@ if (!global.civic['d_job']){
 
 global.settings.animated = true;
 global.settings.disableReset = false;
+
+if(!global.hasOwnProperty("custom_theme")){
+    global['custom_theme']={
+        'custom-1':{},
+        'custom-2':{},
+    }
+}
 
 if (global['arpa'] && global.arpa['launch_facility'] && global.arpa.launch_facility.rank > 0 && !global.tech['space']){
     global.tech['space'] = 1;
