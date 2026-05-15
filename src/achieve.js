@@ -50,7 +50,7 @@ const achieve_list = {
 };
 
 const flairData = {
-    colonist: [flib('name')]
+    colonist: ['']//flib('name')]
 };
 
 const descData = {

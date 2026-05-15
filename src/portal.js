@@ -6851,6 +6851,7 @@ export function mechDesc(parent,obj){
         if (costs[res]() > 0){
             let label = res === 'Money' ? '$' : (res === 'Supply' ? loc('resource_Supply_name') : global.resource[res].name) + ': ';
             let amount = res === 'Supply' ? global.portal.purifier.supply : global.resource[res].amount;
+            
             let color = amount >= costs[res]() ? 'has-text-dark' : ( res === tc.r ? 'has-text-danger' : 'has-text-alert');
             cost.append($(`<div class="${color}" data-${res}="${costs[res]()}">${label}${sizeApproximation(costs[res](),2)}</div>`));
         }
