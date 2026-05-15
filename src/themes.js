@@ -1026,7 +1026,7 @@ export function loadCustomThemeHTML(){
     let vals=Object.keys(themes.dark)
     //dropdown items
     for(let i in vals){
-        let var_dropdown=`<b-dropdown-item v-on:click="setCurThemeVar('${vals[i]}',t)">{{ 'theme_var_${vals[i]}' | label }}</b-dropdown-item>`
+        let var_dropdown=`<b-dropdown-item v-on:click="setCurThemeVar('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`
         let added_any=false;
         //add them to the theme sections
         Object.keys(theme_variables).forEach(theme_section=>{
@@ -1052,17 +1052,18 @@ export function loadCustomThemeHTML(){
                 </button>
                 ${section_variables}
             </b-dropdown>`
-        theme_section_sel+=`<b-dropdown-item v-on:click="t.themeSection='${theme_section}'">{{ 'theme_section_${theme_section}' | label }}</b-dropdown-item>`;
+        theme_section_sel+=`<b-dropdown-item v-on:click="t.themeSection='${theme_section}'">{{ label('theme_section_${theme_section}') }}</b-dropdown-item>`;
     });
     //add to the end of the body
-    document.querySelector('body').insertAdjacentHTML('beforeend',
-    `<div id="themeColorPicker" class="themeColorPicker theme" v-show="t.themeEditorOpen" style="position: absolute;z-index: 999;cursor: move;user-select: none;padding-top:0.5rem;border:.06225rem solid;background:var(--theme-html-background);display:flex;align-items:center;flex-direction:column;" :style="{ top: t.pos.y + 'px', left: t.pos.x + 'px' }" @mousedown="startDrag">
+    let style="position: absolute;z-index: 999;cursor: move;user-select: none;padding-top:0.5rem;border:.06225rem solid;background:var(--theme-html-background);display:flex;align-items:center;flex-direction:column;left:0px;top:0px;";
+    //document.querySelector('body').insertAdjacentHTML('beforeend',
+    $('body').append(`<div id="themeColorPicker" class="themeColorPickers theme" v-if="t.themeEditorOpen" :style="{ top: t.pos.y + 'px', left: t.pos.x + 'px', position: 'absolute', 'z-index':'999' }" style="${1?style:''}" @mousedown="startDragV">
         <span class="has-text-success">Theme Editor</span>
         <b-collapse :open="t.themeEditorOpen">
             <div class="colorPicker" >
                 <b-dropdown hoverable>
                     <button class="button is-primary" slot="trigger">
-                        <span>{{ 'theme_section_' + t.themeSection | label }}</span>
+                        <span>{{ label('theme_section_' + t.themeSection) }}</span>
                         <i class="fas fa-sort-down"></i>
                     </button>
                 ${theme_section_sel}
@@ -1099,11 +1100,9 @@ export function loadCustomThemeHTML(){
                 // console.log(t.curThemeVar,t.curThemeColor);
                 setThemeVar(t.curThemeVar,t.curThemeColor);
             },
-            startDrag(e){
+            startDragV(e){
                 startDrag(e)
             },
-        },
-        filters: {
             label(lbl){
                 return loc(lbl);
             },

@@ -181,13 +181,9 @@ export function mainVue(){
                 $('html').addClass(global.settings.font);
             },
             openCloseThemeEditor(e){
-                console.log("open close theme editor!",theme_settings)
-                // theme_settings.themeEditorOpen=!theme_settings.themeEditorOpen;
-                if(theme_settings.themeEditorOpen){
-                    // theme_settings.pos.x=e.clientX;
-                    // theme_settings.pos.y=e.clientY;
-                    console.log('setting pos to',theme_settings.pos,e)
-                }
+                theme_settings.pos.x=e.clientX;
+                theme_settings.pos.y=e.clientY;
+                // console.log(theme_settings)
             },
             numNotation(notation){
                 global.settings.affix = notation;
@@ -1486,4 +1482,6 @@ export function index(){
             </span>
         </div>
     `);
+
+    loadCustomThemeHTML();
 }
