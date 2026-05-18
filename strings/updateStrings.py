@@ -36,7 +36,7 @@ else:
             except:
                 print("the last-strings.json was a malformed json file.")
                 last_strings = None
-            last_file.close();
+            last_file.close()
         else:
             last_strings = None
         
@@ -69,8 +69,8 @@ else:
         else:
             print("0 keys was deleted.".format(len(locale_strings)))
         
-        loc_file.seek(0,0);
-        loc_file.truncate(0);
+        loc_file.seek(0,0)
+        loc_file.truncate(0)
         json.dump(writing, loc_file, ensure_ascii=False, indent=2)
 
-        copyfile("strings.json", "last-strings.json");
+        copyfile("strings.json", "last-strings.json")
