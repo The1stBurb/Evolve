@@ -23,6 +23,7 @@ import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { set_theme, loadAllThemes, setThemeToHTML } from './themes.js';
 
+loadAllThemes();
 setThemeToHTML();
 
 {

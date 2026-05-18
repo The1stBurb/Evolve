@@ -11643,6 +11643,7 @@
   
   "open_theme_editor":"Enable Theme Editor",
   "theme_custom":"Custom %0",
+  "theme_custom_count":"Number of Customs",
   "theme_none":"No Theme",
   "import_export_theme":"Import/Export Custom Theme",
   "import_theme":"Import Theme",

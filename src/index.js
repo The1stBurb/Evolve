@@ -14,7 +14,7 @@ import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObse
 import { renderEdenic } from './edenic.js';
 import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
-import { themes, set_theme, createNewCustom, getThemeVar, setThemeVar, theme_settings, theme_variables, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from './themes.js';
+import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from './themes.js';
 
 export function mainVue(){
     vBind({
@@ -215,8 +215,30 @@ export function mainVue(){
                 return getThemeTitle(name);
             },
             setCustomCount(num,t){
+                let past_count=t.custom_count;
                 t.custom_count=num;
                 global.custom_theme.custom_count=num;
+                if(past_count==num){
+                    return;
+                }
+                else if(past_count>num){
+                    console.log('too many',num+1,past_count)
+                    for(let i=num+1; i<=past_count; i++){
+                        let name=`custom-${i}`;
+                        delete themes[name];
+                        delete global.custom_theme[name];
+                    }
+                }
+                else{
+                    console.log('too little',past_count+1,num)
+                    for(let i=past_count+1; i<=num; i++){
+                        let name=`custom-${i}`;
+                        themes[name]={};
+                        global.custom_theme[name]=themes[name];
+                    }
+                }
+
+                console.log(themes);
             },
 
             numNotation(notation){
@@ -1432,18 +1454,6 @@ export function index(){
                 <button class="button" @click="saveImportTheme">{{ label('import_theme') }}</button>
                 <button class="button" @click="saveExportTheme">{{ label('export_theme') }}</button>
                 <button class="button" @click="saveExportThemeFile">{{ label('export_file') }}</button>
-                <div>
-                    <b-dropdown hoverable>
-                        <template #trigger>
-                            <button class="button">{{ label('theme_custom_count: ') + t.custom_count }}</button>
-                        </template>
-                        <b-dropdown-item v-on:click="setCustomCount(1,t)">1</b-dropdown-item>
-                        <b-dropdown-item v-on:click="setCustomCount(2,t)">2</b-dropdown-item>
-                        <b-dropdown-item v-on:click="setCustomCount(3,t)">3</b-dropdown-item>
-                        <b-dropdown-item v-on:click="setCustomCount(4,t)">4</b-dropdown-item>
-                        <b-dropdown-item v-on:click="setCustomCount(5,t)">5</b-dropdown-item>
-                    </b-dropdown>
-                </div>
             </div>
         </div>
         </div>

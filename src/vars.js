@@ -2012,6 +2012,9 @@ if(!global.hasOwnProperty("custom_theme")){
 if(!global.custom_theme.hasOwnProperty('custom_count')){
     global.custom_theme.custom_count=2;
 }
+else{
+    global.custom_theme.custom_count=2;
+}
 
 if (global['arpa'] && global.arpa['launch_facility'] && global.arpa.launch_facility.rank > 0 && !global.tech['space']){
     global.tech['space'] = 1;

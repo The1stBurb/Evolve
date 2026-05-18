@@ -938,10 +938,13 @@ export let theme_variables={
     'misc':{drop:'',dat:[]},
 };
 
-//load all from global (will be changed in a bit)
+//load all from global
 export function loadAllThemes(){
     for(let theme_name in global['custom_theme']){
-        themes[theme_name]=global['custom_theme'][theme_name]
+        if(theme_name=='custom_count'){
+            continue;
+        }
+        themes[theme_name]=global['custom_theme'][theme_name];
     }
 }
 
@@ -953,13 +956,13 @@ function set_var(var_name,value){
 //set a theme
 //how it works is it first tries to set the variable, and then tries to set any variables in the parent that havent been set
 var theme='';
-export function set_theme(theme_name,has_set){
+export function set_theme(theme_name,has_set,is_parent){
     theme_name=theme_name ?? global.settings.theme;
-    let theme_dat = themes[theme_name]
+    let theme_dat = themes[theme_name];
     if(!theme_dat){
-        console.error(`Custom theme (${theme_name}) does not exist! Defaulting to 'Dark'.`)
+        console.error(`Custom theme (${theme_name}) does not exist! Defaulting to 'Dark'.`);
         global.settings.theme='dark';
-        set_theme('dark')
+        set_theme('dark');
         return;
     }
     has_set = has_set ?? ['parent'];
@@ -969,7 +972,7 @@ export function set_theme(theme_name,has_set){
     }
     
     for(let key in theme_dat){
-        let val=theme_dat[key]
+        let val=theme_dat[key];
         if (has_set.includes(key)) continue;
         set_var(key, val);
         has_set.push(key);
@@ -977,25 +980,29 @@ export function set_theme(theme_name,has_set){
 
     if(theme_dat.hasOwnProperty('parent')){
         theme_dat.parent.forEach(parent=>{
-            has_set=set_theme(parent,has_set);
+            has_set=set_theme(parent,has_set,true);
         });
     }
-    theme = theme_name;
-    return has_set;
+    if(is_parent){
+        return has_set;
+    }
+    else{
+        if(has_set.length==1 && theme==''){
+            console.error(`Custom theme (${theme_name}) doesn't have anything to change! Defaulting to 'Dark' so it does not break!`)
+            global.settings.theme='dark';
+            set_theme('dark');
+        }
+        theme = theme_name;
+    }
 }
 
-//not needed soon
-export function createNewCustom(){
-    themes['new_theme']={
-        parent:[global.settings.theme],
-    }
-    global.custom_theme['new_theme']=themes['new_theme']
-}
 
 //get the the value associated with a var, should be called getVar but whatever
 export let broke_color='#0ff00f';
 export function getThemeVar(name,theme_name){
-    if(!theme_name && !global.hasOwnProperty('settings')){return broke_color;}
+    if(!theme_name && !global.hasOwnProperty('settings')){
+        return broke_color;
+    }
     let theme_dat=themes[theme_name ?? global.settings.theme];
     if(theme_dat.hasOwnProperty(name)){
         return theme_dat[name];
@@ -1003,14 +1010,14 @@ export function getThemeVar(name,theme_name){
     if(theme_dat.hasOwnProperty('parent')){
         for(let i in theme_dat.parent){
             let parent=theme_dat.parent[i];
-            let val=getThemeVar(name,parent)
+            let val=getThemeVar(name,parent);
             if(val!=broke_color){
                 return val;
             }
         }
     }
     if(themes.variables.hasOwnProperty(name)){
-        return themes.variables[name]
+        return themes.variables[name];
     }
     return broke_color;
 }
@@ -1035,7 +1042,7 @@ export function setThemeVar(name,value,type){
 
 function updateTheme(theme_name){
     theme_name=theme_name ?? global.settings.theme;
-    global.custom_theme[theme_name]=themes[theme_name]
+    global.custom_theme[theme_name]=themes[theme_name];
 }
 
 export function createAllThemeDropdowns(func_name){
@@ -1064,9 +1071,11 @@ export function loadThemeEditorDat(){
     theme_settings['curThemeColor']=getVar('button-background');
 
     let theme_parent=themes[theme_name]?.parent;
-    theme_settings['curParent']=theme_parent.length!=0 ? theme_parent[0] : 'none';
-    if(!theme_settings.hasOwnProperty(theme_name)){
-        theme_settings['changed'][theme_name]={};
+    if(theme_parent){
+        theme_settings['curParent']=theme_parent.length!=0 ? theme_parent[0] : 'none';
+        if(!theme_settings.hasOwnProperty(theme_name)){
+            theme_settings['changed'][theme_name]={};
+        }
     }
 
     theme_settings['custom_count']=global.custom_theme.custom_count;
@@ -1074,7 +1083,7 @@ export function loadThemeEditorDat(){
 
 export function getThemeTitle(name){
     let theme_dat=themes[name];
-    if(theme_dat.hasOwnProperty('title')){
+    if(theme_dat && theme_dat.hasOwnProperty('title')){
         return theme_dat.title;
     }
     else{
@@ -1088,23 +1097,23 @@ function createSubMenus(){}
 //load the theme picker html stuff (at least most of it)
 export function loadCustomThemeHTML(){
     //dark theme has all the variables
-    let vals=Object.keys(themes.dark)
+    let vals=Object.keys(themes.dark);
     //dropdown items
     let all_theme_vars='';
     for(let i in vals){
-        let var_dropdown=`<b-dropdown-item v-on:click="setCurThemeVar('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`
-        all_theme_vars+=`<b-dropdown-item v-on:click="setCurThemeFromOther('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`
+        let var_dropdown=`<b-dropdown-item v-on:click="setCurThemeVar('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`;
+        all_theme_vars+=`<b-dropdown-item v-on:click="setCurThemeFromOther('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`;
         let added_any=false;
         //add them to the theme sections
         Object.keys(theme_variables).forEach(theme_section=>{
             if(vals[i].includes(theme_section)){
-                theme_variables[theme_section].dat.push(var_dropdown)
+                theme_variables[theme_section].dat.push(var_dropdown);
                 added_any=true;
             }
         });
         //if not added anywhere, misc is the place
         if(!added_any){
-            theme_variables['misc'].dat.push(var_dropdown)
+            theme_variables['misc'].dat.push(var_dropdown);
         }
     }
     
@@ -1120,7 +1129,7 @@ export function loadCustomThemeHTML(){
                     </button>
                 </template>
                 ${section_variables}
-            </b-dropdown>`
+            </b-dropdown>`;
         theme_section_sel+=`<b-dropdown-item v-on:click="t.themeSection='${theme_section}'">{{ label('theme_section_${theme_section}') }}</b-dropdown-item>`;
     });
     //add to the end of the body
@@ -1158,7 +1167,7 @@ export function loadCustomThemeHTML(){
                     <b-dropdown hoverable>
                         <template #trigger>
                             <button class="button is-primary">
-                                <span>{{ label('theme_' + t.curParent) }}</span>
+                                <span>{{ getThemeTitle(t.curParent) }}</span>
                                 <i class="fas fa-sort-down"></i>
                             </button>
                         </template>
@@ -1198,9 +1207,6 @@ export function loadCustomThemeHTML(){
             s:global.settings,
         },
         methods:{
-            newCustomTheme(){
-                createNewCustom()
-            },
             setCurThemeVar(name,t){
                 t.curThemeVar=name;
                 let val=getThemeVar(name);
@@ -1210,15 +1216,15 @@ export function loadCustomThemeHTML(){
                     val=getComputedStyle(document.documentElement).getPropertyValue(nval).trim();
                 }
                 if(val.length==4){
-                    val=`#${val[1]}${val[1]}${val[2]}${val[2]}${val[3]}${val[3]}`
+                    val=`#${val[1]}${val[1]}${val[2]}${val[2]}${val[3]}${val[3]}`;
                 }
-                t.curThemeColor=val
+                t.curThemeColor=val;
             },
             setCurThemeFromOther(name,t){
                 t.curSetFromVar=name;
                 let val=getThemeVar(name);
-                if(val==broke_color){return;}
-                setThemeVar(name,val)
+                if(val==broke_color){return;};
+                setThemeVar(name,val);
             },
             changeThemeColor(t,is_temp){
                 if(!is_temp){
@@ -1228,10 +1234,10 @@ export function loadCustomThemeHTML(){
                         t.changed[theme_name]={};
                     }
                     if(t.changed[theme_name].hasOwnProperty(t.curThemeVar)){
-                        t.changed[theme_name][t.curThemeVar].push(pastColor)
+                        t.changed[theme_name][t.curThemeVar].push(pastColor);
                     }
                     else{
-                        t.changed[theme_name][t.curThemeVar]=[pastColor]
+                        t.changed[theme_name][t.curThemeVar]=[pastColor];
                     }
                 }
                 setThemeVar(t.curThemeVar,t.curThemeColor,is_temp ? 'dom' : 'both');
@@ -1247,7 +1253,6 @@ export function loadCustomThemeHTML(){
             },
 
             startDrag(e,t){
-                // startDrag(e)
                 t.move=true;
                 t.mpos={
                     x:e.clientX,
@@ -1275,14 +1280,16 @@ export function loadCustomThemeHTML(){
                 return loc(lbl);
             },
             setParent(nm,set_none){
-                if(global.settings.theme==nm)return;
-                themes[global.settings.theme].parent=[nm]
+                let theme_name=global.settings.theme;
+                if(theme_name==nm)return;
+
+                themes[global.settings.theme].parent=[nm];
                 theme_settings.curParent=nm;
-                updateTheme(global.settings.theme)
-                setThemeToHTML(nm,set_none);
+                updateTheme(theme_name);
+                setThemeToHTML(theme_name,set_none);
             },
             isCustom(){
-                return global.settings.theme.includes('custom')
+                return global.settings.theme.includes('custom');
             },
             setThemeTitle(){
 
@@ -1295,7 +1302,10 @@ export function loadCustomThemeHTML(){
                 return t.isResetOpen;
             },
             resetTheme(){
+                console.log('reset');
                 themes[global.settings.theme]={};
+                updateTheme(global.settings.theme);
+                set_theme(global.settings.theme);
             },
         }
     });
@@ -1306,9 +1316,7 @@ export function loadCustomThemeHTML(){
 export function importTheme(data,utf16){
     let theme_dat=JSON.parse(utf16 ? LZString.decompressFromUTF16(data) : LZString.decompressFromBase64(data));
     console.log(theme_dat);
-    let name=theme_dat.theme_name;
-    global.settings.theme=name;
-    themes[name]=theme_dat;
+    themes[global.settings.theme]=theme_dat;
     updateTheme();
     save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
     window.location.reload();
@@ -1320,3 +1328,18 @@ export function getThemeSaveData(){
 
     return LZString.compressToBase64(JSON.stringify(theme_dat));
 }
+
+/*Code for setting amount of customs
+currently not work good, so remove
+<div>
+    <b-dropdown hoverable>
+        <template #trigger>
+            <button class="button">{{ label('theme_custom_count') + ': ' + t.custom_count }}</button>
+        </template>
+        <b-dropdown-item v-on:click="setCustomCount(1,t)">1</b-dropdown-item>
+        <b-dropdown-item v-on:click="setCustomCount(2,t)">2</b-dropdown-item>
+        <b-dropdown-item v-on:click="setCustomCount(3,t)">3</b-dropdown-item>
+        <b-dropdown-item v-on:click="setCustomCount(4,t)">4</b-dropdown-item>
+        <b-dropdown-item v-on:click="setCustomCount(5,t)">5</b-dropdown-item>
+    </b-dropdown>
+</div> */
