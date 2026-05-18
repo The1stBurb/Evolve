@@ -9,6 +9,10 @@ import { sideMenu, infoBoxBuilder, createRevealSection, createCalcSection, getSo
 //testing testing
 let name_regx=/custom_themes_(.*?)$/;
 export function buildThemesPages(page_name){
+    if(!setupThemeVars){
+        setupThemeVars=true;
+        setupThemeVariables();
+    }
     //get the actaul page name, not the wiki page name
     if (name_regx.test(page_name)){
         page_name=page_name.match(name_regx)[1]
@@ -16,7 +20,6 @@ export function buildThemesPages(page_name){
 
     let content=$('#content');
     clearElement(content);
-    content.append(page_data);
     let mainContent=sideMenu('create',content);
     
     //only the intro page is special
@@ -25,6 +28,25 @@ export function buildThemesPages(page_name){
     }
     else{
         buildPage(mainContent,page_name)
+    }
+}
+
+let setupThemeVars=false;
+function setupThemeVariables(){
+    let vals=Object.keys(themes.dark);
+    for(let i in vals){
+        let added_any=false;
+        //add them to the theme sections
+        Object.keys(theme_variables).forEach(theme_section=>{
+            if(vals[i].includes(theme_section)){
+                theme_variables[theme_section].dat.push(vals[i]);
+                added_any=true;
+            }
+        });
+        //if not added anywhere, misc is the place
+        if(!added_any){
+            theme_variables['misc'].dat.push(vals[i]);
+        }
     }
 }
 

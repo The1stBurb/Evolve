@@ -1,5 +1,5 @@
 import { global, setGlobal, save } from './../vars.js';
-import { set_theme, loadAllThemes, themes, theme_variables } from './../themes.js';
+import { set_theme, loadAllThemes, themes, theme_variables, setThemeToHTML } from './../themes.js';
 import { loc } from './../locale.js';
 import {} from './init.js';
 import {} from './../achieve.js';
@@ -20,6 +20,7 @@ import { buildThemesPages } from './themes.js';
 
 $('body').empty();
 loadAllThemes();
+setThemeToHTML();
 set_theme(global.settings.theme);
 initPage();
 
