@@ -3030,10 +3030,10 @@ function tpShipsCostsCalc(info){
                 <h3 class="has-text-info">${loc('resource_Money_name')}:</h3><span> {{ getBase(i['class'].val, 'class', 'Money') }}</span><span v-show="i['class'].val !== 'explorer'">^{{ getExponent(i.sensor.val, 'sensor', 'Money') }}</span><span v-show="r.Money.preVis"> = {{ calcPre('Money') }}</span>
             </div>
             <div>
-                <h3 class="has-text-info">${loc('resource_Aluminium_name')}:</h3><span> {{ calcPre(getBase(i['class'].val, 'class', 'Aluminium')) }}</span><span v-show="r.Aluminium.preVis"> = {{ calcPre('Aluminium') }}</span>
+                <h3 class="has-text-info">${loc('resource_Aluminium_name')}:</h3><span> {{ getBase(i['class'].val, 'class', 'Aluminium') }}</span><span v-show="r.Aluminium.preVis"> = {{ calcPre('Aluminium') }}</span>
             </div>
             <div>
-                <h3 class="has-text-info">${loc('resource_Adamantite_name')}:</h3><span> {{ calcPre(getBase(i['class'].val, 'class', 'Adamantite')) }}</span><span v-show="r.Adamantite.preVis"> = {{ calcPre('Adamantite') }}</span>
+                <h3 class="has-text-info">${loc('resource_Adamantite_name')}:</h3><span> {{ getBase(i['class'].val, 'class', 'Adamantite') }}</span><span v-show="r.Adamantite.preVis"> = {{ calcPre('Adamantite') }}</span>
             </div>
             <div>
                 <h3 class="has-text-info">${loc('resource_Steel_name')}:</h3><span> {{ getBase(i.armor.val, 'armor', 'Steel') }}^{{ generic(s.exp1.val, 'exp1') }}</span><span v-show="r.Steel.preVis"> = {{ calcPre('Steel') }}</span>
@@ -3356,7 +3356,10 @@ function tpShipsCostsCalc(info){
                 return val ? loc(`outer_shipyard_${type}_${val}`) : loc(`outer_shipyard_${type}`);
             },
             getBase(val, type, resource){
+                console.log(val,type,resource);
                 if (!val){
+                    // if(['Aluminium','Adamantite'].includes(resource))
+                        console.log("is broke?",loc('wiki_calc_tp_ships_costs_res_base',[loc(`outer_shipyard_${type}`)]))
                     return loc('wiki_calc_tp_ships_costs_res_base',[loc(`outer_shipyard_${type}`)]);
                 }
                 let resVal = 0;
@@ -3530,6 +3533,10 @@ function tpShipsCostsCalc(info){
                         res[resource].preVis = true;
                         return res[resource].preVal;
                     }
+                }
+                if(resource=='Ship Class Base'){
+                    console.log(res[resource],res,resource);
+                    return
                 }
                 res[resource].preVal = undefined;
                 res[resource].preVis = false;
