@@ -52,28 +52,28 @@ Misc ---------> Main template
 //all the variables
 :root{
     --theme-html-background: #fff;
-    --theme-primary-border: #fff;
-    --theme-secondary-border: #fff;
-    --theme-primary-color: #fff;
-    --theme-secondary-color: #fff;
+    --theme-primary-border: #000;
+    --theme-secondary-border: #000;
+    --theme-primary-color: #000;
+    --theme-secondary-color: #000;
 
-    --theme-link: #fff;
+    --theme-link: #000;
     --theme-link-hover: #fff;
     --theme-enabled: #fff;
     --theme-disabled: #fff;
 
     // .has-text-xxx
-    --theme-has-text-advanced: #fff;
-    --theme-has-text-alert: #fff;
-    --theme-has-text-caution: #fff;
-    --theme-has-text-danger: #fff;
-    --theme-has-text-fade: #fff;
-    --theme-has-text-flair: #fff;
-    --theme-has-text-label: #fff;
-    --theme-has-text-special: #fff;
-    --theme-has-text-info: #fff;
-    --theme-has-text-success: #fff;
-    --theme-has-text-warning: #fff;
+    --theme-has-text-advanced: #000;
+    --theme-has-text-alert: #000;
+    --theme-has-text-caution: #000;
+    --theme-has-text-danger: #000;
+    --theme-has-text-fade: #000;
+    --theme-has-text-flair: #000;
+    --theme-has-text-label: #000;
+    --theme-has-text-special: #000;
+    --theme-has-text-info: #000;
+    --theme-has-text-success: #000;
+    --theme-has-text-warning: #000;
 
     // .popper
     
@@ -1519,6 +1519,38 @@ html {
                 border: @secondary-border solid .0625rem;
             }
         }
+    }
+    .themeColorPicker{
+        position: absolute;
+        z-index: 999;
+        cursor: move;
+        user-select: none;
+        padding-top:0.5rem;
+        border:.06225rem solid;
+        border-radius:.375rem;
+        background:var(--theme-html-background);
+        display:flex;
+        align-items:center;
+        flex-direction:column;
+    }
+    .theme_color{
+        width:100%;
+    }
+    .themeWarning{
+        padding-left:.375rem;
+        align-items:center;
+        display:flex;
+        flex-direction:column;
+    }
+    .colorPicker{
+        display:flex;
+        width:100%;
+        justify-content:center;
+    }
+    .themeEditor .importExport{
+        padding:.375rem;
+        border:1px solid var(--theme-primary-border);
+        border-radius:.375rem;
     }
 }
 

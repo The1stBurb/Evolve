@@ -1,4 +1,4 @@
-import { global } from './vars.js';
+import { save, global } from './vars.js';
 import { loc } from './locale.js';
 import { vBind } from './functions.js';
 export var themes={
@@ -897,12 +897,15 @@ export var themes={
         'webkit-scrollbar-background': 'var(--theme-html-background)',
         'webkit-scrollbar-thumb-background': 'var(--theme-primary-border)',
     },
+
+    'custom-1':{},
+    'custom-2':{},
 }
 
 //theme settings for the changinator
 export var theme_settings={
     get cur_theme(){return global.settings.theme},
-    curThemeVar:'html-background',
+    curThemeVar:'button-background',
     themeSection:'button',
     themeEditorOpen:false,
     curThemeColor: '#00f',
@@ -910,6 +913,10 @@ export var theme_settings={
         x:0,
         y:0,
     },
+    curParent:'none',
+    changed:{},
+    isResetOpen:false,
+    custom_count:0,
 }
 
 //sort the theme variables into sections
@@ -947,6 +954,7 @@ function set_var(var_name,value){
 //how it works is it first tries to set the variable, and then tries to set any variables in the parent that havent been set
 var theme='';
 export function set_theme(theme_name,has_set){
+    theme_name=theme_name ?? global.settings.theme;
     let theme_dat = themes[theme_name]
     if(!theme_dat){
         console.error(`Custom theme (${theme_name}) does not exist! Defaulting to 'Dark'.`)
@@ -1007,7 +1015,7 @@ export function getThemeVar(name,theme_name){
     return broke_color;
 }
 
-//uhh imma have to check again what this does
+//This gets the actual color associated with a variable
 export let var_regx=/var\(--theme-(.*?)\)/;
 export function getVar(name,theme_name){
     let val=getThemeVar(name,theme_name);
@@ -1015,18 +1023,77 @@ export function getVar(name,theme_name){
 }
 
 //set the value for a variable, in both the theme and dom
-export function setThemeVar(name,value){
-    themes[global.settings.theme][name]=value;
-    set_var(name,value)
+export function setThemeVar(name,value,type){
+    type=type ?? 'both';
+    if(type=='dom' || type=='both'){
+        set_var(name,value);
+    }
+    if(type=='themes' || type=='both'){
+        themes[global.settings.theme][name]=value;
+    }
 }
+
+function updateTheme(theme_name){
+    theme_name=theme_name ?? global.settings.theme;
+    global.custom_theme[theme_name]=themes[theme_name]
+}
+
+export function createAllThemeDropdowns(func_name){
+    let theme_names=Object.keys(themes);
+    theme_names.shift();//removes the 'variables' key
+    // let dropdowns='';
+    return theme_names.map(name=>{
+        return `<b-dropdown-item v-on:click="${func_name}('${name}',${name=='night' || name.includes('custom') ? true : false})">{{ getThemeTitle('${name}') }}</b-dropdown-item>`;
+    }).join('');
+    
+}
+
+export function setThemeToHTML(theme_name, set_none){
+    theme_name=theme_name ?? global.settings.theme;
+
+    $('html').removeClass();
+    $('html').addClass('theme');
+    $('html').addClass(set_none ? 'none' : theme_name);
+    $('html').addClass(global.settings.font);
+    set_theme(theme_name);
+}
+
+export function loadThemeEditorDat(){
+    let theme_name=global.settings.theme;
+    theme_settings['curThemeVar']='button-background';
+    theme_settings['curThemeColor']=getVar('button-background');
+
+    let theme_parent=themes[theme_name]?.parent;
+    theme_settings['curParent']=theme_parent.length!=0 ? theme_parent[0] : 'none';
+    if(!theme_settings.hasOwnProperty(theme_name)){
+        theme_settings['changed'][theme_name]={};
+    }
+
+    theme_settings['custom_count']=global.custom_theme.custom_count;
+}
+
+export function getThemeTitle(name){
+    let theme_dat=themes[name];
+    if(theme_dat.hasOwnProperty('title')){
+        return theme_dat.title;
+    }
+    else{
+        return name.includes('custom') ? loc('theme_custom',[name.split('-')[1]]) : loc(`theme_${name}`);
+    }
+}
+
+//for later!
+function createSubMenus(){}
 
 //load the theme picker html stuff (at least most of it)
 export function loadCustomThemeHTML(){
     //dark theme has all the variables
     let vals=Object.keys(themes.dark)
     //dropdown items
+    let all_theme_vars='';
     for(let i in vals){
         let var_dropdown=`<b-dropdown-item v-on:click="setCurThemeVar('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`
+        all_theme_vars+=`<b-dropdown-item v-on:click="setCurThemeFromOther('${vals[i]}',t)">{{ label('theme_var_${vals[i]}') }}</b-dropdown-item>`
         let added_any=false;
         //add them to the theme sections
         Object.keys(theme_variables).forEach(theme_section=>{
@@ -1045,39 +1112,90 @@ export function loadCustomThemeHTML(){
     let theme_section_sel='';//section selector
     Object.keys(theme_variables).forEach(theme_section=>{
         let section_variables=theme_variables[theme_section].dat.join('');
-        all_theme_sections+=`<b-dropdown hoverable v-show="t.themeSection=='${theme_section}'">
-                <button class="button is-primary" slot="trigger">
-                    <span>{{ 'theme_var_' + t.curThemeVar | label }}</span>
-                    <i class="fas fa-sort-down"></i>
-                </button>
+        all_theme_sections+=`<b-dropdown hoverable v-if="t.themeSection=='${theme_section}'">
+                <template #trigger>
+                    <button class="button is-primary">
+                        <span>{{ label('theme_var_' + t.curThemeVar) }}</span>
+                        <i class="fas fa-sort-down"></i>
+                    </button>
+                </template>
                 ${section_variables}
             </b-dropdown>`
         theme_section_sel+=`<b-dropdown-item v-on:click="t.themeSection='${theme_section}'">{{ label('theme_section_${theme_section}') }}</b-dropdown-item>`;
     });
     //add to the end of the body
-    let style="position: absolute;z-index: 999;cursor: move;user-select: none;padding-top:0.5rem;border:.06225rem solid;background:var(--theme-html-background);display:flex;align-items:center;flex-direction:column;left:0px;top:0px;";
-    //document.querySelector('body').insertAdjacentHTML('beforeend',
-    $('body').append(`<div id="themeColorPicker" class="themeColorPickers theme" v-if="t.themeEditorOpen" :style="{ top: t.pos.y + 'px', left: t.pos.x + 'px', position: 'absolute', 'z-index':'999' }" style="${1?style:''}" @mousedown="startDragV">
-        <span class="has-text-success">Theme Editor</span>
-        <b-collapse :open="t.themeEditorOpen">
-            <div class="colorPicker" >
-                <b-dropdown hoverable>
-                    <button class="button is-primary" slot="trigger">
-                        <span>{{ label('theme_section_' + t.themeSection) }}</span>
-                        <i class="fas fa-sort-down"></i>
-                    </button>
-                ${theme_section_sel}
-                </b-dropdown>
-                ${all_theme_sections}
-                <b-input type="color" id="theme_color" name="theme_color" v-model="t.curThemeColor" :value="t.curThemeColor" @input="changeThemeColor(t)"></b-input>
+    $('body').append($(`<div id="themeColorPicker">
+        <div class="themeColorPicker theme" v-if="t.themeEditorOpen" :style="{ top: (t.pos.y ?? 0) + 'px', left: (t.pos.x ?? 0) + 'px', position: 'absolute', 'zIndex':'999' }" @mousedown="startDrag($event,t)" @mousemove="onDrag($event,t)" @mouseup="endDrag(t)" @mouseleave="endDrag(t)">
+            
+            <h2 class="has-text-advanced">Theme Editor</h2>
+            <div v-if="!isCustom()" class="themeWarning has-text-warning content">
+                <br>
+                <h4 class="has-text-danger">WARNING: This won't work!</h4>
+                
+                <div>You need to select one of the custom themes!</div>
             </div>
-        </b-collapse>
-    </div>`);
+            <div v-if="isCustom()">
+                <div>
+                    <b-dropdown hoverable>
+                        <template #trigger>
+                            <button class="button is-primary">
+                                <span>{{ label('theme_section_' + t.themeSection) }}</span>
+                                <i class="fas fa-sort-down"></i>
+                            </button>
+                        </template>
+                    ${theme_section_sel}
+                    </b-dropdown>
+                    ${all_theme_sections}
+                </div>
+                
+                <b-input type="color" class="theme_color" id="theme_color" name="theme_color" v-model="t.curThemeColor" @input="changeThemeColor(t,true)" @change="changeThemeColor(t)"></b-input>
 
+                <button class="button" @click="undoThemeColorChange(t)">Undo</button>
+                
+                <div style="display:flex;align-items:center;">
+                    
+                    <span>Set Parent:</span>
+                    <b-dropdown hoverable>
+                        <template #trigger>
+                            <button class="button is-primary">
+                                <span>{{ label('theme_' + t.curParent) }}</span>
+                                <i class="fas fa-sort-down"></i>
+                            </button>
+                        </template>
+                        ${createAllThemeDropdowns('setParent')}
+                    </b-dropdown>
+                </div>
+                <div>
+                    <b-switch class="setting" v-model="t.isResetOpen">
+                        <span>{{ label('enable_theme_reset') }}</span>
+                    </b-switch>
+                    <div v-if="t.isResetOpen" style="display:flex;flex-direction:column;">
+
+                        <span class="has-text-danger">{{ label('theme_reset_warn') }}</span>
+                        <button class="button" @click="resetTheme(t)" style="width:50%;">{{ label('theme_reset') }}</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`));
+    //Something I would like to implement but might not be logically possible...
+        /*<div>
+                <span>Set To:</span>
+                <b-dropdown hoverable>
+                    <template #trigger>
+                        <button class="button is-primary">
+                            <span>{{ label('theme_var_' + t.curSetFromVar) }}</span>
+                            <i class="fas fa-sort-down></i>
+                        </button>
+                    </template>
+                    ${all_theme_vars}
+            </div> */
     vBind({
         el:'#themeColorPicker',
         data:{
             t:theme_settings,
+            s:global.settings,
         },
         methods:{
             newCustomTheme(){
@@ -1096,46 +1214,109 @@ export function loadCustomThemeHTML(){
                 }
                 t.curThemeColor=val
             },
-            changeThemeColor(t){
-                // console.log(t.curThemeVar,t.curThemeColor);
-                setThemeVar(t.curThemeVar,t.curThemeColor);
+            setCurThemeFromOther(name,t){
+                t.curSetFromVar=name;
+                let val=getThemeVar(name);
+                if(val==broke_color){return;}
+                setThemeVar(name,val)
             },
-            startDragV(e){
-                startDrag(e)
+            changeThemeColor(t,is_temp){
+                if(!is_temp){
+                    let pastColor=getThemeVar(t.curThemeVar);
+                    let theme_name=global.settings.theme;
+                    if(!t.changed.hasOwnProperty(theme_name)){
+                        t.changed[theme_name]={};
+                    }
+                    if(t.changed[theme_name].hasOwnProperty(t.curThemeVar)){
+                        t.changed[theme_name][t.curThemeVar].push(pastColor)
+                    }
+                    else{
+                        t.changed[theme_name][t.curThemeVar]=[pastColor]
+                    }
+                }
+                setThemeVar(t.curThemeVar,t.curThemeColor,is_temp ? 'dom' : 'both');
             },
+            undoThemeColorChange(t){
+                let var_changed=t.changed[global.settings.theme][t.curThemeVar];
+                if(var_changed.length==0){
+                    return;
+                }
+                let last=var_changed.pop();
+                setThemeVar(t.curThemeVar,last);
+                t.curThemeColor=last;
+            },
+
+            startDrag(e,t){
+                // startDrag(e)
+                t.move=true;
+                t.mpos={
+                    x:e.clientX,
+                    y:e.clientY,
+                };
+            },
+            onDrag(e,t){
+                if(!t.move){
+                    return;
+                }
+                let npos={
+                    x:e.clientX,
+                    y:e.clientY
+                };
+                let deltaX=npos.x - t.mpos.x, deltaY=npos.y - t.mpos.y;
+                t.pos.x+=deltaX;
+                t.pos.y+=deltaY;
+                t.mpos=npos;
+            },
+            endDrag(t){
+                t.move=false;
+            },
+
             label(lbl){
                 return loc(lbl);
+            },
+            setParent(nm,set_none){
+                if(global.settings.theme==nm)return;
+                themes[global.settings.theme].parent=[nm]
+                theme_settings.curParent=nm;
+                updateTheme(global.settings.theme)
+                setThemeToHTML(nm,set_none);
+            },
+            isCustom(){
+                return global.settings.theme.includes('custom')
+            },
+            setThemeTitle(){
+
+            },
+            getThemeTitle(name){
+                return getThemeTitle(name);
+            },
+
+            dangerousResetEnabled(t){
+                return t.isResetOpen;
+            },
+            resetTheme(){
+                themes[global.settings.theme]={};
             },
         }
     });
 }
 
-//move the color picker!
-let mouseX=0, mouseY=0;
-function startDrag(event) {
-    // Record initial mouse position
-    mouseX = event.clientX
-    mouseY = event.clientY
-    console.log("started!")
 
-    // Attach listeners to window so movement stays smooth even if mouse leaves the div
-    window.addEventListener('mousemove', drag)
-    window.addEventListener('mouseup', stopDrag)
+
+export function importTheme(data,utf16){
+    let theme_dat=JSON.parse(utf16 ? LZString.decompressFromUTF16(data) : LZString.decompressFromBase64(data));
+    console.log(theme_dat);
+    let name=theme_dat.theme_name;
+    global.settings.theme=name;
+    themes[name]=theme_dat;
+    updateTheme();
+    save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
+    window.location.reload();
 }
-function drag(event) {
-    // Calculate how far the mouse moved
-    const deltaX = event.clientX - mouseX
-    const deltaY = event.clientY - mouseY
 
-    // Update our reactive coordinates
-    theme_settings.pos.x += deltaX
-    theme_settings.pos.y += deltaY
+export function getThemeSaveData(){
+    let theme_dat=themes[global.settings.theme];
+    theme_dat.theme_name=global.settings.theme;
 
-    // Reset initial mouse position for the next frame
-    mouseX = event.clientX
-    mouseY = event.clientY
-}
-function stopDrag() {
-    window.removeEventListener('mousemove', drag)
-    window.removeEventListener('mouseup', stopDrag)
+    return LZString.compressToBase64(JSON.stringify(theme_dat));
 }

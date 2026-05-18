@@ -21,7 +21,9 @@ import { vacuumCollapse } from './resets.js';
 import { index, mainVue, initTabs, loadTab } from './index.js';
 import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
-import { set_theme, loadAllThemes } from './themes.js';
+import { set_theme, loadAllThemes, setThemeToHTML } from './themes.js';
+
+setThemeToHTML();
 
 {
     $(document).ready(function() {

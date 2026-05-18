@@ -11642,8 +11642,11 @@
   "wiki_search_regex_support": "RegEx Supported",
   
   "open_theme_editor":"Enable Theme Editor",
-  "theme_custom1":"Custom 1",
-  "theme_custom2":"Custom 2",
+  "theme_custom":"Custom %0",
+  "theme_none":"No Theme",
+  "import_export_theme":"Import/Export Custom Theme",
+  "import_theme":"Import Theme",
+  "export_theme":"Export Theme",
 
   "theme_var_html-background":"Main Background Color",
   "theme_var_primary-border":"Main Border Color",
@@ -11857,6 +11860,10 @@
   "theme_section_star":"Stars",
   "theme_section_scrollbar":"Scrollbars",
   "theme_section_misc":"Misc.",
+
+  "enable_theme_reset":"Enable Reset Buttons",
+  "theme_reset_warn":"Are you sure you want to reset? You will lose ALL of you progress on this theme!",
+  "theme_reset":"Reset Current Theme",
 
   "wiki_custom_theme_intro-intro_para1":"This section of the wiki is on the Custom Themes editor.",
   "wiki_custom_theme_intro-intro_para2":"It's main purpose is to help explain what each section means and what each variable does!",
