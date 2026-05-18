@@ -3356,10 +3356,7 @@ function tpShipsCostsCalc(info){
                 return val ? loc(`outer_shipyard_${type}_${val}`) : loc(`outer_shipyard_${type}`);
             },
             getBase(val, type, resource){
-                console.log(val,type,resource);
                 if (!val){
-                    // if(['Aluminium','Adamantite'].includes(resource))
-                        console.log("is broke?",loc('wiki_calc_tp_ships_costs_res_base',[loc(`outer_shipyard_${type}`)]))
                     return loc('wiki_calc_tp_ships_costs_res_base',[loc(`outer_shipyard_${type}`)]);
                 }
                 let resVal = 0;
@@ -3533,10 +3530,6 @@ function tpShipsCostsCalc(info){
                         res[resource].preVis = true;
                         return res[resource].preVal;
                     }
-                }
-                if(resource=='Ship Class Base'){
-                    console.log(res[resource],res,resource);
-                    return
                 }
                 res[resource].preVal = undefined;
                 res[resource].preVis = false;
