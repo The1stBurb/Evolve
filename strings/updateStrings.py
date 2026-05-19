@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
 else:
     locale = sys.argv[1]
 
-    if not path.isfile('strings.{}.json'.format(locale)):
+    if not path.isfile('./strings.{}.json'.format(locale)):
         print("'strings.{}.json' not found.\nCreate that file with a line write '{{ }}' if need.".format(locale))
         exit()
 
