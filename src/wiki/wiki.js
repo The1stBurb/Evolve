@@ -18,6 +18,9 @@ import { changeLog } from './change.js';
 import { cancelSearchIndexing, search } from './search.js';
 import { buildThemesPages } from './themes.js';
 
+import '../evolve.less';
+import './wiki.less';
+
 $('body').empty();
 loadAllThemes();
 setThemeToHTML();

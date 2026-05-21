@@ -22,6 +22,8 @@ import { index, mainVue, initTabs, loadTab } from './index.js';
 import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { set_theme, loadAllThemes, setThemeToHTML } from './themes.js';
+import { enableDebug, updateDebugData } from './debug.js';
+import './evolve.less';
 
 loadAllThemes();
 setThemeToHTML();
@@ -871,7 +873,7 @@ export function execGameLoops(periods = 1){
 }
 
 if (window.Worker){
-    webWorker.w = new Worker("evolve/evolve.js");
+    webWorker.w = new Worker(import.meta.env.BASE_URL + "evolve/evolve.js");
     webWorker.w.addEventListener('message', function(e){
         const data = e.data;
         switch (data.loop) {
