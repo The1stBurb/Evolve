@@ -1300,9 +1300,7 @@ export function index(){
             localelist = localelist + `<b-dropdown-item v-on:click="lChange('${locale}')">${locales[locale]}</b-dropdown-item>`;
         });
     }
-{/* <b-dropdown-item>
-                    <!--<season-hunt :event="'halloween'" :num="5" :size="12" :trick="true" :typer="'dropdown_item'" />-->
-                </b-dropdown-item> --> */}
+
     // Settings Tab
     let settings = $(`<b-tab-item id="settings" class="settings sticky" :label="label('tab_settings')">
         <div id="mTabSettings">
@@ -1325,6 +1323,7 @@ export function index(){
                 <b-dropdown-item v-on:click="numNotation('sci')">{{ label('scientific') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="numNotation('eng')">{{ label('engineering') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="numNotation('sln')">{{ label('sln') }}</b-dropdown-item>
+                <season-hunt :event="'halloween'" :num="5" :size="12" :trick="true" :typer="'dropdown_item'" />
             </b-dropdown>
 
             <span>{{ label('icons') }} </span>

@@ -2604,6 +2604,7 @@ export function trickOrTreat(num,size,trick){
     let halloween = getHalloween();
     if(num==5){
         console.log(halloween);
+        console.log(global.special.trick);
     }
     const date = new Date();
     const year = date.getFullYear();
@@ -3116,7 +3117,7 @@ export function getHalloween(){
     const date = new Date();
     let year = date.getFullYear();
 
-    if (!global.special.trick.hasOwnProperty(year)||1){
+    if (!global.special.trick.hasOwnProperty(year)){
         global.special.trick[year] = {
             trick1: false,
             trick2: false,
