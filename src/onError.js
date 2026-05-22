@@ -1,4 +1,9 @@
-import { clearElement } from './functions.js';
+import { clearElement, vBind } from './functions.js';
+import { loc } from './locale.js'
+
+
+import FileImportButton from './components/FileImportButton.vue';
+import V from './vue-cdn-shim.js';
 
 window.fullyLoaded=false;
 window.onerror = function (message, source, lineno, colno, error) {
@@ -25,7 +30,59 @@ window.onerror = function (message, source, lineno, colno, error) {
 
                 <p>To keep you from not being able to load the game, here is an Emergency Save Loader.</p>
             </div>
-            `);
+            <div id="impExp" class="importExport">
+                <b-field label="${loc('import_export')}">
+                    <b-input id="importExport" type="textarea"></b-input>
+                </b-field>
+                <button class="button" @click="saveImport">{{ label('import') }}</button>
+                <button class="button" @click="saveExport">{{ label('export') }}</button>
+                <button class="button" @click="saveExportFile">{{ label('export_file') }}</button>
+                <button class="button right" @click="restoreGame"><span class="settings9" aria-label="${loc('settings9')}">{{ label('restore') }}</span></button>
+            </div>
+        `);
+        vBind({
+            el: '#impExp',
+            data: {
+                s: global.settings,
+            },
+            methods: {
+                saveImport(){
+                    let impExp=$('#importExport textarea');
+                    if (impExp.val().length > 0){
+                        importGame(impExp.val());
+                    }
+                },
+                saveExport(){
+                    $('#importExport textarea').val(window.exportGame());
+                    $('#importExport textarea').select();
+                    document.execCommand('copy');
+                },
+                restoreGame(){
+                    let restore_data = save.getItem('evolveBak') || false;
+                    this.$buefy.dialog.confirm({
+                        title: loc('restore'),
+                        message: loc('restore_warning'),
+                        ariaModal: true,
+                        confirmText: loc('restore'),
+                        onConfirm() {
+                            if (restore_data){
+                                importGame(restore_data,true);
+                            }
+                        }
+                    });
+                },
+                
+                namecase(name){
+                    return name.replace(/(?:^|\s)\w/g, function(match) {
+                        return match.toUpperCase();
+                    });
+                },
+                label(lbl){
+                    return loc(lbl);
+                },
+            }
+        });
+
     }
     // if(error.includes('TypeError:')){
     //     console.log('uh oh')
