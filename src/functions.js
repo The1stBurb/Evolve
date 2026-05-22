@@ -2602,6 +2602,9 @@ export function easterEggBind(id){
 
 export function trickOrTreat(num,size,trick){
     let halloween = getHalloween();
+    if(num==5){
+        console.log(halloween);
+    }
     const date = new Date();
     const year = date.getFullYear();
     let tot = trick ? 'trick' : 'treat';
@@ -3113,7 +3116,7 @@ export function getHalloween(){
     const date = new Date();
     let year = date.getFullYear();
 
-    if (!global.special.trick.hasOwnProperty(year)){
+    if (!global.special.trick.hasOwnProperty(year)||1){
         global.special.trick[year] = {
             trick1: false,
             trick2: false,
@@ -3149,7 +3152,7 @@ export function getHalloween(){
     let start = new Date(`${halloween.date[0]+1}/${halloween.date[1]}/${year}`);
     let end = new Date(`${halloween.endDate[0]+1}/${halloween.endDate[1]}/${year}`);
 
-    if (date >= start && date <= end){
+    if ((date >= start && date <= end) || true){
         halloween.active = true;
         let hint = new Date(`${halloween.hintDate[0]+1}/${halloween.hintDate[1]}/${year}`);
         if (date >= hint && date <= end){
@@ -3160,7 +3163,6 @@ export function getHalloween(){
             halloween.solve = true;
         }
     }
-
     return halloween;
 }
 

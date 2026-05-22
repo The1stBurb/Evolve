@@ -16,6 +16,8 @@ import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
 import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from './themes.js';
 
+import SeasonHunt from './components/SeasonHunt.vue';
+
 export function mainVue(){
     vBind({
         el: '#mainColumn div.content',
@@ -335,7 +337,10 @@ export function mainVue(){
             softResetGame(){
                 window.soft_reset();
             }
-        }
+        },
+        components:{
+            SeasonHunt,
+        },
     });
 
     ['1','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'].forEach(function(k){
@@ -1277,11 +1282,12 @@ export function index(){
         hideEgg = `<b-dropdown-item>${egg9}</b-dropdown-item>`;
     }
 
-    let trick = trickOrTreat(5,12,true);
-    let hideTreat = '';
-    if (trick.length > 0){
-        hideTreat = `<b-dropdown-item>${trick}</b-dropdown-item>`;
-    }
+    // let trick = trickOrTreat(5,12,true);
+    // // let hideTreat = '';
+    // if (trick.length > 0){
+    //     hideTreat = `<b-dropdown-item>${trick}</b-dropdown-item>`;
+    // }
+    let hideTreat=``
 
     let localelist = '';
     let current_locale = '';
@@ -1294,7 +1300,9 @@ export function index(){
             localelist = localelist + `<b-dropdown-item v-on:click="lChange('${locale}')">${locales[locale]}</b-dropdown-item>`;
         });
     }
-
+{/* <b-dropdown-item>
+                    <!--<season-hunt :event="'halloween'" :num="5" :size="12" :trick="true" :typer="'dropdown_item'" />-->
+                </b-dropdown-item> --> */}
     // Settings Tab
     let settings = $(`<b-tab-item id="settings" class="settings sticky" :label="label('tab_settings')">
         <div id="mTabSettings">
@@ -1317,7 +1325,6 @@ export function index(){
                 <b-dropdown-item v-on:click="numNotation('sci')">{{ label('scientific') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="numNotation('eng')">{{ label('engineering') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="numNotation('sln')">{{ label('sln') }}</b-dropdown-item>
-                ${hideTreat}
             </b-dropdown>
 
             <span>{{ label('icons') }} </span>

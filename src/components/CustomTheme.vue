@@ -104,7 +104,7 @@
 
 <template>
     <div id="themeColorPicker">
-        <div class="themeColorPicker theme" v-if="t.themeEditorOpen" :style="{ top: (t.pos.y ?? 0) + 'px', left: (t.pos.x ?? 0) + 'px', position: 'absolute', 'zIndex':'999' }" @mousedown="startDrag($event)" @mousemove="onDrag($event)" @mouseup="endDrag()" @mouseleave="endDrag()">
+        <!-- <div class="themeColorPicker theme" v-if="t.themeEditorOpen" :style="{ top: (t.pos.y ?? 0) + 'px', left: (t.pos.x ?? 0) + 'px', position: 'absolute', 'zIndex':'999' }" @mousedown="startDrag($event)" @mousemove="onDrag($event)" @mouseup="endDrag()" @mouseleave="endDrag()">
             
             <h2 class="has-text-advanced">Theme Editor</h2>
             <div v-if="!isCustom()" class="themeWarning has-text-warning content">
@@ -156,6 +156,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>

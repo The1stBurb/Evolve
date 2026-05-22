@@ -46,7 +46,16 @@ export default defineConfig(({ mode }) => {
             },
         },
         plugins: [
-            vue(),
+            vue({
+                // template: {
+                //     compilerOptions: {
+                //         isCustomElement: tag => {
+                //             console.log(tag);
+                //             return ['seasonhunt'].includes(tag)
+                //         }
+                //     }
+                // }
+            }),
 
             // serve the web worker from its source location (evolve/evolve.js) during dev
             {
