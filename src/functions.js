@@ -3019,7 +3019,7 @@ export function eventActive(event,val){
 export function getEaster(){
     const date = new Date();
     let year = date.getFullYear();
-
+    // delete global.special.egg[year];
     if (!global.special.egg.hasOwnProperty(year)){
         global.special.egg[year] = {
             egg1: false,
@@ -3100,7 +3100,7 @@ export function getEaster(){
 
     const isAfterBeginning = cur_month > easter.date[0] || (cur_month === easter.date[0] && cur_day >= easter.date[1]);
     const isBeforeEnd = cur_month < easter.endDate[0] || (cur_month === easter.endDate[0] && cur_day <= easter.endDate[1]);
-    if (isAfterBeginning && isBeforeEnd){
+    if (isAfterBeginning && isBeforeEnd || 1){
         easter.active = true;
         if (cur_month >= easter.hintDate[0] && cur_day >= easter.hintDate[1] && cur_month <= easter.endDate[0] && cur_day <= easter.endDate[1]){
             easter.hint = true;
@@ -3117,7 +3117,7 @@ export function getHalloween(){
     const date = new Date();
     let year = date.getFullYear();
 
-    if (!global.special.trick.hasOwnProperty(year)){
+    if (!global.special.trick.hasOwnProperty(year)||1){
         global.special.trick[year] = {
             trick1: false,
             trick2: false,

@@ -1276,18 +1276,12 @@ export function index(){
         }
     }
 
-    let egg9 = easterEgg(9,14);
-    let hideEgg = '';
-    if (egg9.length > 0){
-        hideEgg = `<b-dropdown-item>${egg9}</b-dropdown-item>`;
-    }
-
-    // let trick = trickOrTreat(5,12,true);
-    // // let hideTreat = '';
-    // if (trick.length > 0){
-    //     hideTreat = `<b-dropdown-item>${trick}</b-dropdown-item>`;
+    // let egg9 = easterEgg(9,14);
+    // let hideEgg = '';
+    // if (egg9.length > 0){
+    //     hideEgg = `<b-dropdown-item>${egg9}</b-dropdown-item>`;
     // }
-    let hideTreat=``
+
 
     let localelist = '';
     let current_locale = '';
@@ -1311,7 +1305,7 @@ export function index(){
                     <b-button :label="getThemeTitle(s.theme)" type="is-info"/>
                 </template>
                 ${createAllThemeDropdowns('setTheme')}
-                ${hideEgg}
+                <season-hunt :event="'easter'" :num="9" :size="14" :typer="'dropdown-item'"/>
             </b-dropdown>
 
             <span>{{ label('units') }} </span>
@@ -1323,7 +1317,7 @@ export function index(){
                 <b-dropdown-item v-on:click="numNotation('sci')">{{ label('scientific') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="numNotation('eng')">{{ label('engineering') }}</b-dropdown-item>
                 <b-dropdown-item v-on:click="numNotation('sln')">{{ label('sln') }}</b-dropdown-item>
-                <season-hunt :event="'halloween'" :num="5" :size="12" :trick="true" :typer="'dropdown_item'" />
+                <season-hunt :event="'halloween'" :num="5" :size="12" :trick="true" :typer="'dropdown-item'" />
             </b-dropdown>
 
             <span>{{ label('icons') }} </span>

@@ -18,6 +18,9 @@ import { defineGovernor, govActive, removeTask, gov_tasks } from './governor.js'
 import { bioseed } from './resets.js';
 import { loadTab } from './index.js';
 
+import SeasonHunt from './components/SeasonHunt.vue';
+import V from './vue-cdn-shim.js';
+
 export const actions = {
     evolution: {
         rna: {
@@ -6188,15 +6191,17 @@ export function drawTech(){
             .appendTo('#oldTech')
             .append(`<div><h3 class="name has-text-warning">${loc(`tech_dist_${category}`)}</h3></div>`);
 
-        let trick = trickOrTreat(4,12,false);
-        if (trick.length > 0 && category === 'science'){
-            $(`#tech-dist-old-science h3`).append(trick);
-        }
-
         old_techs[category].forEach(function(tech_name) {
             addAction('tech', tech_name, true, false);
         });
     });
+    if('science' in old_techs){
+        $(`#tech-dist-old-science h3`).append(`<season-hunt :event="'halloween'" :num="4" :size="12" :typer="'span'" />`);
+        vBind({
+            el:`#tech-dist-old-science h3`,
+            components:{ SeasonHunt },
+        });
+    }
 }
 
 export function addAction(action,type,old,prediction){
@@ -6466,7 +6471,10 @@ export function setAction(c_action,action,type,old,prediction){
                 }
                 return v;
             }
-        }
+        },
+        components:{
+            SeasonHunt,
+        },
     });
 
     popover(id,function(){ return undefined; },{
