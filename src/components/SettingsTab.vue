@@ -1,7 +1,7 @@
 <script setup>
     import { ref } from "vue";
     import { save, webWorker, global } from '../vars.js';
-    import { loc, locales, updateHtmlLang } from '../locale.js';
+    import { loc, locales, updateHtmlLang, getString } from '../locale.js';
     // import { tabLabel as label } from '../index.js';
     import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from '../themes.js';
 
@@ -18,13 +18,13 @@
     function notation(n){
         switch (n){
             case 'si':
-                return loc(`metric`);
+                return label(`metric`);
             case 'sci':
-                return loc(`scientific`);
+                return label(`scientific`);
             case 'eng':
-                return loc(`engineering`);
+                return label(`engineering`);
             case 'sln':
-                return loc(`sln`);
+                return label(`sln`);
         }
     }
     function icon(icon){
@@ -75,11 +75,11 @@
                     JSON.parse(evt.target.result);
                 }
                 catch {
-                    global.settings.sPackMsg = loc(`string_pack_error`,[fileName]);
+                    global.settings.sPackMsg = label(`string_pack_error`,[fileName]);
                     return;
                 }
                 
-                global.settings.sPackMsg = loc(`string_pack_using`,[fileName]);
+                global.settings.sPackMsg = label(`string_pack_using`,[fileName]);
                 save.setItem('string_pack_name',fileName); save.setItem('string_pack',LZString.compressToUTF16(evt.target.result));
                 if (global.settings.sPackOn){
                     global.queue.rename = true;
@@ -98,7 +98,7 @@
     }
     function clearStringFile(){
         if (save.getItem('string_pack')){
-            global.settings.sPackMsg = loc(`string_pack_none`);
+            global.settings.sPackMsg = label(`string_pack_none`);
             save.removeItem('string_pack_name');
             save.removeItem('string_pack');
             if (global.settings.sPackOn){
@@ -124,10 +124,10 @@
     function restoreGame(){
         let restore_data = save.getItem('evolveBak') || false;
         this.$buefy.dialog.confirm({
-            title: loc('restore'),
-            message: loc('restore_warning'),
+            title: label('restore'),
+            message: label('restore_warning'),
             ariaModal: true,
-            confirmText: loc('restore'),
+            confirmText: label('restore'),
             onConfirm() {
                 if (restore_data){
                     importGame(restore_data,true);
@@ -138,6 +138,7 @@
     function lChange(locale){
         global.settings.locale = locale;
         global.queue.rename = true;
+        // getString(locale);
         save.setItem('evolved', LZString.compressToUTF16(JSON.stringify(global)));
 
         // Update the HTML lang attribute for accessibility
@@ -264,6 +265,9 @@
     function softResetGame(){
         window.soft_reset();
     }
+    function label(lbl,args){
+        return loc(lbl,args);
+    }
 
     const locale_list=ref([]);
     let localelist = [];
@@ -329,11 +333,11 @@
     }
 </script>
 <template>
-    <b-tab-item id="settings" class="settings sticky" :label="loc('tab_settings')">
+    <b-tab-item id="settings" class="settings sticky" :label="label('tab_settings')">
         <!--  v-if="global.settings.civTabs == 7" perchance? (put in the div below) -->
-        <div id="mTabSettings">
+        <div id="mTabSettings"><!-- Include this if you want fancy text reload!  :key="global.settings.locale"-->
         <div class="theme">
-            <span>{{ loc('theme') }} </span>
+            <span>{{ label('theme') }} </span>
             <b-dropdown aria-role="list" ref="themeDropdownCont">
                 <template #trigger="{ active }">
                     <b-button :label="getThemeTitle(s.theme)" type="is-info"/>
@@ -342,152 +346,152 @@
                 <season-hunt :event="'easter'" :num="9" :size="14" :typer="'dropdown-item'"/>
             </b-dropdown>
 
-            <span>{{ loc('units') }} </span>
+            <span>{{ label('units') }} </span>
             <b-dropdown  aria-role="list">
                 <template #trigger="{ active }">
                     <b-button :label="notation(s.affix)" type="is-info"/>
                 </template>
-                <b-dropdown-item v-on:click="numNotation('si')">{{ loc('metric') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="numNotation('sci')">{{ loc('scientific') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="numNotation('eng')">{{ loc('engineering') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="numNotation('sln')">{{ loc('sln') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="numNotation('si')">{{ label('metric') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="numNotation('sci')">{{ label('scientific') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="numNotation('eng')">{{ label('engineering') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="numNotation('sln')">{{ label('sln') }}</b-dropdown-item>
                 <season-hunt :event="'halloween'" :num="5" :size="12" :trick="true" :typer="'dropdown-item'" />
             </b-dropdown>
 
-            <span>{{ loc('icons') }} </span>
+            <span>{{ label('icons') }} </span>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
-                    <b-button :label="loc(global.settings.icon)" type="is-info"/>
+                    <b-button :label="label(global.settings.icon)" type="is-info"/>
                 </template>
-                <b-dropdown-item v-on:click="icon('star')"><iconic :icon="'star'" :size="16" /> {{ loc('star') }}</b-dropdown-item>
-                <b-dropdown-item v-for="item in iconlist" v-on:click="icon(item.icon)"><iconic :icon="item.icon" :size="16" /> {{ loc(item.icon) }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="icon('star')"><iconic :icon="'star'" :size="16" /> {{ label('star') }}</b-dropdown-item>
+                <b-dropdown-item v-for="item in iconlist" v-on:click="icon(item.icon)"><iconic :icon="item.icon" :size="16" /> {{ label(item.icon) }}</b-dropdown-item>
             </b-dropdown>
         </div>
         <div id="localization" class="localization">
-            <span>{{ loc('locale') }} </span>
+            <span>{{ label('locale') }} </span>
             <b-dropdown :triggers="['hover']" aria-role="list">
                 <template #trigger>
-                    <b-button label="current_locale" type="is-info"/>
+                    <b-button :label="locales[s.locale]" type="is-info"/>
                 </template>
                 <b-dropdown-item v-for="item in locale_list" v-on:click="lChange(item.name)">{{ item.label }}</b-dropdown-item>
             </b-dropdown>
 
-            <span>{{ loc('font') }} </span>
+            <span>{{ label('font') }} </span>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
-                    <b-button type="is-info">{{ loc(s.font) }}</b-button>
+                    <b-button type="is-info">{{ label(s.font) }}</b-button>
                 </template>
-                <b-dropdown-item v-on:click="font('standard')">{{ loc('standard') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="font('large_log')">{{ loc('large_log') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="font('large_all')">{{ loc('large_all') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="font('standard')">{{ label('standard') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="font('large_log')">{{ label('large_log') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="font('large_all')">{{ label('large_all') }}</b-dropdown-item>
             </b-dropdown>
         </div>
 
         <div class="queue">
-            <span>{{ loc('queuestyle') }} </span>
+            <span>{{ label('queuestyle') }} </span>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
-                    <b-button :label="loc(s.queuestyle)" type="is-info"/>
+                    <b-button :label="label(s.queuestyle)" type="is-info"/>
                 </template>
-                <b-dropdown-item v-on:click="setQueueStyle('standardqueuestyle')">{{ loc('standardqueuestyle') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setQueueStyle('listqueuestyle')">{{ loc('listqueuestyle') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setQueueStyle('bulletlistqueuestyle')">{{ loc('bulletlistqueuestyle') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setQueueStyle('numberedlistqueuestyle')">{{ loc('numberedlistqueuestyle') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueStyle('standardqueuestyle')">{{ label('standardqueuestyle') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueStyle('listqueuestyle')">{{ label('listqueuestyle') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueStyle('bulletlistqueuestyle')">{{ label('bulletlistqueuestyle') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueStyle('numberedlistqueuestyle')">{{ label('numberedlistqueuestyle') }}</b-dropdown-item>
             </b-dropdown>
 
-            <span class="settings15" aria-label="loc('settings15')">{{ loc('q_merge') }} </span>
+            <span class="settings15" aria-label="label('settings15')">{{ label('q_merge') }} </span>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
-                    <b-button :label="loc(s.q_merge)" type="is-info"/>
+                    <b-button :label="label(s.q_merge)" type="is-info"/>
                 </template>
-                <b-dropdown-item v-on:click="qu_merge('merge_never')">{{ loc('merge_never') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="qu_merge('merge_nearby')">{{ loc('merge_nearby') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="qu_merge('merge_all')">{{ loc('merge_all') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="qu_merge('merge_never')">{{ label('merge_never') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="qu_merge('merge_nearby')">{{ label('merge_nearby') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="qu_merge('merge_all')">{{ label('merge_all') }}</b-dropdown-item>
             </b-dropdown>
 
-            <span>{{ loc('q_resize') }} </span>
+            <span>{{ label('q_resize') }} </span>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
-                    <b-button :label="loc('q_resize_' + s.q_resize)" type="is-info"/>
+                    <b-button :label="label('q_resize_' + s.q_resize)" type="is-info"/>
                 </template>
-                <b-dropdown-item v-on:click="setQueueResize('auto')">{{ loc('q_resize_auto') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setQueueResize('grow')">{{ loc('q_resize_grow') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setQueueResize('shrink')">{{ loc('q_resize_shrink') }}</b-dropdown-item>
-                <b-dropdown-item v-on:click="setQueueResize('manual')">{{ loc('q_resize_manual') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueResize('auto')">{{ label('q_resize_auto') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueResize('grow')">{{ label('q_resize_grow') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueResize('shrink')">{{ label('q_resize_shrink') }}</b-dropdown-item>
+                <b-dropdown-item v-on:click="setQueueResize('manual')">{{ label('q_resize_manual') }}</b-dropdown-item>
             </b-dropdown>
         </div>
 
-        <b-switch class="setting" v-model="s.pause" @input="unpause"><span class="settings12" aria-label="loc('settings12')">{{ loc('pause') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.mKeys"><span class="settings1" aria-label="loc('settings1')">{{ loc('m_keys') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.cLabels"><span class="settings5" aria-label="loc('settings5')">{{ loc('c_cat') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.alwaysPower"><span class="settings17" aria-label="loc('settings17')">{{ loc('always_power') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.qKey"><span class="settings6" aria-label="loc('settings6')">{{ loc('q_key') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.qAny"><span class="settings7" aria-label="loc('settings7')">{{ loc('q_any') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.qAny_res"><span class="settings14" aria-label="loc('settings14')">{{ loc('q_any_res') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.sPackOn" @input="stringPackOn"><span class="settings13" aria-label="loc('settings13')">{{ loc('s_pack_on') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.expose"><span class="settings8" aria-label="loc('settings8')">{{ loc('expose') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.tabLoad" @update:model-value="toggleTabLoad"><span class="settings11" aria-label="loc('settings11')">{{ loc('tabLoad') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.boring"><span class="settings10" aria-label="loc('settings10')">{{ loc('boring') }}</span></b-switch>
-        <b-switch class="setting" v-model="s.touch"><span class="settings16" aria-label="loc('settings16')">{{ loc('touch') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.pause" @input="unpause"><span class="settings12" aria-label="label('settings12')">{{ label('pause') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.mKeys"><span class="settings1" aria-label="label('settings1')">{{ label('m_keys') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.cLabels"><span class="settings5" aria-label="label('settings5')">{{ label('c_cat') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.alwaysPower"><span class="settings17" aria-label="label('settings17')">{{ label('always_power') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.qKey"><span class="settings6" aria-label="label('settings6')">{{ label('q_key') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.qAny"><span class="settings7" aria-label="label('settings7')">{{ label('q_any') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.qAny_res"><span class="settings14" aria-label="label('settings14')">{{ label('q_any_res') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.sPackOn" @input="stringPackOn"><span class="settings13" aria-label="label('settings13')">{{ label('s_pack_on') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.expose"><span class="settings8" aria-label="label('settings8')">{{ label('expose') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.tabLoad" @update:model-value="toggleTabLoad"><span class="settings11" aria-label="label('settings11')">{{ label('tabLoad') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.boring"><span class="settings10" aria-label="label('settings10')">{{ label('boring') }}</span></b-switch>
+        <b-switch class="setting" v-model="s.touch"><span class="settings16" aria-label="label('settings16')">{{ label('touch') }}</span></b-switch>
         <div>
-            <div>{{ loc('key_mappings') }}</div>
-            <div class="keyMap"><span>{{ loc('multiplier',[10]) }}</span> <b-input v-model="s.keyMap.x10" id="x10Key"></b-input></div>
-            <div class="keyMap"><span>{{ loc('multiplier',[25]) }}</span> <b-input class="keyMap" v-model="s.keyMap.x25" id="x25Key"></b-input></div>
-            <div class="keyMap"><span>{{ loc('multiplier',[100]) }}</span> <b-input class="keyMap" v-model="s.keyMap.x100" id="x100Key"></b-input></div>
-            <div class="keyMap"><span>{{ loc('q_key') }}</span> <b-input class="keyMap" v-model="s.keyMap.q" id="queueKey"></b-input></div>
+            <div>{{ label('key_mappings') }}</div>
+            <div class="keyMap"><span>{{ label('multiplier',[10]) }}</span> <b-input v-model="s.keyMap.x10" id="x10Key"></b-input></div>
+            <div class="keyMap"><span>{{ label('multiplier',[25]) }}</span> <b-input class="keyMap" v-model="s.keyMap.x25" id="x25Key"></b-input></div>
+            <div class="keyMap"><span>{{ label('multiplier',[100]) }}</span> <b-input class="keyMap" v-model="s.keyMap.x100" id="x100Key"></b-input></div>
+            <div class="keyMap"><span>{{ label('q_key') }}</span> <b-input class="keyMap" v-model="s.keyMap.q" id="queueKey"></b-input></div>
         </div>
         <div class="importExport">
-            <div>{{ loc('tab_mappings') }}</div>
-            <div class="keyMap"><span>{{ loc('tab_civil') }}</span> <b-input v-model="s.keyMap.showCiv" id="showCivKey"></b-input></div>
-            <div class="keyMap"><span>{{ loc('tab_civics') }}</span> <b-input v-model="s.keyMap.showCivic" id="showCivicKey"></b-input></div>
-            <div class="keyMap"><span>{{ loc('tab_research') }}</span> <b-input v-model="s.keyMap.showResearch" id="showResearchKey"></b-input></div>
-            <div class="keyMap"><span>{{ loc('tab_resources') }}</span> <b-input v-model="s.keyMap.showResources" id="showResourcesKey"></b-input></div>
-            <div class="keyMap"><span>{{ loc('tech_arpa') }}</span> <b-input v-model="s.keyMap.showGenetics" id="showGeneticsKey"></b-input></div>
-            <div class="keyMap"><span>{{ loc('tab_stats') }}</span> <b-input v-model="s.keyMap.showAchieve" id="showAchieveKey"></b-input></div>
-            <div class="keyMap"><span>{{ loc('tab_settings') }}</span> <b-input v-model="s.keyMap.settings" id="settingshKey"></b-input></div>
+            <div>{{ label('tab_mappings') }}</div>
+            <div class="keyMap"><span>{{ label('tab_civil') }}</span> <b-input v-model="s.keyMap.showCiv" id="showCivKey"></b-input></div>
+            <div class="keyMap"><span>{{ label('tab_civics') }}</span> <b-input v-model="s.keyMap.showCivic" id="showCivicKey"></b-input></div>
+            <div class="keyMap"><span>{{ label('tab_research') }}</span> <b-input v-model="s.keyMap.showResearch" id="showResearchKey"></b-input></div>
+            <div class="keyMap"><span>{{ label('tab_resources') }}</span> <b-input v-model="s.keyMap.showResources" id="showResourcesKey"></b-input></div>
+            <div class="keyMap"><span>{{ label('tech_arpa') }}</span> <b-input v-model="s.keyMap.showGenetics" id="showGeneticsKey"></b-input></div>
+            <div class="keyMap"><span>{{ label('tab_stats') }}</span> <b-input v-model="s.keyMap.showAchieve" id="showAchieveKey"></b-input></div>
+            <div class="keyMap"><span>{{ label('tab_settings') }}</span> <b-input v-model="s.keyMap.settings" id="settingshKey"></b-input></div>
         </div>
         <div class="stringPack setting">
-            <button id="stringPack" class="button" @click="importStringFile">{{ loc('load_string_pack') }}</button>
+            <button id="stringPack" class="button" @click="importStringFile">{{ label('load_string_pack') }}</button>
             <input type="file" class="fileImport" id="stringPackFile" accept="text/plain, application/json">
-            <button class="button right" @click="clearStringFile">{{ loc('clear_string_pack') }}</button>
+            <button class="button right" @click="clearStringFile">{{ label('clear_string_pack') }}</button>
         </div>
         <div class="stringPack setting">
             <span>{{ s.sPackMsg }}</span>
         </div>
         <div class="importExport">
-            <b-field :label="loc('import_export')">
+            <b-field :label="label('import_export')">
                 <b-input id="importExport" type="textarea"></b-input>
             </b-field>
-            <button class="button" @click="saveImport">{{ loc('import') }}</button>
-            <button class="button" @click="saveExport">{{ loc('export') }}</button>
-            <button class="button" @click="saveExportFile">{{ loc('export_file') }}</button>
-            <button class="button right" @click="restoreGame"><span class="settings9" aria-label="loc('settings9')">{{ loc('restore') }}</span></button>
+            <button class="button" @click="saveImport">{{ label('import') }}</button>
+            <button class="button" @click="saveExport">{{ label('export') }}</button>
+            <button class="button" @click="saveExportFile">{{ label('export_file') }}</button>
+            <button class="button right" @click="restoreGame"><span class="settings9" aria-label="label('settings9')">{{ label('restore') }}</span></button>
         </div>
         <div class="reset">
             <b-collapse :open="false">
-                <b-switch v-model="s.disableReset" slot="trigger">{{ loc('enable_reset') }}</b-switch>
+                <b-switch v-model="s.disableReset" slot="trigger">{{ label('enable_reset') }}</b-switch>
                 <div class="notification" v-if="s.disableReset">
                     <div class="content">
                         <h4 class="has-text-danger">
-                            {{ loc('reset_warn') }}
+                            {{ label('reset_warn') }}
                         </h4>
                         <p>
-                            <button class="button" :disabled="!s.disableReset" @click="softResetGame()"><span class="settings4" aria-label="loc('settings4')">{{ loc('reset_soft') }}</span></button>
-                            <button class="button right" :disabled="!s.disableReset" @click="resetGame()"><span class="settings3" aria-label="loc('settings3')">{{ loc('reset_hard') }}</span></button>
+                            <button class="button" :disabled="!s.disableReset" @click="softResetGame()"><span class="settings4" aria-label="label('settings4')">{{ label('reset_soft') }}</span></button>
+                            <button class="button right" :disabled="!s.disableReset" @click="resetGame()"><span class="settings3" aria-label="label('settings3')">{{ label('reset_hard') }}</span></button>
                         </p>
                     </div>
                 </div>
             </b-collapse>
         </div>
         <div class="themeEditor">
-            <b-switch class="setting" v-model="t.themeEditorOpen" @click="openCloseThemeEditor"><span>{{ loc('open_theme_editor')}}</span></b-switch>
+            <b-switch class="setting" v-model="t.themeEditorOpen" @click="openCloseThemeEditor"><span>{{ label('open_theme_editor')}}</span></b-switch>
             <div v-if="t.themeEditorOpen" class="importExport">
-                <b-field label="loc('import_export_theme')">
+                <b-field label="label('import_export_theme')">
                     <b-input id="importExportTheme" type="textarea"></b-input>
                 </b-field>
-                <button class="button" @click="saveImportTheme">{{ loc('import_theme') }}</button>
-                <button class="button" @click="saveExportTheme">{{ loc('export_theme') }}</button>
-                <button class="button" @click="saveExportThemeFile">{{ loc('export_file') }}</button>
+                <button class="button" @click="saveImportTheme">{{ label('import_theme') }}</button>
+                <button class="button" @click="saveExportTheme">{{ label('export_theme') }}</button>
+                <button class="button" @click="saveExportThemeFile">{{ label('export_file') }}</button>
             </div>
         </div>
         </div>

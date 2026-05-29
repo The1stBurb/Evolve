@@ -39,7 +39,7 @@ export function loc(key, variables) {
     return string;
 }
 
-function getString(locale) {
+export function getString(locale) {
     $.ajaxSetup({ async: false });
 
     let defaultString;
