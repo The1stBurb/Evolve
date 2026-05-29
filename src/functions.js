@@ -2605,10 +2605,6 @@ export function easterEggBind(id){
 
 export function trickOrTreat(num,size,trick){
     let halloween = getHalloween();
-    if(num==5){
-        console.log(halloween);
-        console.log(global.special.trick);
-    }
     const date = new Date();
     const year = date.getFullYear();
     let tot = trick ? 'trick' : 'treat';

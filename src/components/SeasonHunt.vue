@@ -34,7 +34,6 @@
 
     onMounted(()=>{
         is_active.value = getIcon();
-        console.log('activate',event,num,is_active,typer);
     });
 </script>
 
