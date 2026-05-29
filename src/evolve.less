@@ -1600,6 +1600,7 @@ div {
 
 .button.right {
     float: right;
+    margin-right: 0.1rem;
 }
 
 a {
@@ -1896,7 +1897,7 @@ a {
     overflow-y: hidden;
 
     .leftColumn {
-        height: ~"calc(100vh - 2.45rem)";
+        height: ~"calc(100vh - 2.25rem)";
 
         .colHeader {
             display: flex;
@@ -2071,9 +2072,29 @@ a {
         }
     }
 
-    .resTabs>section {
-        .sticky();
-        height: ~"calc(100vh - 8.5rem)";
+    /*  give each subtab panel their own fixed-height scroll container,
+        to prevent jarring page-jump animations when switching between 
+        subtabs of different content heights */
+    .resTabs .tab-content > .tab-item {
+        height: ~"calc(100vh - 8rem)";
+        overflow-y: auto;
+        overflow-x: hidden;
+        @supports (scrollbar-width: auto) {
+            scrollbar-width: thin;
+        }
+    }
+
+    .govTabs2 .tab-content > .tab-item {
+        // same fixed-height technique as .resTabs above, just a bit further down
+        // might be sensitive to future layout changes- obvious symptom is if civics tab becomes
+        // permanently scrollable, regardless of the actual window height
+        height: ~"calc(100vh - 12.3rem)";
+        padding-right: 0;
+        // override resTabs overflow so b-dropdown menus aren't clipped to the tab-item box
+        overflow: visible;
+        // resTabs specificity (0,2,0) beats the global grid rule's align-self:start (0,1,0),
+        // so we must explicitly restore it here or both tab-items stretch to the taller one's height
+        align-self: start;
     }
 
     /* Outer main tabs section: clip horizontal slide animations without
@@ -2097,14 +2118,24 @@ a {
         width: 100%;
         /* Preserve exact left/right padding so layouts match */
         padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
+        padding-right: 0.15rem;
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     /* Push non-subtab content down a bit so stuff like the settings tab doesn't scrape against the main navigation bar */
     #mainTabs > .tab-content > .tab-item {
         padding-top: 0.75rem !important;
+        height: calc(100vh - 5rem);
+        padding-bottom: 3%;
+        top: 0 // override for specifically the settings tab, to keep it from being unusually far compared to the others
+    }
+
+    // .sticky on tab-items provides internal overflow scrolling, but position:sticky
+    // conflicts with CSS grid stacking, causing a vertical snap during slide transitions
+    // override to position:relative to keep positioning context without the snapping
+    .b-tabs .tab-content > .tab-item.sticky {
+        position: relative;
     }
 
     /* Pull inner subtab navigation bars up so they negate the 0.75rem padding applied above, keeping them a comfortable distance from the main tabs */
@@ -2112,9 +2143,9 @@ a {
         margin-top: -0.75rem;
     }
 
-    /* Pull up the content within subtabs to close the inner gaps */
+    // doesn't need to be pulled up anymore
     .resTabs > .tab-content {
-        margin-top: -0.5rem;
+        margin-top: 0.5rem;
     }
 
     /* Firefox specifically suffers from sub-pixel rendering shimmies during transform animations
@@ -2126,7 +2157,25 @@ a {
         }
     }
 
-    /* Vue 3 Buefy migration overrides for slide animations */
+    /* Vue 3 Buefy slide animations, switched to CSS grid stacking approach
+        all .tab-items are placed in the same grid cell (grid-area: 1/1) so both 
+        the entering and leaving tab stay in normal flow during the animation
+        container height is always the taller of the two, so it never collapses to zero,
+        and overflow-x: clip on the container properly does its job */
+    .b-tabs .tab-content {
+        display: grid;
+    }
+
+    .b-tabs .tab-content > .tab-item {
+        grid-area: 1 / 1;
+        /* prevent grid's default align-self:stretch from forcing a tab-item taller than
+           its content important for tabs like Industry whose tab-item is also a flex
+           container (class="industryTab"), since a stretch-forced height would cascade
+           into the flex children and make them grow to fill the extra space. */
+        align-self: start;
+        padding-bottom: 0.85rem;
+    }
+
     .b-tabs .tab-content > .slide-next-enter-active,
     .b-tabs .tab-content > .slide-next-leave-active,
     .b-tabs .tab-content > .slide-prev-enter-active,
@@ -2135,11 +2184,6 @@ a {
     .b-tabs .tab-content > .slide-down-leave-active,
     .b-tabs .tab-content > .slide-up-enter-active,
     .b-tabs .tab-content > .slide-up-leave-active {
-        position: absolute;
-        box-sizing: border-box;
-        top: 0;
-        left: 0;
-        width: 100%;
         transition-duration: 225ms !important;
     }
 
@@ -2179,8 +2223,14 @@ a {
         transform: translate3d(0, 100%, 0);
     }
 
-    .govTabs2>section {
-        height: ~"calc(100vh - 15rem)";
+    #mTabSettings {
+        padding-right: 0.5rem;
+    }
+
+    /* govTabs2 .tab-content > .tab-item is handled above in the resTabs block instead */
+
+    #tech.tab-item {
+        padding-bottom: 2rem !important;
     }
 
     .resources {
@@ -2278,10 +2328,11 @@ a {
 
         #oldTech {
             margin-bottom: 4rem;
+            padding-bottom: 2rem !important;
         }
 
         .mtab {
-            height: ~"calc(100vh - 10rem)";
+            height: ~"calc(100vh - 10rem)"; // NOTE: this is safe to change to auto
         }
 
         .action {
@@ -2557,8 +2608,7 @@ a {
     }
 
     .civics {
-        padding-top: 0;
-        padding-bottom: 0;
+        padding: 0;
 
         .revolution {
             margin-left: .375rem;
@@ -2966,7 +3016,6 @@ a {
     
     .mechAssembly {
         padding-bottom: .5rem;
-        margin-bottom: .5rem;
         border-bottom: .0625rem solid;
 
         .button {
@@ -3002,6 +3051,20 @@ a {
                     margin: 0 .125rem;
                 }
             }
+        }
+    }
+
+    #mechLab {
+        display: flex;
+        flex-direction: column;
+        overflow-y: hidden;
+
+        #mechList {
+            flex: 1 1 0;
+            min-height: 0;
+            height: auto;   // override height: 100vh from .sticky
+            padding-bottom: 0.5rem;
+            padding-top: 0.5rem;
         }
     }
 
@@ -3107,6 +3170,7 @@ a {
     .importExport,
     .stringPack {
         margin-top: 1rem;
+        padding-right: 0.3rem;
     }
     
     #customFile,
@@ -3865,6 +3929,9 @@ span.inline {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    // prevent flex rows from stretching to fill a taller-than-content container
+    align-content: flex-start;
+    align-items: flex-start;
 }
 
 .industry {
@@ -4175,6 +4242,9 @@ span.inline {
 
 .ShipYardTab {
     margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
 
     .button {
         height: 2rem;
@@ -4212,6 +4282,11 @@ span.inline {
 
     #shipList {
         margin-top: .25rem;
+        flex: 1 1 0;
+        min-height: 0;
+        height: auto;   // override height: 100vh from .sticky
+        padding-bottom: 0.5rem;
+
         .shipRow {
             display: grid;
             padding-top: .25rem;
@@ -4727,9 +4802,9 @@ div.bigbang {
     }
 }
 
-#evolution {
-    height: ~"calc(100vh - 6rem)";
-}
+//* #evolution {
+    //* height: ~"calc(100vh - 6rem)";
+//*}
 
 .resTabs>section,
 .resTabs>.tabs,
