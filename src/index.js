@@ -163,95 +163,7 @@ export function mainVue(){
                     }
                 });
             },
-            lChange(locale){
-                global.settings.locale = locale;
-                global.queue.rename = true;
-                save.setItem('evolved', LZString.compressToUTF16(JSON.stringify(global)));
 
-                // Update the HTML lang attribute for accessibility
-                updateHtmlLang(locale);
-
-                if (webWorker.w){
-                    webWorker.w.terminate();
-                }
-                window.location.reload();
-            },
-            saveImportTheme(){
-                if ($('#importExportTheme textarea').val().length > 0){
-                    importTheme($('#importExportTheme textarea').val());
-                }
-            },
-            saveExportTheme(){
-                $('#importExportTheme textarea').val(getThemeSaveData());
-                $('#importExportTheme textarea').select();
-                document.execCommand('copy');
-            },
-            saveExportThemeFile(){
-                const downloadToFile = (content, filename, contentType) => {
-                    const a = document.createElement('a');
-                    const file = new Blob([content], {type: contentType});
-                    a.href= URL.createObjectURL(file);
-                    a.download = filename;
-                    a.click();
-                    URL.revokeObjectURL(a.href);
-                };
-                const date = new Date();
-                const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toFixed(0).padStart(2, '0');
-                const day = date.getDate().toFixed(0).padStart(2, '0');
-                const hour = date.getHours().toFixed(0).padStart(2, '0');
-                const minute = date.getMinutes().toFixed(0).padStart(2, '0');
-                downloadToFile(getThemeSaveData(), `evolve_theme-${getThemeTitle(global.settings.theme)}-${year}-${month}-${day}-${hour}-${minute}.txt`, 'text/plain');
-            },
-            setTheme(theme,set_none){
-                set_theme(theme);
-                global.settings.theme = theme;
-                setThemeToHTML(theme,set_none);
-            },
-            openCloseThemeEditor(e){
-                // theme_settings.pos.x=e.clientX+20;
-                // theme_settings.pos.y=e.clientY-200;
-                loadThemeEditorDat();
-                // console.log(theme_settings)
-            },
-            getThemeTitle(name){
-                return getThemeTitle(name);
-            },
-            setCustomCount(num,t){
-                let past_count=t.custom_count;
-                t.custom_count=num;
-                global.custom_theme.custom_count=num;
-                if(past_count==num){
-                    return;
-                }
-                else if(past_count>num){
-                    console.log('too many',num+1,past_count)
-                    for(let i=num+1; i<=past_count; i++){
-                        let name=`custom-${i}`;
-                        delete themes[name];
-                        delete global.custom_theme[name];
-                    }
-                }
-                else{
-                    console.log('too little',past_count+1,num)
-                    for(let i=past_count+1; i<=num; i++){
-                        let name=`custom-${i}`;
-                        themes[name]={};
-                        global.custom_theme[name]=themes[name];
-                    }
-                }
-
-                console.log(themes);
-            },
-
-            
-            setQueueStyle(style){
-                global.settings.queuestyle = style;
-                updateQueueStyle();
-            },
-            setQueueResize(mode) {
-                global.settings.q_resize = mode;
-            },
             icon(icon){
                 global.settings.icon = icon;
                 save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
@@ -314,27 +226,6 @@ export function mainVue(){
             },
             label(lbl){
                 return tabLabel(lbl);
-            },
-            sPack(){
-                return global.settings.sPackMsg;
-            },
-            notation(n){
-                switch (n){
-                    case 'si':
-                        return loc(`metric`);
-                    case 'sci':
-                        return loc(`scientific`);
-                    case 'eng':
-                        return loc(`engineering`);
-                    case 'sln':
-                        return loc(`sln`);
-                }
-            },
-            resetGame(){
-                window.reset();
-            },
-            softResetGame(){
-                window.soft_reset();
             }
         },
         components:{
@@ -412,18 +303,6 @@ export function tabLabel(lbl){
         default:
             return loc(lbl);
     }
-}
-
-function updateQueueStyle(){
-    const buildingQueue = $('#buildQueue');
-    ['standardqueuestyle', 'listqueuestyle', 'bulletlistqueuestyle', 'numberedlistqueuestyle']
-        .forEach(qstyle => {
-            if (global.settings.queuestyle === qstyle) {
-                buildingQueue.addClass(qstyle);
-            } else {
-                buildingQueue.removeClass(qstyle);
-            }
-        });
 }
 
 export function initTabs() {

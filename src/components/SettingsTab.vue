@@ -2,6 +2,7 @@
     import { ref } from "vue";
     import { save, webWorker, global } from '../vars.js';
     import { loc, locales, updateHtmlLang, getString } from '../locale.js';
+    import { gameLoop } from '../functions.js';
     // import { tabLabel as label } from '../index.js';
     import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from '../themes.js';
 
@@ -254,7 +255,15 @@
     }
     function setQueueStyle(style){
         global.settings.queuestyle = style;
-        updateQueueStyle();
+        const buildingQueue = $('#buildQueue');
+        ['standardqueuestyle', 'listqueuestyle', 'bulletlistqueuestyle', 'numberedlistqueuestyle']
+            .forEach(qstyle => {
+                if (global.settings.queuestyle === qstyle) {
+                    buildingQueue.addClass(qstyle);
+                } else {
+                    buildingQueue.removeClass(qstyle);
+                }
+            });
     }
     function setQueueResize(mode) {
         global.settings.q_resize = mode;
