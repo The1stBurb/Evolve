@@ -18,6 +18,7 @@ import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeD
 
 import SeasonHunt from './components/SeasonHunt.vue';
 import SettingsTab from './components/SettingsTab.vue';
+import TopBar from './components/TopBar.vue';
 
 export function mainVue(){
     vBind({
@@ -614,13 +615,11 @@ export function loadTab(tab){
                 if (!global.settings.tabLoad){
                     tagEvent('page_view',{ page_title: `Evolve - Research` });
                 }
-                let queue = $(`<div id="resQueue" class="resQueue" v-show="rq.display"></div>`);
-                $(`#mTabResearch`).append(queue);
-                let tabs = $(`<div id="resContent"><b-tabs class="resTabs" v-model="s.resTabs" :animated="s.animated">
+                let queue_and_tabs = $(`<div id="resQueue" class="resQueue" v-show="rq.display"></div><div id="resContent"><b-tabs class="resTabs" v-model="s.resTabs" :animated="s.animated">
                     <b-tab-item id="tech" :label="label_f('new')"></b-tab-item>
                     <b-tab-item id="oldTech" :label="label_f('old')"></b-tab-item>
                 </b-tabs></div>`);
-                $(`#mTabResearch`).append(tabs);
+                $(`#mTabResearch`).append(queue_and_tabs);
                 vBind({
                     el: `#resContent`,
                     data: {
@@ -770,32 +769,7 @@ export function index(){
     $('html').addClass(global.settings.font);
 
     // Top Bar
-    $('body').append(`<div id="topBar" class="topBar">
-        <h2 class="is-sr-only">Top Bar</h2>
-        <span class="planetWrap">
-            <span class="planet">{{ planet(race.species) }}</span>
-            <span class="universe" v-show="showUniverse()">{{ universe(race.universe) }}</span>
-            <span class="pet" id="playerPet" v-show="showPet()" @click="petPet()"></span>
-            <span class="simulation" v-show="showSim()">${loc(`evo_challenge_simulation`)}</span>
-        </span>
-        <span class="calendar">
-            <span class="infoTimer" id="infoTimer"></span>
-            <span v-show="city.calendar.day">
-                <span class="is-sr-only" v-html="sign()"></span><span id="astroSign" class="astro" v-html="getAstroSign()"></span>
-                <b-tooltip :label="moon()" :aria-label="moon()" position="is-bottom" size="is-small" multilined animated><i id="moon" class="moon wi"></i></b-tooltip>
-                <span class="year">${loc('year')} <span class="has-text-warning">{{ city.calendar.year }}</span></span>
-                <span class="day">${loc('day')} <span class="has-text-warning">{{ city.calendar.day }}</span></span>
-                <span class="season">{{ season() }}</span>
-                <b-tooltip :label="weather()" :aria-label="weather()" position="is-bottom" size="is-small" multilined animated><i id="weather" class="weather wi"></i></b-tooltip>
-                <b-tooltip :label="temp()" :aria-label="temp()" position="is-bottom" size="is-small" multilined animated><i id="temp" class="temp wi"></i></b-tooltip>
-                <b-tooltip :label="atRemain()" v-show="s.at" :aria-label="atRemain()" position="is-bottom" size="is-small" multilined animated><span class="atime has-text-caution">{{ remain(s.at) }}</span></b-tooltip>
-                <span role="button" class="atime" style="padding: 0 0.5rem; margin-left: 0.5rem; cursor: pointer" @click="pause" :aria-label="pausedesc()">
-                    <span id="pausegame"></span>
-                </span>
-            </span>
-        </span>
-        <span class="version" id="versionLog"><a href="wiki.html#changelog" target="_blank"></a></span>
-    </div>`);
+    $('body').append(`<top-bar />`);
 
     let main = $(`<div id="main" class="main"></div>`);
     let columns = $(`<div class="columns is-gapless"></div>`);
