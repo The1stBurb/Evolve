@@ -200,7 +200,7 @@ export function mainVue(){
             }
         },
         components:{
-            SeasonHunt, SettingsTab,
+            SeasonHunt, SettingsTab, TopBar, 
         },
     });
 
@@ -770,6 +770,12 @@ export function index(){
 
     // Top Bar
     $('body').append(`<top-bar />`);
+    vBind({
+        el: 'body',
+        components: {
+            TopBar, 
+        },
+    });
 
     let main = $(`<div id="main" class="main"></div>`);
     let columns = $(`<div class="columns is-gapless"></div>`);

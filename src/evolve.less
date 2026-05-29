@@ -1105,7 +1105,7 @@ Misc ---------> Main template
             }
         }
         
-        .fileImport {
+        input.fileImport {
             background-color: @html-background;
         }
 
@@ -1244,282 +1244,284 @@ html {
     &.theme{
         #lib.theme();
         #lib.mainTemplate();
-
-        &.dark {
-            .pop-desc .has-text-caution {
-                color: #a30500;
-            }
-
+    }
+    #lib.theme();
+    
+    &.dark {
+        .pop-desc .has-text-caution {
+            color: #a30500;
         }
 
-        // Light theme
-        &.light {
+    }
 
-            body {
-                font-weight: 500;
-            }
+    // Light theme
+    &.light {
 
-            // .button
-            .button,
-            .button:hover {
-                border: solid .0625rem @black;
-            }
-
-            // UI Bars
-            .topBar {
-                .calendar {
-                    .wi-thermometer-exterior {
-                        color: #00d6b2;
-                    }
-
-                    .wi-day-sunny,
-                    .wi-day-windy {
-                        color: #fffb00;
-                    }
-
-                    .wi-cloud,
-                    .wi-cloudy-gusts {
-                        color: #dfe2d3;
-                    }
-
-                    .wi-rain,
-                    .wi-storm-showers {
-                        color: #00b0e6;
-                    }
-
-                    .wi-snow,
-                    .wi-snow-wind {
-                        color: #fff;
-                    }
-                }
-            }
-
-            // .main
-            .main {
-                .content {
-                    .action {
-                        a.button {
-                            span.count {
-                                border-bottom: .0625rem solid #000;
-                                border-left: .0625rem solid #000;
-                            }
-                        }
-                    }
-
-                    .action.cna:not(.cnam) {
-                        span.aTitle {
-                            color: #282828;
-                        }
-                    }
-                }
-            }
-
-            // .industry
-            .industry {
-                background: none;
-
-                .smelting {
-                    border-top: 0;
-                }
-
-                .header {
-                    border-bottom: #4e4e4e solid .0625rem;
-                }
-            }
-
-            .progress::-webkit-progress-value,
-            .progress::-moz-progress-bar {
-                background-color: #898989;
-            }
+        body {
+            font-weight: 500;
         }
 
-        // Custom / Night / None theme
-        //for if the theme has no theme specific items
-        &.none{
-            @worthless-var:#fff;
+        // .button
+        .button,
+        .button:hover {
+            border: solid .0625rem @black;
         }
 
-        // Red Green CB theme
-        &.redgreen {
-            #lib.theme();
-            #lib.mainTemplate();
-
-            .main>div.popper,
-            body .modal>div.popper {
-                .has-text-danger {
-                    color: #aa00aa;
-                }
-            }
-
-            #powerStatus .has-text-warning {
-                color: #9900cc;
-            }
-
-            // Trade
-            .trade {
-                .has-text-danger {
-                    color: #167df0;
-                    color: #aa00ff;
+        // UI Bars
+        .topBar {
+            .calendar {
+                .wi-thermometer-exterior {
+                    color: #00d6b2;
                 }
 
-                .has-text-warning {
+                .wi-day-sunny,
+                .wi-day-windy {
+                    color: #fffb00;
+                }
+
+                .wi-cloud,
+                .wi-cloudy-gusts {
+                    color: #dfe2d3;
+                }
+
+                .wi-rain,
+                .wi-storm-showers {
+                    color: #00b0e6;
+                }
+
+                .wi-snow,
+                .wi-snow-wind {
                     color: #fff;
                 }
             }
+        }
 
-            // UI Bars
-            .topBar {
-                .calendar {
-                    .wi-thermometer-exterior {
-                        color: #00e6d2;
+        // .main
+        .main {
+            .content {
+                .action {
+                    a.button {
+                        span.count {
+                            border-bottom: .0625rem solid #000;
+                            border-left: .0625rem solid #000;
+                        }
                     }
+                }
 
-                    .wi-thermometer {
-                        color: #fffb00;
+                .action.cna:not(.cnam) {
+                    span.aTitle {
+                        color: #282828;
                     }
                 }
             }
-
-            .mad {
-                background: repeating-linear-gradient(45deg,
-                        #8a8b49,
-                        #8a8b49 10px,
-                        #000000 10px,
-                        #000000 20px);
-            }
-
-            .armed .mad {
-                background: repeating-linear-gradient(45deg,
-                        #fbfd84,
-                        #fbfd84 10px,
-                        #000000 10px,
-                        #000000 20px);
-            }
-
         }
 
-        // Dark Night theme
-        &.darkNight {
+        // .industry
+        .industry {
+            background: none;
 
-            // Theme specific
-            input,
-            select,
-            textarea {
-                background: @primary-color;
+            .smelting {
+                border-top: 0;
+            }
+
+            .header {
+                border-bottom: #4e4e4e solid .0625rem;
             }
         }
 
-        // GruvBox Light theme
-        &.gruvboxLight {
-
-            input,
-            select,
-            textarea,
-            .notification {
-                background: @secondary-color;
-            }
-        }
-
-        // GruvBox Dark theme
-        &.gruvboxDark {
-
-            input,
-            select,
-            textarea,
-            .notification {
-                background: @primary-color;
-            }
-
-            .add,
-            .sub {
-                border: @secondary-border solid .0625rem;
-            }
-
-            .current {
-                border-top: @secondary-border solid .0625rem;
-                border-bottom: @secondary-border solid .0625rem;
-            }
-            .current.infoOnly {
-                border: @secondary-border solid .0625rem;
-            }
-
-        }
-
-        // GruvBox Dark Red Green theme
-        &.gruvboxDarkRG {
-            #lib.theme();
-            #lib.mainTemplate();
-
-            input,
-            select,
-            textarea,
-            .notification {
-                background: @primary-color;
-            }
-
-            .add,
-            .sub {
-                border: @secondary-border solid .0625rem;
-            }
-
-            .current {
-                border-top: @secondary-border solid .0625rem;
-                border-bottom: @secondary-border solid .0625rem;
-            }
-            .current.infoOnly {
-                border: @secondary-border solid .0625rem;
-            }
-        }
-
-        // Orange Soda theme
-        &.orangeSoda {
-
-            // Theme specific
-            .modal .action {
-                #lib.mainTemplate.main.content.action();
-            }
-
-            .has-text-info {
-                color: #F09D51;
-            }
-
-            .pop-desc {
-                .has-text-caution {
-                    color: @has-text-danger;
-                }
-            }
-
-            input,
-            select,
-            textarea,
-            .notification {
-                background: @primary-color;
-            }
-        }
-        // Dracula theme
-        &.dracula {
-
-            input,
-            select,
-            textarea,
-            .notification {
-                background: @primary-color;
-            }
-
-            .add,
-            .sub {
-                border: @secondary-border solid .0625rem;
-            }
-
-            .current {
-                border-top: @secondary-border solid .0625rem;
-                border-bottom: @secondary-border solid .0625rem;
-            }
-            .current.infoOnly {
-                border: @secondary-border solid .0625rem;
-            }
+        .progress::-webkit-progress-value,
+        .progress::-moz-progress-bar {
+            background-color: #898989;
         }
     }
+
+    // Custom / Night / None theme
+    //for if the theme has no theme specific items
+    &.none{
+        @worthless-var:#fff;
+    }
+
+    // Red Green CB theme
+    &.redgreen {
+        #lib.theme();
+        #lib.mainTemplate();
+
+        .main>div.popper,
+        body .modal>div.popper {
+            .has-text-danger {
+                color: #aa00aa;
+            }
+        }
+
+        #powerStatus .has-text-warning {
+            color: #9900cc;
+        }
+
+        // Trade
+        .trade {
+            .has-text-danger {
+                color: #167df0;
+                color: #aa00ff;
+            }
+
+            .has-text-warning {
+                color: #fff;
+            }
+        }
+
+        // UI Bars
+        .topBar {
+            .calendar {
+                .wi-thermometer-exterior {
+                    color: #00e6d2;
+                }
+
+                .wi-thermometer {
+                    color: #fffb00;
+                }
+            }
+        }
+
+        .mad {
+            background: repeating-linear-gradient(45deg,
+                    #8a8b49,
+                    #8a8b49 10px,
+                    #000000 10px,
+                    #000000 20px);
+        }
+
+        .armed .mad {
+            background: repeating-linear-gradient(45deg,
+                    #fbfd84,
+                    #fbfd84 10px,
+                    #000000 10px,
+                    #000000 20px);
+        }
+
+    }
+
+    // Dark Night theme
+    &.darkNight {
+
+        // Theme specific
+        input,
+        select,
+        textarea {
+            background: @primary-color;
+        }
+    }
+
+    // GruvBox Light theme
+    &.gruvboxLight {
+
+        input,
+        select,
+        textarea,
+        .notification {
+            background: @secondary-color;
+        }
+    }
+
+    // GruvBox Dark theme
+    &.gruvboxDark {
+
+        input,
+        select,
+        textarea,
+        .notification {
+            background: @primary-color;
+        }
+
+        .add,
+        .sub {
+            border: @secondary-border solid .0625rem;
+        }
+
+        .current {
+            border-top: @secondary-border solid .0625rem;
+            border-bottom: @secondary-border solid .0625rem;
+        }
+        .current.infoOnly {
+            border: @secondary-border solid .0625rem;
+        }
+
+    }
+
+    // GruvBox Dark Red Green theme
+    &.gruvboxDarkRG {
+        #lib.theme();
+        #lib.mainTemplate();
+
+        input,
+        select,
+        textarea,
+        .notification {
+            background: @primary-color;
+        }
+
+        .add,
+        .sub {
+            border: @secondary-border solid .0625rem;
+        }
+
+        .current {
+            border-top: @secondary-border solid .0625rem;
+            border-bottom: @secondary-border solid .0625rem;
+        }
+        .current.infoOnly {
+            border: @secondary-border solid .0625rem;
+        }
+    }
+
+    // Orange Soda theme
+    &.orangeSoda {
+
+        // Theme specific
+        .modal .action {
+            #lib.mainTemplate.main.content.action();
+        }
+
+        .has-text-info {
+            color: #F09D51;
+        }
+
+        .pop-desc {
+            .has-text-caution {
+                color: @has-text-danger;
+            }
+        }
+
+        input,
+        select,
+        textarea,
+        .notification {
+            background: @primary-color;
+        }
+    }
+    // Dracula theme
+    &.dracula {
+
+        input,
+        select,
+        textarea,
+        .notification {
+            background: @primary-color;
+        }
+
+        .add,
+        .sub {
+            border: @secondary-border solid .0625rem;
+        }
+
+        .current {
+            border-top: @secondary-border solid .0625rem;
+            border-bottom: @secondary-border solid .0625rem;
+        }
+        .current.infoOnly {
+            border: @secondary-border solid .0625rem;
+        }
+    }
+
     .themeColorPicker{
         position: absolute;
         z-index: 999;

@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "esbuild": "^0.28.0",
+    "syntax": "^1.6.3",
     "vue": "^3.5.31"
   }
 }

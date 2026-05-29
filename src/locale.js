@@ -125,7 +125,7 @@ export function initHtmlLang() {
         if (savedData) {
             const gameState = JSON.parse(LZString.decompressFromUTF16(savedData));
             if (gameState?.settings?.locale) {
-                updateHtmlLang(gameState.settings.locale);
+                // updateHtmlLang(gameState.settings.locale);
             }
         }
     } catch (e) {

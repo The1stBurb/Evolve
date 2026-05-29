@@ -1,18 +1,22 @@
 <script setup>
     import { ref } from "vue";
+    import '../evolve.less';
 
+    import { global } from '../vars.js';
     import { loc } from '../locale.js';
     import { setWeather, seasonDesc, astrologySign, astroVal } from '../seasons.js';
-    import { messageQueue } from '../functions.js';
+    import { messageQueue, loopTimers, gameLoop } from '../functions.js';
+    import { races } from '../races.js';
+    import { universe_types } from '../space.js';
     const city=ref(global.city);
     const race=ref(global.race);
     const s=ref(global.settings);
-    
+
     function planet(species){
         return races[species].home;
     }
     function universe(universe){
-        return showUniverse() ? '' : universe_types[universe].name;
+        return showUniverse() ? universe_types[universe].name : '';
     }
     function showUniverse(){
         return global.race.universe === 'standard' || global.race.universe === 'bigbang' ? false : true;
@@ -81,8 +85,8 @@
             <span v-show="city.calendar.day">
                 <span class="is-sr-only" v-html="seasonDesc('sign')"></span><span id="astroSign" class="astro" v-html="seasonDesc('astrology')"></span>
                 <b-tooltip :label="seasonDesc('moon')" :aria-label="seasonDesc('moon')" position="is-bottom" size="is-small" multilined animated><i id="moon" class="moon wi"></i></b-tooltip>
-                <span class="year">{{ loc('year') }} <span class="has-text-warning">{{ city.calendar.year }}</span></span>
-                <span class="day">{{ loc('day') }} <span class="has-text-warning">{{ city.calendar.day }}</span></span>
+                <span class="year">{{ loc('year') }} <span class="has-text-warning">{{ city.calendar.year }} </span></span>
+                <span class="day">{{ loc('day') }} <span class="has-text-warning">{{ city.calendar.day }} </span></span>
                 <span class="season">{{ seasonDesc('season') }}</span>
                 <b-tooltip :label="seasonDesc('weather')" :aria-label="seasonDesc('weather')" position="is-bottom" size="is-small" multilined animated><i id="weather" class="weather wi"></i></b-tooltip>
                 <b-tooltip :label="seasonDesc('temp')" :aria-label="seasonDesc('temp')" position="is-bottom" size="is-small" multilined animated><i id="temp" class="temp wi"></i></b-tooltip>

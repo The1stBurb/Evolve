@@ -143,7 +143,7 @@
         save.setItem('evolved', LZString.compressToUTF16(JSON.stringify(global)));
 
         // Update the HTML lang attribute for accessibility
-        updateHtmlLang(locale);
+        // updateHtmlLang(locale);
 
         if (webWorker.w){
             webWorker.w.terminate();
