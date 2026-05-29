@@ -1046,9 +1046,20 @@ function updateTheme(theme_name){
 }
 
 export function createAllThemeDropdowns(func_name){
-    let theme_names=Object.keys(themes);
-    theme_names.shift();//removes the 'variables' key
+    let theme_n=Object.keys(themes);
+    theme_n.shift();//removes the 'variables' key
+    let theme_names=[];
+    for(let name in themes){
+        if(name=='variables'){
+            continue;
+        }
+        theme_names.push({
+            // func:func_name,
+            name: name,
+        });
+    }
     // let dropdowns='';
+    return theme_names;
     return theme_names.map(name=>{
         return `<b-dropdown-item v-on:click="${func_name}('${name}',${name=='night' || name.includes('custom') ? true : false})">{{ getThemeTitle('${name}') }}</b-dropdown-item>`;
     }).join('');
