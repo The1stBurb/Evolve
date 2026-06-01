@@ -1,11 +1,14 @@
 <script setup>
-    import { trickOrTreat, easterEgg } from '../functions.js';
     import { ref, onMounted } from "vue";
+
+    import { global } from '../vars.js';
+    import { trickOrTreat, easterEgg } from '../functions.js';
+
     const { event, num, trick, size, typer } = defineProps({
-        event: { type: String },
-        num: { type: Number },
+        event: { type: String, required: true },
+        num: { type: Number, required: true },
         trick: {type: Boolean, default: false },
-        size: { type: Number },
+        size: { type: Number, required: true },
         typer: {type: String, default: 'span' },
     });
     
@@ -34,10 +37,15 @@
 
     onMounted(()=>{
         is_active.value = getIcon();
+        console.log(event,num,trick,size,typer, is_active.value, global.settings.boring);
     });
+
+    function isSeen(type){
+        return typer == type && is_active && !global.settings.boring;
+    }
 </script>
 
 <template>
-    <b-dropdown-item v-if="typer == 'dropdown-item' && is_active" v-html="val" />
-    <span v-if="typer == 'span' && is_active" v-html="val"></span>
+    <b-dropdown-item v-if="typer == 'dropdown-item'" v-show="!global.settings.boring && is_active" v-html="val" />
+    <span v-if="typer == 'span'" v-show="!global.settings.boring && is_active" v-html="val"></span>
 </template>

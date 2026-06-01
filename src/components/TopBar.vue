@@ -1,8 +1,7 @@
 <script setup>
     import { ref } from "vue";
-    import '../evolve.less';
 
-    import { global } from '../vars.js';
+    import { global, webWorker } from '../vars.js';
     import { loc } from '../locale.js';
     import { setWeather, seasonDesc, astrologySign, astroVal } from '../seasons.js';
     import { messageQueue, loopTimers, gameLoop } from '../functions.js';

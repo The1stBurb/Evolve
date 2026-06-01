@@ -16,9 +16,10 @@ import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
 import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from './themes.js';
 
-import SeasonHunt from './components/SeasonHunt.vue';
-import SettingsTab from './components/SettingsTab.vue';
-import TopBar from './components/TopBar.vue';
+// import SeasonHunt from './components/SeasonHunt.vue';
+// import SettingsTab from './components/SettingsTab.vue';
+// import TopBar from './components/TopBar.vue';
+import InitBody from './components/InitBody.vue';
 
 export function mainVue(){
     vBind({
@@ -28,180 +29,16 @@ export function mainVue(){
             t: theme_settings,
         },
         methods: {
-            swapTab(tab) {
-                // CSS grid stacking handles tab height automatically
-                if (!global.settings.tabLoad){
-                    loadTab(tab);
-                }
-                return tab;
-            },
-            saveImport(){
-                let impExp=$('#importExport textarea');
-                if (impExp.val().length > 0){
-                    importGame(impExp.val());
-                }
-            },
-            saveExport(){
-                $('#importExport textarea').val(window.exportGame());
-                $('#importExport textarea').select();
-                document.execCommand('copy');
-            },
-            saveExportFile(){
-                const downloadToFile = (content, filename, contentType) => {
-                    const a = document.createElement('a');
-                    const file = new Blob([content], {type: contentType});
-                    a.href= URL.createObjectURL(file);
-                    a.download = filename;
-                    a.click();
-                    URL.revokeObjectURL(a.href);
-                };
-                const date = new Date();
-                const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toFixed(0).padStart(2, '0');
-                const day = date.getDate().toFixed(0).padStart(2, '0');
-                const hour = date.getHours().toFixed(0).padStart(2, '0');
-                const minute = date.getMinutes().toFixed(0).padStart(2, '0');
-                downloadToFile(window.exportGame(), `evolve-${year}-${month}-${day}-${hour}-${minute}.txt`, 'text/plain');
-            },
-            importStringFile(){ 
-                let file = document.getElementById("stringPackFile").files[0];
-                if (file) {
-                    let reader = new FileReader();
-                    let fileName = document.getElementById("stringPackFile").files[0].name;
-                    reader.readAsText(file, "UTF-8");
-                    reader.onload = function (evt) {
-                        try {
-                            JSON.parse(evt.target.result);
-                        }
-                        catch {
-                            global.settings.sPackMsg = loc(`string_pack_error`,[fileName]);
-                            return;
-                        }
-                       
-                        global.settings.sPackMsg = loc(`string_pack_using`,[fileName]);
-                        save.setItem('string_pack_name',fileName); save.setItem('string_pack',LZString.compressToUTF16(evt.target.result));
-                        if (global.settings.sPackOn){
-                            global.queue.rename = true;
-                            save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
-                            if (webWorker.w){
-                                webWorker.w.terminate();
-                            }
-                            window.location.reload();
-                        }
-                       
-                    }
-                    reader.onerror = function (evt) {
-                        console.error("error reading file");
-                    }
-                }
-            },
-            clearStringFile(){
-                if (save.getItem('string_pack')){
-                    global.settings.sPackMsg = loc(`string_pack_none`);
-                    save.removeItem('string_pack_name');
-                    save.removeItem('string_pack');
-                    if (global.settings.sPackOn){
-                        global.queue.rename = true;
-                        save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
-                        if (webWorker.w){
-                            webWorker.w.terminate();
-                        }
-                        window.location.reload();
-                    }
-                }
-            },
-            stringPackOn(){
-                if (save.getItem('string_pack')){
-                    global.queue.rename = true;
-                    save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
-                    if (webWorker.w){
-                        webWorker.w.terminate();
-                    }
-                    window.location.reload();
-                }
-            },
-            restoreGame(){
-                let restore_data = save.getItem('evolveBak') || false;
-                this.$buefy.dialog.confirm({
-                    title: loc('restore'),
-                    message: loc('restore_warning'),
-                    ariaModal: true,
-                    confirmText: loc('restore'),
-                    onConfirm() {
-                        if (restore_data){
-                            importGame(restore_data,true);
-                        }
-                    }
-                });
-            },
-
-            icon(icon){
-                global.settings.icon = icon;
-                save.setItem('evolved',LZString.compressToUTF16(JSON.stringify(global)));
-                if (webWorker.w){
-                    webWorker.w.terminate();
-                }
-                window.location.reload();
-            },
             remove(index){
                 global.r_queue.queue.splice(index,1);
-            },
-            font(f){
-                global.settings.font = f;
-                $(`html`).removeClass('standard');
-                $(`html`).removeClass('large_log');
-                $(`html`).removeClass('large_all');
-                $('html').addClass(f);
-            },
-            qu_merge(merge){
-                global.settings.q_merge = merge;
-            },
-            toggleTabLoad() {
-                if (global.settings.tabLoad) {
-                    // Enabling preload, load all tabs
-                    initTabs();
-                } else {
-                    // Disabling preload, clear all tabs
-                    clearResDrag();
-                    clearGrids();
-                    clearMechDrag();
-                    clearGeneticsDrag();
-                    clearSpyopDrag();
-                    clearShipDrag();
-                    clearElement($(`#mTabCivil`));
-                    clearElement($(`#mTabCivic`));
-                    clearElement($(`#mTabResearch`));
-                    clearElement($(`#mTabResource`));
-                    clearElement($(`#mTabArpa`));
-                    clearElement($(`#mTabStats`));
-                    clearElement($(`#mTabObserve`));
-                }
-            },
-            unpause(){
-                $(`#pausegame`).removeClass('play');
-                $(`#pausegame`).removeClass('pause');
-                if (global.settings.pause){
-                    $(`#pausegame`).addClass('pause');
-                }
-                else {
-                    $(`#pausegame`).addClass('play');
-                }
-                if (!global.settings.pause && !webWorker.s){
-                    gameLoop('start');
-                }
             },
             namecase(name){
                 return name.replace(/(?:^|\s)\w/g, function(match) {
                     return match.toUpperCase();
                 });
             },
-            label(lbl){
-                return tabLabel(lbl);
-            }
         },
-        components:{
-            SeasonHunt, SettingsTab, TopBar, 
-        },
+        components:{ InitBody, },
     });
 
     ['1','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'].forEach(function(k){
@@ -767,61 +604,104 @@ export function index(){
     clearElement($('body'));
 
     $('html').addClass(global.settings.font);
-
-    // Top Bar
-    $('body').append(`<top-bar />`);
+    $('body').append(`<init-body />`)
     vBind({
         el: 'body',
-        components: {
-            TopBar, 
-        },
+        components: { InitBody },
     });
+    // Top Bar
+    // $('body').append(`<top-bar />`);
+    // vBind({
+    //     el: 'body',
+    //     components: {
+    //         TopBar, 
+    //     },
+    // });
 
-    let main = $(`<div id="main" class="main"></div>`);
-    let columns = $(`<div class="columns is-gapless"></div>`);
-    $('body').append(main);
-    main.append(columns);
+    // let main = $(`<div id="main" class="main"></div>`);
+    // let columns = $(`<div class="columns is-gapless"></div>`);
+    // $('body').append(main);
+    // main.append(columns);
 
     // Left Column
-    columns.append(`<div class="column is-one-quarter leftColumn">
-        <div id="race" class="race colHeader">
-            <h2 class="is-sr-only">Race Info</h2>
-            <div class="name">{{ name() }}</div>
-            <div class="morale-contain"><span id="morale" v-show="city.morale.current" class="morale">${loc('morale')} <span class="has-text-warning">{{ mRound(city.morale.current) }}%</span></div>
-            <div class="power"><span id="powerStatus" class="has-text-warning" v-show="city.powered"><span>MW</span> <span id="powerMeter" class="meter">{{ approx(replicate(city.power)) }}</span></span></div>
-        </div>
-        <div id="sideQueue">
-            <div id="buildQueue" class="bldQueue standardqueuestyle has-text-info" v-show="display"></div>
-            <div id="msgQueue" class="msgQueue vscroll has-text-info" aria-live="polite">
-                <div id="msgQueueHeader">
-                    <h2 class="has-text-success">${loc('message_log')}</h2>
-                    <span class="special" role="button" title="message queue options" @click="trigModal">
-                        <svg version="1.1" x="0px" y="0px" width="12px" height="12px" viewBox="340 140 280 279.416" enable-background="new 340 140 280 279.416" xml:space="preserve">
-                            <path class="gear" d="M620,305.666v-51.333l-31.5-5.25c-2.333-8.75-5.833-16.917-9.917-23.917L597.25,199.5l-36.167-36.75l-26.25,18.083
-                            c-7.583-4.083-15.75-7.583-23.916-9.917L505.667,140h-51.334l-5.25,31.5c-8.75,2.333-16.333,5.833-23.916,9.916L399.5,163.333
-                            L362.75,199.5l18.667,25.666c-4.083,7.584-7.583,15.75-9.917,24.5l-31.5,4.667v51.333l31.5,5.25
-                            c2.333,8.75,5.833,16.334,9.917,23.917l-18.667,26.25l36.167,36.167l26.25-18.667c7.583,4.083,15.75,7.583,24.5,9.917l5.25,30.916
-                            h51.333l5.25-31.5c8.167-2.333,16.333-5.833,23.917-9.916l26.25,18.666l36.166-36.166l-18.666-26.25
-                            c4.083-7.584,7.583-15.167,9.916-23.917L620,305.666z M480,333.666c-29.75,0-53.667-23.916-53.667-53.666s24.5-53.667,53.667-53.667
-                            S533.667,250.25,533.667,280S509.75,333.666,480,333.666z"/>
-                        </svg>
-                    </span>
-                    <span role="button" class="zero has-text-advanced" @click="clearLog(m.view)">${loc('message_log_clear')}</span>
-                    <span role="button" class="zero has-text-advanced" @click="clearLog()">${loc('message_log_clear_all')}</span>
-                </div>
-                <h2 class="is-sr-only">${loc('message_filters')}</h2>
-                <div id="msgQueueFilters" class="hscroll msgQueueFilters"></div>
-                <h2 class="is-sr-only">${loc('messages')}</h2>
-                <div id="msgQueueLog" aria-live="polite"></div>
+    // columns.append(`<div class="column is-one-quarter leftColumn">
+    //     <div id="race" class="race colHeader">
+    //         <h2 class="is-sr-only">Race Info</h2>
+    //         <div class="name">{{ name() }}</div>
+    //         <div class="morale-contain"><span id="morale" v-show="city.morale.current" class="morale">${loc('morale')} <span class="has-text-warning">{{ mRound(city.morale.current) }}%</span></div>
+    //         <div class="power"><span id="powerStatus" class="has-text-warning" v-show="city.powered"><span>MW</span> <span id="powerMeter" class="meter">{{ approx(replicate(city.power)) }}</span></span></div>
+    //     </div>
+    //     <div id="sideQueue">
+    //         <div id="buildQueue" class="bldQueue standardqueuestyle has-text-info" v-show="display"></div>
+    //         <div id="msgQueue" class="msgQueue vscroll has-text-info" aria-live="polite">
+    //             <div id="msgQueueHeader">
+    //                 <h2 class="has-text-success">${loc('message_log')}</h2>
+    //                 <span class="special" role="button" title="message queue options" @click="trigModal">
+    //                     <svg version="1.1" x="0px" y="0px" width="12px" height="12px" viewBox="340 140 280 279.416" enable-background="new 340 140 280 279.416" xml:space="preserve">
+    //                         <path class="gear" d="M620,305.666v-51.333l-31.5-5.25c-2.333-8.75-5.833-16.917-9.917-23.917L597.25,199.5l-36.167-36.75l-26.25,18.083
+    //                         c-7.583-4.083-15.75-7.583-23.916-9.917L505.667,140h-51.334l-5.25,31.5c-8.75,2.333-16.333,5.833-23.916,9.916L399.5,163.333
+    //                         L362.75,199.5l18.667,25.666c-4.083,7.584-7.583,15.75-9.917,24.5l-31.5,4.667v51.333l31.5,5.25
+    //                         c2.333,8.75,5.833,16.334,9.917,23.917l-18.667,26.25l36.167,36.167l26.25-18.667c7.583,4.083,15.75,7.583,24.5,9.917l5.25,30.916
+    //                         h51.333l5.25-31.5c8.167-2.333,16.333-5.833,23.917-9.916l26.25,18.666l36.166-36.166l-18.666-26.25
+    //                         c4.083-7.584,7.583-15.167,9.916-23.917L620,305.666z M480,333.666c-29.75,0-53.667-23.916-53.667-53.666s24.5-53.667,53.667-53.667
+    //                         S533.667,250.25,533.667,280S509.75,333.666,480,333.666z"/>
+    //                     </svg>
+    //                 </span>
+    //                 <span role="button" class="zero has-text-advanced" @click="clearLog(m.view)">${loc('message_log_clear')}</span>
+    //                 <span role="button" class="zero has-text-advanced" @click="clearLog()">${loc('message_log_clear_all')}</span>
+    //             </div>
+    //             <h2 class="is-sr-only">${loc('message_filters')}</h2>
+    //             <div id="msgQueueFilters" class="hscroll msgQueueFilters"></div>
+    //             <h2 class="is-sr-only">${loc('messages')}</h2>
+    //             <div id="msgQueueLog" aria-live="polite"></div>
+    //         </div>
+    //     </div>
+    //     <div id="resources" class="resources vscroll"><h2 class="is-sr-only">${loc('tab_resources')}</h2></div>
+    // </div>`);
+
+    popover('race',
+        function(){
+            return typeof races[global.race.species].desc === 'string' ? races[global.race.species].desc : races[global.race.species].desc();
+        },{
+            elm: '#race > .name'
+        }
+    );
+
+
+    $(`#sideQueue`).append(`
+        <div id="buildQueue" class="bldQueue standardqueuestyle has-text-info" v-show="display"></div>
+        
+        <div id="msgQueue" class="msgQueue vscroll has-text-info" aria-live="polite">
+            <div id="msgQueueHeader">
+
+                <h2 class="has-text-success">${loc('message_log')}</h2>
+
+                <span class="special" role="button" title="message queue options" @click="trigModal">
+                    <svg version="1.1" x="0px" y="0px" width="12px" height="12px" viewBox="340 140 280 279.416" enable-background="new 340 140 280 279.416" xml:space="preserve">
+                        <path class="gear" d="M620,305.666v-51.333l-31.5-5.25c-2.333-8.75-5.833-16.917-9.917-23.917L597.25,199.5l-36.167-36.75l-26.25,18.083
+                        c-7.583-4.083-15.75-7.583-23.916-9.917L505.667,140h-51.334l-5.25,31.5c-8.75,2.333-16.333,5.833-23.916,9.916L399.5,163.333
+                        L362.75,199.5l18.667,25.666c-4.083,7.584-7.583,15.75-9.917,24.5l-31.5,4.667v51.333l31.5,5.25
+                        c2.333,8.75,5.833,16.334,9.917,23.917l-18.667,26.25l36.167,36.167l26.25-18.667c7.583,4.083,15.75,7.583,24.5,9.917l5.25,30.916
+                        h51.333l5.25-31.5c8.167-2.333,16.333-5.833,23.917-9.916l26.25,18.666l36.166-36.166l-18.666-26.25
+                        c4.083-7.584,7.583-15.167,9.916-23.917L620,305.666z M480,333.666c-29.75,0-53.667-23.916-53.667-53.666s24.5-53.667,53.667-53.667
+                        S533.667,250.25,533.667,280S509.75,333.666,480,333.666z"/>
+                    </svg>
+                </span>
+
+                <span role="button" class="zero has-text-advanced" @click="clearLog(m.view)">${loc('message_log_clear')}</span>
+
+                <span role="button" class="zero has-text-advanced" @click="clearLog()">${loc('message_log_clear_all')}</span>
+
             </div>
-        </div>
-        <div id="resources" class="resources vscroll"><h2 class="is-sr-only">${loc('tab_resources')}</h2></div>
-    </div>`);
-    message_filters.forEach(function (filter){
-        $(`#msgQueueFilters`).append(`
-            <span id="msgQueueFilter-${filter}" class="${filter === 'all' ? 'is-active' : ''}" aria-disabled="${filter === 'all' ? 'true' : 'false'}" @click="swapFilter('${filter}')" v-show="s.${filter}.vis" role="button">${loc('message_log_' + filter)}</span>
-        `);
-    });
+
+            <h2 class="is-sr-only">${loc('message_filters')}</h2>
+            
+            <div id="msgQueueFilters" class="hscroll msgQueueFilters"></div>
+            
+            <h2 class="is-sr-only">${loc('messages')}</h2>
+            
+            <div id="msgQueueLog" aria-live="polite"></div>
+        </div>`)
     vBind({
         el: `#msgQueue`,
         data: {
@@ -1009,81 +889,70 @@ export function index(){
     });
 
     // Center Column
-    let mainColumn = $(`<div id="mainColumn" class="column is-three-quarters"></div>`);
-    columns.append(mainColumn);
-    let content = $(`<div class="content"></div>`);
-    mainColumn.append(content);
+    // let mainColumn = $(`<div id="mainColumn" class="column is-three-quarters"></div>`);
+    // columns.append(mainColumn);
+    // let content = $(`<div class="content"></div>`);
+    // mainColumn.append(content);
 
-    content.append(`<h2 class="is-sr-only">Tab Navigation</h2>`);
-    let tabs = $(`<b-tabs id="mainTabs" v-model="s.civTabs" :animated="s.animated" @update:model-value="swapTab($event)"></b-tabs>`);
-    content.append(tabs);
+    // content.append(`<h2 class="is-sr-only">Tab Navigation</h2>`);
+    // let tabs = $(`<b-tabs id="mainTabs" v-model="s.civTabs" :animated="s.animated" @update:model-value="swapTab($event)"></b-tabs>`);
+    // content.append(tabs);
 
-    // Evolution Tab
-    let evolution = $(`<b-tab-item class="tab-item sticky" :visible="s.showEvolve" :label="label('tab_evolve')">
-        <div id="evolution"></div>
-    </b-tab-item>`);
-    tabs.append(evolution);
+    // // Evolution Tab
+    // let evolution = $(`<b-tab-item class="tab-item sticky" :visible="s.showEvolve" :label="label('tab_evolve')">
+    //     <div id="evolution"></div>
+    // </b-tab-item>`);
+    // tabs.append(evolution);
 
-    // City Tab
-    let city = $(`<b-tab-item :visible="s.showCiv" :label="label('tab_civil')">
-        <div id="mTabCivil"></div>
-    </b-tab-item>`);
-    tabs.append(city);
+    // // City Tab
+    // let city = $(`<b-tab-item :visible="s.showCiv" :label="label('tab_civil')">
+    //     <div id="mTabCivil"></div>
+    // </b-tab-item>`);
+    // tabs.append(city);
 
-    // Civics Tab
-    let civic = $(`<b-tab-item :visible="s.showCivic" :label="label('tab_civics')">
-        <div id="mTabCivic"></div>
-    </b-tab-item>`);
-    tabs.append(civic);
+    // // Civics Tab
+    // let civic = $(`<b-tab-item :visible="s.showCivic" :label="label('tab_civics')">
+    //     <div id="mTabCivic"></div>
+    // </b-tab-item>`);
+    // tabs.append(civic);
 
-    // Research Tab
-    let research = $(`<b-tab-item :visible="s.showResearch" :label="label('tab_research')">
-        <div id="mTabResearch"></div>
-    </b-tab-item>`);
-    tabs.append(research);
+    // // Research Tab
+    // let research = $(`<b-tab-item :visible="s.showResearch" :label="label('tab_research')">
+    //     <div id="mTabResearch"></div>
+    // </b-tab-item>`);
+    // tabs.append(research);
 
-    // Resources Tab
-    let resources = $(`<b-tab-item :visible="s.showResources" :label="label('tab_resources')">
-        <div id="mTabResource"></div>
-    </b-tab-item>`);
-    tabs.append(resources);
+    // // Resources Tab
+    // let resources = $(`<b-tab-item :visible="s.showResources" :label="label('tab_resources')">
+    //     <div id="mTabResource"></div>
+    // </b-tab-item>`);
+    // tabs.append(resources);
 
-    // ARPA Tab
-    let arpa = $(`<b-tab-item :visible="s.showGenetics" :label="label('tech_arpa')">
-        <div id="mTabArpa"></div>
-    </b-tab-item>`);
-    tabs.append(arpa);
+    // // ARPA Tab
+    // let arpa = $(`<b-tab-item :visible="s.showGenetics" :label="label('tech_arpa')">
+    //     <div id="mTabArpa"></div>
+    // </b-tab-item>`);
+    // tabs.append(arpa);
 
-    // Stats Tab
-    let stats = $(`<b-tab-item :visible="s.showAchieve" :label="label('tab_stats')">
-        <div id="mTabStats"></div>
-    </b-tab-item>`);
-    tabs.append(stats);
+    // // Stats Tab
+    // let stats = $(`<b-tab-item :visible="s.showAchieve" :label="label('tab_stats')">
+    //     <div id="mTabStats"></div>
+    // </b-tab-item>`);
+    // tabs.append(stats);
 
-    
+    // // Settings Tab
+    // // let settings = $(`<settings-tab />`);
+    // // tabs.append(settings);
 
-    // let egg9 = easterEgg(9,14);
-    // let hideEgg = '';
-    // if (egg9.length > 0){
-    //     hideEgg = `<b-dropdown-item>${egg9}</b-dropdown-item>`;
-    // }
+    // // (Hidden Last Tab) Hell Observation Tab
+    // let observe = $(`<b-tab-item disabled>
+    //     <template slot="header"></template>
+    //     <div id="mTabObserve"></div>
+    // </b-tab-item>`);
+    // tabs.append(observe);
 
-
-
-    // Settings Tab
-    let settings = $(`<settings-tab />`);
-
-    tabs.append(settings);
-
-    // (Hidden Last Tab) Hell Observation Tab
-    let observe = $(`<b-tab-item disabled>
-        <template slot="header"></template>
-        <div id="mTabObserve"></div>
-    </b-tab-item>`);
-    tabs.append(observe);
-
-    // Right Column
-    columns.append(`<div id="queueColumn" class="queueCol column"></div>`);
+    // // Right Column
+    // columns.append(`<div id="queueColumn" class="queueCol column"></div>`);
 
     let egg15 = easterEgg(15,8);
     

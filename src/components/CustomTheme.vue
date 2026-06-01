@@ -104,16 +104,16 @@
 
 <template>
     <div id="themeColorPicker">
-        <div class="themeColorPicker theme" v-if="t.themeEditorOpen" :style="{ top: (t.pos.y ?? 0) + 'px', left: (t.pos.x ?? 0) + 'px', position: 'absolute', 'zIndex':'999' }" @mousedown="startDrag($event)" @mousemove="onDrag($event)" @mouseup="endDrag()" @mouseleave="endDrag()">
+        <div class="themeColorPicker theme" v-show="t.themeEditorOpen" :style="{ top: (t.pos.y ?? 0) + 'px', left: (t.pos.x ?? 0) + 'px', position: 'absolute', 'zIndex':'999' }" @mousedown="startDrag($event)" @mousemove="onDrag($event)" @mouseup="endDrag()" @mouseleave="endDrag()">
             
             <h2 class="has-text-advanced">Theme Editor</h2>
-            <div v-if="!isCustom()" class="themeWarning has-text-warning content">
+            <div v-show="!isCustom()" class="themeWarning has-text-warning content">
                 <br>
                 <h4 class="has-text-danger">WARNING: This won't work!</h4>
                 
                 <div>You need to select one of the custom themes!</div>
             </div>
-            <div v-if="isCustom()">
+            <div v-show="isCustom()">
                 <div>
                     <b-dropdown hoverable>
                         <template #trigger>
@@ -148,7 +148,7 @@
                     <b-switch class="setting" v-model="t.isResetOpen">
                         <span>{{ label('enable_theme_reset') }}</span>
                     </b-switch>
-                    <div v-if="t.isResetOpen" style="display:flex;flex-direction:column;">
+                    <div v-show="t.isResetOpen" style="display:flex;flex-direction:column;">
 
                         <span class="has-text-danger">{{ label('theme_reset_warn') }}</span>
                         <button class="button" @click="resetTheme()" style="width:50%;">{{ label('theme_reset') }}</button>

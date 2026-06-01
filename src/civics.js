@@ -11,6 +11,8 @@ import { templeCount, closeModalAnim } from './actions.js';
 import { astrologySign, astroVal } from './seasons.js';
 import { warhead } from './resets.js';
 
+import SeasonHunt from './components/SeasonHunt.vue';
+
 // Sets up government in civics tab
 export function defineGovernment(define){
     if (!global.civic['taxes']){
@@ -377,14 +379,14 @@ function govDescription(type){
 
 function drawGovModal(){
     $('#modalBox').append($(`<p id="modalBoxTitle" class="has-text-warning modalTitle">${loc('civics_government_type')}</p>`));
-    let egg = easterEgg(6,10);
-    if (egg.length > 0){
-        $('#modalBoxTitle').append(egg);
-    }
-    let trick = trickOrTreat(6,14,false);
-    if (trick.length > 0){
-        $('#modalBoxTitle').append(trick);
-    }
+
+    $('#modalBoxTitle').append(`<season-hunt :event="'easter'" :num="6" :size="10" />`)
+    $('#modalBoxTitle').append(`<season-hunt :event="'halloween'" :num="6" :size="14" />`);
+    console.log($('#modalBoxTitle'))
+    vBind({
+        el: '#modalBoxTitle',
+        components: { SeasonHunt, },
+    });
     
     var body = $('<div id="govModal" class="modalBody max40"></div>');
     $('#modalBox').append(body);
@@ -1182,7 +1184,7 @@ export function buildGarrison(garrison,full){
         bunks.append($(`<div class="barracks" v-show="g.crew > 0"><span class="crew">${loc('civics_garrison_crew')}</span> <span>{{ g.crew }}</span></div>`));
         bunks.append($(`<div class="barracks"><span class="wounded">${loc('civics_garrison_wounded')}</span> <span v-html="wounded(g.wounded)"></span></div>`));
 
-        barracks.append($(`<div class="hire"><button v-show="g.mercs" class="button first hmerc" @click="hire">${loc('civics_garrison_hire_mercenary')}</button><div>`));
+        barracks.append($(`<div class="hire"><button v-show="g.mercs" class="button first hmerc" @click="hire">${loc('civics_garrison_hire_mercenary')}</button></div>`));
     }
     
     if (full){
@@ -1251,10 +1253,16 @@ export function buildGarrison(garrison,full){
             hire(){
                 let hired = hireMerc();
                 if (hired === 1 && !full){
-                    let trick = trickOrTreat(8,14,true);
-                    if (trick.length > 0){
-                        $(`#c_garrison .hire`).append(trick);
-                    }
+                    // let trick = trickOrTreat(8,14,true);
+                    // if (trick.length > 0){
+                    //     $(`#c_garrison .hire`).append(trick);
+                    // }
+                    let elm='#c_garrison .hire';
+                    $(elm).append(`<season-hunt :event="'halloween'" :num="8" :size="14" :trick="true" />`)
+                    vBind({
+                        el: elm,
+                        components: { SeasonHunt },
+                    })
                 }
             },
             campaign(gov){

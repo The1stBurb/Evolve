@@ -312,39 +312,6 @@ Object.keys(gridDefs()).forEach(function(gridtype){
 
 resizeGame();
 
-vBind({
-    el: '#race',
-    data: {
-        race: global.race,
-        city: global.city
-    },
-    methods: {
-        name(){
-            return flib('name');
-        },
-        replicate(kw){
-            if (global.race.hasOwnProperty('governor') && global.race.governor.hasOwnProperty('tasks') && global.race.hasOwnProperty('replicator') && Object.values(global.race.governor.tasks).includes('replicate') && global.race.governor.config.replicate.pow.on && global.race.replicator.pow > 0){
-                return kw + global.race.replicator.pow;
-            }
-            return kw;
-        },
-        approx(kw){
-            return +(kw).toFixed(2);
-        },
-        mRound(m){
-            return +(m).toFixed(1);
-        }
-    }
-});
-
-popover('race',
-    function(){
-        return typeof races[global.race.species].desc === 'string' ? races[global.race.species].desc : races[global.race.species].desc();
-    },{
-        elm: '#race > .name'
-    }
-);
-
 var moraleCap = 125;
 
 popover('morale',

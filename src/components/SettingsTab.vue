@@ -1,9 +1,18 @@
 <script setup>
     import { ref } from "vue";
+
     import { save, webWorker, global } from '../vars.js';
     import { loc, locales, updateHtmlLang, getString } from '../locale.js';
-    import { gameLoop } from '../functions.js';
-    // import { tabLabel as label } from '../index.js';
+    import { gameLoop, clearElement } from '../functions.js';
+    import { initTabs } from '../index.js';
+
+    import { clearResDrag } from '../actions.js';
+    import { clearGrids } from '../industry.js';
+    import { clearMechDrag } from '../portal.js';
+    import { clearGeneticsDrag } from '../arpa.js';
+    import { clearSpyopDrag } from '../governor.js';
+    import { clearShipDrag } from '../truepath.js';
+
     import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from '../themes.js';
 
     import SeasonHunt from './SeasonHunt.vue';
@@ -37,6 +46,17 @@
         }
         // window.location.reload();
     }
+    function label(lbl,args){
+        return loc(lbl,args);
+    }
+    function font(f){
+        global.settings.font = f;
+        $(`html`).removeClass('standard');
+        $(`html`).removeClass('large_log');
+        $(`html`).removeClass('large_all');
+        $('html').addClass(f);
+    }
+
     function saveImport(){
         let impExp=$('#importExport textarea');
         if (impExp.val().length > 0){
@@ -65,6 +85,7 @@
         const minute = date.getMinutes().toFixed(0).padStart(2, '0');
         downloadToFile(window.exportGame(), `evolve-${year}-${month}-${day}-${hour}-${minute}.txt`, 'text/plain');
     }
+
     function importStringFile(){ 
         let file = document.getElementById("stringPackFile").files[0];
         if (file) {
@@ -122,20 +143,7 @@
             window.location.reload();
         }
     }
-    function restoreGame(){
-        let restore_data = save.getItem('evolveBak') || false;
-        this.$buefy.dialog.confirm({
-            title: label('restore'),
-            message: label('restore_warning'),
-            ariaModal: true,
-            confirmText: label('restore'),
-            onConfirm() {
-                if (restore_data){
-                    importGame(restore_data,true);
-                }
-            }
-        });
-    }
+    
     function lChange(locale){
         global.settings.locale = locale;
         global.queue.rename = true;
@@ -143,13 +151,14 @@
         save.setItem('evolved', LZString.compressToUTF16(JSON.stringify(global)));
 
         // Update the HTML lang attribute for accessibility
-        // updateHtmlLang(locale);
+        updateHtmlLang(locale);
 
         if (webWorker.w){
             webWorker.w.terminate();
         }
         window.location.reload();
     }
+
     function saveImportTheme(){
         if ($('#importExportTheme textarea').val().length > 0){
             importTheme($('#importExportTheme textarea').val());
@@ -177,6 +186,7 @@
         const minute = date.getMinutes().toFixed(0).padStart(2, '0');
         downloadToFile(getThemeSaveData(), `evolve_theme-${getThemeTitle(global.settings.theme)}-${year}-${month}-${day}-${hour}-${minute}.txt`, 'text/plain');
     }
+
     function setTheme(theme,set_none){
         set_theme(theme);
         global.settings.theme = theme;
@@ -209,16 +219,7 @@
             }
         }
     }
-    function font(f){
-        global.settings.font = f;
-        $(`html`).removeClass('standard');
-        $(`html`).removeClass('large_log');
-        $(`html`).removeClass('large_all');
-        $('html').addClass(f);
-    }
-    function qu_merge(merge){
-        global.settings.q_merge = merge;
-    }
+
     function toggleTabLoad() {
         if (global.settings.tabLoad) {
             // Enabling preload, load all tabs
@@ -253,6 +254,7 @@
             gameLoop('start');
         }
     }
+    
     function setQueueStyle(style){
         global.settings.queuestyle = style;
         const buildingQueue = $('#buildQueue');
@@ -268,15 +270,31 @@
     function setQueueResize(mode) {
         global.settings.q_resize = mode;
     }
+    function qu_merge(merge){
+        global.settings.q_merge = merge;
+    }
+
     function resetGame(){
         window.reset();
     }
     function softResetGame(){
         window.soft_reset();
     }
-    function label(lbl,args){
-        return loc(lbl,args);
+    function restoreGame(){
+        let restore_data = save.getItem('evolveBak') || false;
+        this.$buefy.dialog.confirm({
+            title: label('restore'),
+            message: label('restore_warning'),
+            ariaModal: true,
+            confirmText: label('restore'),
+            onConfirm() {
+                if (restore_data){
+                    importGame(restore_data,true);
+                }
+            }
+        });
     }
+
 
     const locale_list=ref([]);
     let localelist = [];

@@ -6,6 +6,7 @@ import { universe_affixes, universe_types, piracy } from './space.js';
 import { monsters } from './portal.js';
 import { loc } from './locale.js'
 
+import SeasonHunt from './components/SeasonHunt.vue';
 const achieve_list = {
     misc: [
         'apocalypse','ascended','dreaded','anarchist','second_evolution','blackhole','warmonger',
@@ -467,8 +468,7 @@ export function drawAchieve(args){
         });
     }
 
-    let trick = trickOrTreat(5,12,false);
-    achieve.prepend(`<div class="has-text-warning">${loc("achieve_draw_achieve_earned",[earned,total])}${trick}</div>`);
+    achieve.prepend(`<div class="has-text-warning">${loc("achieve_draw_achieve_earned",[earned,total])}<season-hunt :event="'halloween'" :num="5" :size="12" /></div>`);
 
     vBind({
         el: '#achievePanel',
@@ -479,7 +479,8 @@ export function drawAchieve(args){
             feat(flair){
                 return feats[flair].flair;
             }
-        }
+        },
+        components: { SeasonHunt, }
     });
 
     if (fool && !global.stats.feat['fool']){
@@ -2876,9 +2877,9 @@ export function drawStats(){
     if (hallowed.active){
         let trick = '';
         if (global.stats.cfood >= 13 || global.race['cataclysm'] || global.race['orbit_decayed'] || global.race['warlord']){
-            trick = `<span>${trickOrTreat(7,12,true)}</span>`;
+            trick = `<season-hunt :event="'halloween'" :num="7" :size="12" :trick="true" />`;
         }
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_trickortreat")}</span> {{ format(s.cfood) }} ${trick}</div>`);
+        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_trickortreat")}</span> {{ format(s.cfood) }} ${trick} </div>`);
     }
 
     if (global.race.hasOwnProperty('gods') && global.race.gods != 'none'){
@@ -2924,6 +2925,7 @@ export function drawStats(){
                         return loc(`race_${s}`);
                 }
             }
-        }
+        },
+        components: { SeasonHunt, }
     });
 }

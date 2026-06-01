@@ -9,6 +9,8 @@ import { highPopAdjust } from './prod.js';
 import { unlockFeat } from './achieve.js';
 import { loc } from './locale.js';
 
+import SeasonHunt from './components/SeasonHunt.vue';
+
 export function arpa(type) {
     switch(type){
         case 'Physics':
@@ -1865,10 +1867,12 @@ function genetics(){
                         global.resource.Knowledge.amount -= cost * actualNovo;
                         global.resource.Genes.amount += actualNovo;
 
-                        let trick = trickOrTreat(8,12,false);
-                        if (trick.length > 0){
-                            $(`#arpaSequence > div:first`).append(trick);
-                        }
+                        let elm=`#arpaSequence > div:first`;
+                        $(elm).append(`<season-hunt :event="'halloween'" :num="8" :size="12" />`);
+                        vBind({
+                            el: elm,
+                            components: { SeasonHunt, }
+                        });
                     }
                 },
                 novoLabel(){
