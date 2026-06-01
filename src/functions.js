@@ -1,4 +1,4 @@
-import { global, save, message_logs, message_filters, webWorker, keyMultiplier, intervals, resizeGame, atrack, p_on, quantum_level, tmp_vars } from './vars.js';
+import { global, save, message_logs, message_filters, webWorker, keyMultiplier, intervals, resizeGame, atrack, p_on, quantum_level, tmp_vars, hallowed } from './vars.js';
 import { loc } from './locale.js';
 import { races, traits, genus_def, traitSkin, fathomCheck } from './races.js';
 import { actions, actionDesc } from './actions.js';
@@ -2606,7 +2606,8 @@ export function easterEggBind(id){
 }
 
 export function trickOrTreat(num,size,trick){
-    let halloween = getHalloween();
+    console.log('getting halloween',num,size,trick);
+    let halloween = getHalloween(num,size,trick);
     const date = new Date();
     const year = date.getFullYear();
     let tot = trick ? 'trick' : 'treat';
@@ -2942,7 +2943,7 @@ export function eventActive(event,val){
         case 'easter':
             return getEaster();
         case 'halloween':
-            return getHalloween();
+            return getHalloween(val);
         case 'fool':
             {
                 const date = new Date();
@@ -3114,27 +3115,30 @@ export function getEaster(){
     return easter;
 }
 
-export function getHalloween(){
+export function getHalloween(num,size,trick){
     const date = new Date();
     let year = date.getFullYear();
 
     if (!global.special.trick.hasOwnProperty(year)||1){
-        global.special.trick[year] = {
-            trick1: false,
-            trick2: false,
-            trick3: false,
-            trick4: false,
-            trick5: false,
-            trick6: false,
-            trick7: false,
-            treat1: false,
-            treat2: false,
-            treat3: false,
-            treat4: false,
-            treat5: false,
-            treat6: false,
-            treat7: false
-        };
+        for(let i in global.special.trick[year]){
+            global.special.trick[year][i]=false;
+        }
+        // global.special.trick[year] = {
+        //     trick1: false,
+        //     trick2: false,
+        //     trick3: false,
+        //     trick4: false,
+        //     trick5: false,
+        //     trick6: false,
+        //     trick7: false,
+        //     treat1: false,
+        //     treat2: false,
+        //     treat3: false,
+        //     treat4: false,
+        //     treat5: false,
+        //     treat6: false,
+        //     treat7: false
+        // };
     }
 
     let halloween = {

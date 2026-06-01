@@ -1,4 +1,4 @@
-import { global, save, seededRandom, webWorker, keyMultiplier, keyMap, srSpeak, sizeApproximation, p_on, support_on, int_on, gal_on, spire_on, tmp_vars, setupStats, callback_queue } from './vars.js';
+import { global, save, seededRandom, webWorker, keyMultiplier, keyMap, srSpeak, sizeApproximation, p_on, support_on, int_on, gal_on, spire_on, tmp_vars, setupStats, callback_queue, hallowed } from './vars.js';
 import { loc } from './locale.js';
 import { timeCheck, timeFormat, vBind, popover, clearPopper, flib, tagEvent, clearElement, costMultiplier, darkEffect, genCivName, powerModifier, powerCostMod, calcPrestige, adjustCosts, modRes, messageQueue, buildQueue, format_emblem, shrineBonusActive, calc_mastery, calcPillar, calcGenomeScore, getShrineBonus, eventActive, easterEgg, getHalloween, trickOrTreat, deepClone, hoovedRename, get_qlevel } from './functions.js';
 import { unlockAchieve, challengeIcon, alevel, universeAffix, checkAdept } from './achieve.js';
@@ -1089,7 +1089,7 @@ export const actions = {
         food: {
             id: 'city-food',
             title(){
-                let hallowed = getHalloween();
+                let hallowed = getHalloween('food title');
                 if (hallowed.active){
                     return global.tech['conjuring'] ? loc('city_trick_conjure') : loc('city_trick');
                 }
@@ -1114,7 +1114,7 @@ export const actions = {
             reqs: { primitive: 1 },
             not_trait: ['cataclysm','artifical'],
             condition(){
-                let hallowed = getHalloween();
+                let hallowed = getHalloween('food condition');
                 if (hallowed && global.race['soul_eater'] && !global.race['evil']){
                     return true;
                 }
@@ -8130,8 +8130,8 @@ export function wardenLabel(){
 }
 
 function basicHousingLabel(){
-    let halloween = eventActive('halloween');
-    if (halloween.active){
+    // let halloween = eventActive('halloween','basic house label');
+    if (hallowed.active){
         return loc(`events_halloween_basic_house`);
     }
 
@@ -8171,8 +8171,8 @@ function basicHousingLabel(){
 }
 
 function mediumHousingLabel(){
-    let halloween = eventActive('halloween');
-    if (halloween.active){
+    // let halloween = eventActive('halloween','medium housing label');
+    if (hallowed.active){
         return loc(`events_halloween_medium_house`);
     }
 
@@ -8202,8 +8202,8 @@ function mediumHousingLabel(){
 }
 
 function largeHousingLabel(basic){
-    let halloween = eventActive('halloween');
-    if (halloween.active){
+    // let halloween = eventActive('halloween','large housing label');
+    if (hallowed.active){
         return loc(`events_halloween_large_house`);
     }
 
@@ -8246,56 +8246,56 @@ export function housingLabel(type,flag){
 }
 
 export function structName(type){
-    let halloween = eventActive('halloween');
+    // let halloween = eventActive('halloween',type != 'temple' ? type : false);
 
     switch (type){
         case 'casino':
         {
-            return halloween.active ? loc(`events_halloween_casino`) : (global.race['warlord'] ? loc(`portal_casino`) : loc(`city_casino`));
+            return hallowed.active ? loc(`events_halloween_casino`) : (global.race['warlord'] ? loc(`portal_casino`) : loc(`city_casino`));
         }
         case 'farm':
         {
-            return halloween.active ? loc(`events_halloween_farm`) : loc(`city_farm`);
+            return hallowed.active ? loc(`events_halloween_farm`) : loc(`city_farm`);
         }
         case 'dormitory':
         {
-            return halloween.active ? loc(`events_halloween_dorm`) : loc(`galaxy_dormitory`);
+            return hallowed.active ? loc(`events_halloween_dorm`) : loc(`galaxy_dormitory`);
         }
         case 'mine':
         {
-            return halloween.active ? loc(`events_halloween_mine`) : loc('city_mine');
+            return hallowed.active ? loc(`events_halloween_mine`) : loc('city_mine');
         }
         case 'coal_mine':
         {
-            return halloween.active ? loc(`events_halloween_coal_mine`) : loc('city_coal_mine');
+            return hallowed.active ? loc(`events_halloween_coal_mine`) : loc('city_coal_mine');
         }
         case 'lumberyard':
         {
-            return halloween.active ? loc(`events_halloween_lumberyard`) : loc('city_lumber_yard');
+            return hallowed.active ? loc(`events_halloween_lumberyard`) : loc('city_lumber_yard');
         }
         case 'sawmill':
         {
-            return halloween.active ? loc(`events_halloween_sawmill`) : loc('city_sawmill');
+            return hallowed.active ? loc(`events_halloween_sawmill`) : loc('city_sawmill');
         }
         case 'hospital':
         {
-            return halloween.active ? loc(`events_halloween_hospital`) : loc('city_hospital');
+            return hallowed.active ? loc(`events_halloween_hospital`) : loc('city_hospital');
         }
         case 'windmill':
         {
-            return halloween.active ? loc(`events_halloween_windmill`) : loc('city_mill_title2');
+            return hallowed.active ? loc(`events_halloween_windmill`) : loc('city_mill_title2');
         }
         case 'factory':
         {
-            return halloween.active ? loc(`events_halloween_factory`) : loc('city_factory');
+            return hallowed.active ? loc(`events_halloween_factory`) : loc('city_factory');
         }
         case 'storage_yard':
         {
-            return halloween.active ? loc(`events_halloween_storage_yard`) : loc('city_storage_yard');
+            return hallowed.active ? loc(`events_halloween_storage_yard`) : loc('city_storage_yard');
         }
         case 'temple':
         {
-            return halloween.active ? loc(`events_halloween_temple`) : (global.race.universe === 'evil' && global.civic.govern.type != 'theocracy' ? loc('city_propaganda') : loc('city_temple'));
+            return hallowed.active ? loc(`events_halloween_temple`) : (global.race.universe === 'evil' && global.civic.govern.type != 'theocracy' ? loc('city_propaganda') : loc('city_temple'));
         }
     }
 }

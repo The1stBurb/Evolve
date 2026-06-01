@@ -1,4 +1,4 @@
-import { save, global, seededRandom, webWorker, keyMultiplier, sizeApproximation, p_on, support_on, int_on, gal_on } from './vars.js';
+import { save, global, seededRandom, webWorker, keyMultiplier, sizeApproximation, p_on, support_on, int_on, gal_on, hallowed } from './vars.js';
 import { vBind, messageQueue, clearElement, popover, clearPopper, flib, powerModifier, powerCostMod, calcPrestige, spaceCostMultiplier, darkEffect, eventActive, calcGenomeScore, randomKey, getTraitDesc, deepClone, get_qlevel, timeFormat } from './functions.js';
 import { unlockAchieve, unlockFeat, universeAffix } from './achieve.js';
 import { races, traits, genus_def, genusVars, planetTraits, biomes, traitCostMod } from './races.js';
@@ -709,8 +709,8 @@ const spaceProjects = {
         living_quarters: {
             id: 'space-living_quarters',
             title(){
-                let halloween = eventActive('halloween');
-                if (halloween.active){
+                // let halloween = eventActive('halloween');
+                if (hallowed.active){
                     return loc(`events_halloween_red_housing`);
                 }
                 return loc('space_red_living_quarters_title');
@@ -3133,8 +3133,8 @@ const interstellarProjects = {
         luxury_condo: {
             id: 'interstellar-luxury_condo',
             title(){
-                let halloween = eventActive('halloween');
-                if (halloween.active){
+                // let halloween = eventActive('halloween');
+                if (hallowed.active){
                     return loc(`events_halloween_condo`);
                 }
                 return loc('tech_luxury_condo');

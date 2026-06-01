@@ -256,10 +256,10 @@ export function loadTab(tab){
                 });
                 if (global.race.species !== 'protoplasm'){
                     drawCity();
-                    renderSpace();
-                    renderFortress();
-                    renderTauCeti();
-                    renderEdenic();
+                    // renderSpace();
+                    // renderFortress();
+                    // renderTauCeti();
+                    // renderEdenic();
                 }
                 if (global.race['noexport']){
                     if (global.race['noexport'] === 'Race'){

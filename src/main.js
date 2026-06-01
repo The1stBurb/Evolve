@@ -1,6 +1,6 @@
 import './onError.js';
 
-import { global, save, seededRandom, webWorker, intervals, keyMap, atrack, resizeGame, breakdown, sizeApproximation, keyMultiplier, power_generated, p_on, support_on, int_on, gal_on, spire_on, set_qlevel, quantum_level, callback_queue, active_rituals, makeGlobalReactive } from './vars.js';
+import { global, save, seededRandom, webWorker, intervals, keyMap, atrack, resizeGame, breakdown, sizeApproximation, keyMultiplier, power_generated, p_on, support_on, int_on, gal_on, spire_on, set_qlevel, quantum_level, callback_queue, active_rituals, makeGlobalReactive, hallowed, setHallowed } from './vars.js';
 import { loc } from './locale.js';
 import { unlockAchieve, checkAchievements, drawAchieve, alevel, universeAffix, challengeIcon, unlockFeat, checkAdept } from './achieve.js';
 import { gameLoop, vBind, popover, clearPopper, flib, tagEvent, timeCheck, arpaTimeCheck, timeFormat, powerModifier, resetResBuffer, modRes, initMessageQueue, messageQueue, calc_mastery, calcPillar, darkEffect, calcQueueMax, calcRQueueMax, buildQueue, shrineBonusActive, getShrineBonus, eventActive, easterEggBind, trickOrTreatBind, powerGrid, deepClone, addATime, exceededATimeThreshold, loopTimers, calcQuantumLevel, drawPet } from './functions.js';
@@ -49,6 +49,9 @@ setThemeToHTML();
         });
     });
 }
+
+
+setHallowed(eventActive('halloween','mainAssign'));
 
 var multitab = false;
 window.addEventListener('storage', (e) => {
@@ -7996,28 +7999,30 @@ function fastLoop(){
         updateDebugData();
     }
 
-    let easter = eventActive('easter');
-    if (easter.active){
-        for (i=1; i<=18; i++){
-            if ($(`#egg${i}`).length > 0 && !$(`#egg${i}`).hasClass('binded')){
-                easterEggBind(i);
-                $(`#egg${i}`).addClass('binded');
+    if(!firstRun){
+        let easter = eventActive('easter');
+        if (easter.active){
+            for (i=1; i<=18; i++){
+                if ($(`#egg${i}`).length > 0 && !$(`#egg${i}`).hasClass('binded')){
+                    easterEggBind(i);
+                    $(`#egg${i}`).addClass('binded');
+                }
             }
         }
-    }
 
-    let halloween = eventActive('halloween');
-    if (halloween.active){
-        for (i=1; i<=8; i++){
-            if ($(`#treat${i}`).length > 0 && !$(`#treat${i}`).hasClass('binded')){
-                trickOrTreatBind(i,false);
-                $(`#treat${i}`).addClass('binded');
+        // let halloween = eventActive('halloween','fast loop binder');
+        if (hallowed.active){
+            for (i=1; i<=8; i++){
+                if ($(`#treat${i}`).length > 0 && !$(`#treat${i}`).hasClass('binded')){
+                    trickOrTreatBind(i,false);
+                    $(`#treat${i}`).addClass('binded');
+                }
             }
-        }
-        for (i=1; i<=8; i++){
-            if ($(`#trick${i}`).length > 0 && !$(`#trick${i}`).hasClass('binded')){
-                trickOrTreatBind(i,true);
-                $(`#trick${i}`).addClass('binded');
+            for (i=1; i<=8; i++){
+                if ($(`#trick${i}`).length > 0 && !$(`#trick${i}`).hasClass('binded')){
+                    trickOrTreatBind(i,true);
+                    $(`#trick${i}`).addClass('binded');
+                }
             }
         }
     }

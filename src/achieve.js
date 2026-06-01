@@ -1,4 +1,4 @@
-import { global, set_alevel, set_ulevel } from './vars.js';
+import { global, set_alevel, set_ulevel, hallowed } from './vars.js';
 import { clearElement, popover, flib, calc_mastery, masteryType, calcPillar, svgIcons, svgViewBox, format_emblem, getBaseIcon, sLevel, vBind, calcQueueMax, calcRQueueMax, messageQueue, eventActive, easterEgg, getHalloween, trickOrTreat, harmonyEffect } from './functions.js';
 import { races, genus_def } from './races.js';
 import { actions } from './actions.js';
@@ -787,7 +787,7 @@ export function checkAchievements(){
 
     const date = new Date();
     let easter = eventActive('easter');
-    let halloween = eventActive('halloween');
+    // let halloween = eventActive('halloween','checkAcheives');
     let year = date.getFullYear();
     if (!global.settings.boring && date.getDate() === 13 && date.getDay() === 5 && global.resource[global.race.species].amount >= 1){
         let murder = false;
@@ -819,7 +819,7 @@ export function checkAchievements(){
     else if (eventActive('launch_day')){
         unlockFeat('launch_day',global.race.universe === 'micro' ? true : false);
     }
-    else if (halloween.active){
+    else if (hallowed.active){
         let total = 0;
         for (let i=1; i<=7; i++){
             if (global.special.trick[year][`trick${i}`]){

@@ -1,4 +1,4 @@
-import { global, tmp_vars, keyMultiplier, breakdown, sizeApproximation, p_on, support_on, active_rituals } from './vars.js';
+import { global, tmp_vars, keyMultiplier, breakdown, sizeApproximation, p_on, support_on, active_rituals, hallowed } from './vars.js';
 import { vBind, clearElement, modRes, flib, calc_mastery, calcPillar, eventActive, easterEgg, trickOrTreat, popover, harmonyEffect, darkEffect, hoovedRename, messageQueue } from './functions.js';
 import { traits, fathomCheck } from './races.js';
 import { templeCount, actions, closeModalAnim } from './actions.js';
@@ -1311,7 +1311,7 @@ export function setResourceName(name){
         }
     }*/
 
-    let hallowed = eventActive('halloween');
+    // let hallowed = eventActive('halloween',`setResName:${name}`);
     if (hallowed.active){
         switch(name){
             case 'Food':

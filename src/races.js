@@ -17,7 +17,7 @@ import { warhead, big_bang } from './resets.js';
 
 const date = new Date();
 const easter = getEaster();
-const hallowed = getHalloween();
+const hallowed = getHalloween('hallowed');
 
 export const neg_roll_traits = ['angry','arrogant','atrophy','diverse','dumb','fragrant','frail','freespirit','gluttony','gnawer','greedy','hard_of_hearing','heavy','hooved','invertebrate','lazy','mistrustful','nearsighted','nyctophilia','paranoid','pathetic','pessimistic','puny','pyrophobia','skittish','slow','slow_regen','snowy','solitary','unorganized','unfavored'];
 
