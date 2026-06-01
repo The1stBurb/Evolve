@@ -10,6 +10,8 @@ import { edenicTech } from './edenic.js';
 import { checkPathRequirements } from './truepath.js';
 import { highPopAdjust, production } from './prod.js';
 
+import SeasonHunt from './components/SeasonHunt.vue';
+
 export function loadIndustry(industry,parent,bind){
     switch (industry){
         case 'smelter':
@@ -186,18 +188,21 @@ function loadSmelter(parent,bind){
     parent.append(fuel);
 
     if (parent.hasClass('modalBody')){
-        let egg = easterEgg(10);
-        if (egg.length > 0){
-            fuel.prepend(egg);
-        }
+        fuel.prepend(`<season-hunt :event="'halloween'" :num="10" />`)
+        // let egg = easterEgg(10);
+        // if (egg.length > 0){
+        //     fuel.prepend(egg);
+        // }
     }
 
     if (bind && global.race['forge'] && global.race['steelen']){
-        let trick = trickOrTreat(3,12,true);
-        if (trick.length > 0){
-            fuel.prepend(trick);
-        }
+        fuel.prepend(`<season-hunt :event="'halloween'" :num="3" :size="12" :trick="true" />`)
+        // let trick = trickOrTreat(3,12,true);
+        // if (trick.length > 0){
+        //     fuel.prepend(trick);
+        // }
     }
+
 
     let fId = parent.hasClass('modalBody') ? `mSmelterFuels` : `smelterFuels`;
     let fuelTypes = $(`<div id="${fId}" class="fuels"></div>`);
@@ -473,7 +478,8 @@ function loadSmelter(parent,bind){
                 }
                 return v;
             }
-        }
+        },
+        component: { SeasonHunt, },
     });
 
     function tooltip(type){

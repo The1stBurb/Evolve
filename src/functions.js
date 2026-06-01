@@ -15,6 +15,8 @@ import { shipCosts, TPShipDesc } from './truepath.js';
 import { mechCost, mechDesc } from './portal.js';
 import { big_bang } from './resets.js';
 
+import Buefy from "buefy";
+
 var popperRef = false;
 export function popover(id,content,opts){
     if (!opts){ opts = {}; }
@@ -1209,7 +1211,7 @@ export function vBind(bind, action) {
 
             const app = Vue.createApp(vueOptions);
             if (!bind.hasOwnProperty('buefy') || bind.buefy) {
-                app.use(Buefy.default);
+                app.use(Buefy);
             }
             
             app.mount(bind.el);
@@ -3019,7 +3021,7 @@ export function getEaster(){
     const date = new Date();
     let year = date.getFullYear();
     // delete global.special.egg[year];
-    if (!global.special.egg.hasOwnProperty(year)){
+    if (!global.special.egg.hasOwnProperty(year) || 1){
         global.special.egg[year] = {
             egg1: false,
             egg2: false,

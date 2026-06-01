@@ -26,5 +26,8 @@ export const {
     // Provide/inject
     provide, inject,
     // Misc
-    getCurrentInstance, useSlots, useAttrs, version
+    getCurrentInstance, useSlots, useAttrs, version,
+
+    //Needed for buefy!
+    Comment, Text, Static, resolveDynamicComponent, createSlots, toHandlers, toHandlerKey, camelize, createStaticVNode, 
 } = V;

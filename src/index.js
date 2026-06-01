@@ -16,31 +16,10 @@ import { drawShipYard, clearShipDrag, renderTauCeti } from './truepath.js';
 import { arpa, clearGeneticsDrag } from './arpa.js';
 import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from './themes.js';
 
-// import SeasonHunt from './components/SeasonHunt.vue';
-// import SettingsTab from './components/SettingsTab.vue';
-// import TopBar from './components/TopBar.vue';
+import SeasonHunt from './components/SeasonHunt.vue';
 import InitBody from './components/InitBody.vue';
 
 export function mainVue(){
-    vBind({
-        el: '#mainColumn div.content',
-        data: {
-            s: global.settings,
-            t: theme_settings,
-        },
-        methods: {
-            remove(index){
-                global.r_queue.queue.splice(index,1);
-            },
-            namecase(name){
-                return name.replace(/(?:^|\s)\w/g, function(match) {
-                    return match.toUpperCase();
-                });
-            },
-        },
-        components:{ InitBody, },
-    });
-
     ['1','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'].forEach(function(k){
         popover(`settings${k}`, function(){
                 return loc(`settings${k}`);
@@ -130,6 +109,8 @@ export function initTabs() {
     }
 }
 
+//For now I (The1stBurb) will leave this alone and not fully put everything into the components/mainTabs/*Tab.vue files
+//as it will depend on how preload is handled and other decisions!
 export function loadTab(tab){
     if (!global.settings.tabLoad) {
         clearResDrag();
@@ -607,7 +588,7 @@ export function index(){
     $('body').append(`<init-body />`)
     vBind({
         el: 'body',
-        components: { InitBody },
+        components: { InitBody, },
     });
     // Top Bar
     // $('body').append(`<top-bar />`);
@@ -670,7 +651,7 @@ export function index(){
 
     $(`#sideQueue`).append(`
         <div id="buildQueue" class="bldQueue standardqueuestyle has-text-info" v-show="display"></div>
-        
+
         <div id="msgQueue" class="msgQueue vscroll has-text-info" aria-live="polite">
             <div id="msgQueueHeader">
 
@@ -888,83 +869,16 @@ export function index(){
         }
     });
 
-    // Center Column
-    // let mainColumn = $(`<div id="mainColumn" class="column is-three-quarters"></div>`);
-    // columns.append(mainColumn);
-    // let content = $(`<div class="content"></div>`);
-    // mainColumn.append(content);
-
-    // content.append(`<h2 class="is-sr-only">Tab Navigation</h2>`);
-    // let tabs = $(`<b-tabs id="mainTabs" v-model="s.civTabs" :animated="s.animated" @update:model-value="swapTab($event)"></b-tabs>`);
-    // content.append(tabs);
-
-    // // Evolution Tab
-    // let evolution = $(`<b-tab-item class="tab-item sticky" :visible="s.showEvolve" :label="label('tab_evolve')">
-    //     <div id="evolution"></div>
-    // </b-tab-item>`);
-    // tabs.append(evolution);
-
-    // // City Tab
-    // let city = $(`<b-tab-item :visible="s.showCiv" :label="label('tab_civil')">
-    //     <div id="mTabCivil"></div>
-    // </b-tab-item>`);
-    // tabs.append(city);
-
-    // // Civics Tab
-    // let civic = $(`<b-tab-item :visible="s.showCivic" :label="label('tab_civics')">
-    //     <div id="mTabCivic"></div>
-    // </b-tab-item>`);
-    // tabs.append(civic);
-
-    // // Research Tab
-    // let research = $(`<b-tab-item :visible="s.showResearch" :label="label('tab_research')">
-    //     <div id="mTabResearch"></div>
-    // </b-tab-item>`);
-    // tabs.append(research);
-
-    // // Resources Tab
-    // let resources = $(`<b-tab-item :visible="s.showResources" :label="label('tab_resources')">
-    //     <div id="mTabResource"></div>
-    // </b-tab-item>`);
-    // tabs.append(resources);
-
-    // // ARPA Tab
-    // let arpa = $(`<b-tab-item :visible="s.showGenetics" :label="label('tech_arpa')">
-    //     <div id="mTabArpa"></div>
-    // </b-tab-item>`);
-    // tabs.append(arpa);
-
-    // // Stats Tab
-    // let stats = $(`<b-tab-item :visible="s.showAchieve" :label="label('tab_stats')">
-    //     <div id="mTabStats"></div>
-    // </b-tab-item>`);
-    // tabs.append(stats);
-
-    // // Settings Tab
-    // // let settings = $(`<settings-tab />`);
-    // // tabs.append(settings);
-
-    // // (Hidden Last Tab) Hell Observation Tab
-    // let observe = $(`<b-tab-item disabled>
-    //     <template slot="header"></template>
-    //     <div id="mTabObserve"></div>
-    // </b-tab-item>`);
-    // tabs.append(observe);
-
-    // // Right Column
-    // columns.append(`<div id="queueColumn" class="queueCol column"></div>`);
-
-    let egg15 = easterEgg(15,8);
     
     // Bottom Mobile navigation bar
     // Currently uses hard coded english strings for labels, since we don't have any existing strings that accurately label the main game panel and side queue/message log(right column)
-    $('body').append(`
-        <div id="mobileNav">
-            <button class="mobile-nav-btn is-active" data-panel="resources">${loc('tab_resources')}</button>
-            <button class="mobile-nav-btn" data-panel="game">Game</button>
-            <button class="mobile-nav-btn" data-panel="queue">Queue</button>
-        </div>
-    `);
+    // $('body').append(`
+    //     <div id="mobileNav">
+    //         <button class="mobile-nav-btn is-active" data-panel="resources">${loc('tab_resources')}</button>
+    //         <button class="mobile-nav-btn" data-panel="game">Game</button>
+    //         <button class="mobile-nav-btn" data-panel="queue">Queue</button>
+    //     </div>
+    // `);
 
     $('#mobileNav').on('click', '.mobile-nav-btn', function () {
         const panel = $(this).data('panel');
@@ -995,29 +909,9 @@ export function index(){
         window.visualViewport.addEventListener('scroll', syncFixedToViewport);
     }
 
-    // Bottom Bar
-    $('body').append(`
-        <div class="promoBar">
-            <span class="left">
-                <h1>
-                    <span class="has-text-warning">${egg15.length > 0 ? `Ev${egg15}lve` : `Evolve`}</span>
-                    by
-                    <span class="has-text-success">Demagorddon</span>
-                </h1>
-            </span>
-            <span class="right">
-                <h2 class="is-sr-only">External Links</h2>
-                <ul class="external-links">
-                    <li><a href="wiki.html" target="_blank">Wiki</a></li>
-                    <li><a href="https://www.reddit.com/r/EvolveIdle/" target="_blank">Reddit</a></li>
-                    <li><a href="https://discord.gg/dcwdQEr" target="_blank">Discord</a></li>
-                    <li><a href="https://github.com/pmotschmann/Evolve" target="_blank">GitHub</a></li>
-                    <li><a href="https://www.patreon.com/demagorddon" target="_blank">Patreon</a></li>
-                    <li><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PTRJZBW9J662C&currency_code=USD&source=url" target="_blank">Donate</a></li>
-                </ul>
-            </span>
-        </div>
-    `);
-
+    let egg15 = easterEgg(15,8);
+    // // Bottom Bar
+    // $('body').append(`
+    //     );
     loadCustomThemeHTML();
 }

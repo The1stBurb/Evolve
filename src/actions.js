@@ -6073,6 +6073,10 @@ export function drawCity(){
     cLabels = global.settings['cLabels'];
 }
 
+function checkTechPath(){
+    return true;
+}
+
 export function drawTech(){
     if (!global.settings.tabLoad && global.settings.civTabs !== 3){
         return;

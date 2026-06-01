@@ -1,12 +1,22 @@
 <script setup>
     import { ref } from "vue";
-    import TopBar from './TopBar.vue';
-    import SettingsTab from './SettingsTab.vue';
+    
+    import TopBar from './bodyElms/TopBar.vue';
+    import CityTab from './bodyElms/CityTab.vue';
+    import CivicsTab from './bodyElms/CivicsTab.vue';
+    import ResearchTab from './bodyElms/ResearchTab.vue';
+    import ResourceTab from './bodyElms/ResourceTab.vue';
+    import ApraTab from './bodyElms/ApraTab.vue';
+    import StatsTab from './bodyElms/StatsTab.vue';
+    import SettingsTab from './bodyElms/SettingsTab.vue';
+    import MessageQueue from './bodyElms/MessageQueue.vue';
+    import SeasonHunt from './SeasonHunt.vue';
 
     import { global, message_filters, message_logs } from '../vars.js';
     import { loc } from '../locale';
     import { loadTab, tabLabel } from '../index.js';
     import { flib } from '../functions.js';
+
     /* For any viewers info! the hierarchy of comments is by follows:
         level 1 - \* ... *\ 
             these are the main "section headers"
@@ -16,7 +26,7 @@
 
 
     /* vBind Data */
-    const s=ref(global.settings);
+    const s = ref(global.settings);
     const race = ref(global.race);
     const city = ref(global.city);
     
@@ -97,8 +107,7 @@
                 </div>
 
                 <div id="sideQueue">
-                    
-
+                    <message-queue />
                 </div>
 
                 <div id="resources" class="resources vscroll">
@@ -116,29 +125,17 @@
                             <div id="evolution"></div>
                         </b-tab-item>
 
-                        <b-tab-item :visible="s.showCiv" :label="label('tab_civil')">
-                            <div id="mTabCivil"></div>
-                        </b-tab-item>
+                        <city-tab />
 
-                        <b-tab-item :visible="s.showCivic" :label="label('tab_civics')">
-                            <div id="mTabCivic"></div>
-                        </b-tab-item>
+                        <civics-tab />
 
-                        <b-tab-item :visible="s.showResearch" :label="label('tab_research')">
-                            <div id="mTabResearch"></div>
-                        </b-tab-item>
+                        <research-tab />
 
-                        <b-tab-item :visible="s.showResources" :label="label('tab_resources')">
-                            <div id="mTabResource"></div>
-                        </b-tab-item>
+                        <resource-tab />
 
-                        <b-tab-item :visible="s.showGenetics" :label="label('tech_arpa')">
-                            <div id="mTabArpa"></div>
-                        </b-tab-item>
+                        <apra-tab />
 
-                        <b-tab-item :visible="s.showAchieve" :label="label('tab_stats')">
-                            <div id="mTabStats"></div>
-                        </b-tab-item>
+                        <stats-tab />
 
                         <settings-tab />
 
@@ -156,11 +153,34 @@
         </div>
     </div>
 
-    <!-- <div id="mobileNav">
+    <div id="mobileNav">
         <button class="mobile-nav-btn is-active" data-panel="resources">{{ loc('tab_resources') }}</button>
 
         <button class="mobile-nav-btn" data-panel="game">Game</button>
 
         <button class="mobile-nav-btn" data-panel="queue">Queue</button>
-    </div> -->
+    </div>
+
+    <div class="promoBar">
+        <span class="left">
+            <h1>
+                <span class="has-text-warning">
+                    Ev<season-hunt :event="'easter'" :num="15" :size="10" :inactive="'o'" />lve <!--  -->
+                </span>
+                by
+                <span class="has-text-success">Demagorddon</span>
+            </h1>
+        </span>
+        <span class="right">
+            <h2 class="is-sr-only">External Links</h2>
+            <ul class="external-links">
+                <li><a href="wiki.html" target="_blank">Wiki</a></li>
+                <li><a href="https://www.reddit.com/r/EvolveIdle/" target="_blank">Reddit</a></li>
+                <li><a href="https://discord.gg/dcwdQEr" target="_blank">Discord</a></li>
+                <li><a href="https://github.com/pmotschmann/Evolve" target="_blank">GitHub</a></li>
+                <li><a href="https://www.patreon.com/demagorddon" target="_blank">Patreon</a></li>
+                <li><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PTRJZBW9J662C&currency_code=USD&source=url" target="_blank">Donate</a></li>
+            </ul>
+        </span>
+    </div>
 </template>

@@ -1,12 +1,12 @@
 <script setup>
     import { ref } from "vue";
 
-    import { global, webWorker } from '../vars.js';
-    import { loc } from '../locale.js';
-    import { setWeather, seasonDesc, astrologySign, astroVal } from '../seasons.js';
-    import { messageQueue, loopTimers, gameLoop } from '../functions.js';
-    import { races } from '../races.js';
-    import { universe_types } from '../space.js';
+    import { global, webWorker } from '../../vars.js';
+    import { loc } from '../../locale.js';
+    import { setWeather, seasonDesc, astrologySign, astroVal } from '../../seasons.js';
+    import { messageQueue, loopTimers, gameLoop } from '../../functions.js';
+    import { races } from '../../races.js';
+    import { universe_types } from '../../space.js';
     const city=ref(global.city);
     const race=ref(global.race);
     const s=ref(global.settings);

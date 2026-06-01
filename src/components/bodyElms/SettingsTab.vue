@@ -1,23 +1,23 @@
 <script setup>
     import { ref } from "vue";
 
-    import { save, webWorker, global } from '../vars.js';
-    import { loc, locales, updateHtmlLang, getString } from '../locale.js';
-    import { gameLoop, clearElement } from '../functions.js';
-    import { initTabs } from '../index.js';
+    import { save, webWorker, global } from '../../vars.js';
+    import { loc, locales, updateHtmlLang, getString } from '../../locale.js';
+    import { gameLoop, clearElement } from '../../functions.js';
+    import { initTabs } from '../../index.js';
 
-    import { clearResDrag } from '../actions.js';
-    import { clearGrids } from '../industry.js';
-    import { clearMechDrag } from '../portal.js';
-    import { clearGeneticsDrag } from '../arpa.js';
-    import { clearSpyopDrag } from '../governor.js';
-    import { clearShipDrag } from '../truepath.js';
+    import { clearResDrag } from '../../actions.js';
+    import { clearGrids } from '../../industry.js';
+    import { clearMechDrag } from '../../portal.js';
+    import { clearGeneticsDrag } from '../../arpa.js';
+    import { clearSpyopDrag } from '../../governor.js';
+    import { clearShipDrag } from '../../truepath.js';
 
-    import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from '../themes.js';
+    import { themes, set_theme, theme_settings, loadCustomThemeHTML, createAllThemeDropdowns, setThemeToHTML, loadThemeEditorDat, importTheme, getThemeSaveData, getThemeTitle } from '../../themes.js';
 
-    import SeasonHunt from './SeasonHunt.vue';
-    import Iconic from './Icon.vue';
-    global.settings.icon='star';
+    import SeasonHunt from '../SeasonHunt.vue';
+    import Iconic from '../Icon.vue';
+    
     let s=(global.settings);
     const t=ref(theme_settings);
     const themeDropdownCont=ref(null);
