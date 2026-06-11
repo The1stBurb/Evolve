@@ -2606,7 +2606,6 @@ export function easterEggBind(id){
 }
 
 export function trickOrTreat(num,size,trick){
-    console.log('getting halloween',num,size,trick);
     let halloween = getHalloween(num,size,trick);
     const date = new Date();
     const year = date.getFullYear();
@@ -3022,7 +3021,11 @@ export function getEaster(){
     const date = new Date();
     let year = date.getFullYear();
     // delete global.special.egg[year];
-    if (!global.special.egg.hasOwnProperty(year) || 1){
+    if (!global.special.egg.hasOwnProperty(year) || 0){
+        
+        // for(let i in global.special.egg[year]){
+        //     global.special.egg[year][i]=false;
+        // }
         global.special.egg[year] = {
             egg1: false,
             egg2: false,
@@ -3102,7 +3105,7 @@ export function getEaster(){
 
     const isAfterBeginning = cur_month > easter.date[0] || (cur_month === easter.date[0] && cur_day >= easter.date[1]);
     const isBeforeEnd = cur_month < easter.endDate[0] || (cur_month === easter.endDate[0] && cur_day <= easter.endDate[1]);
-    if (isAfterBeginning && isBeforeEnd || 1){
+    if (isAfterBeginning && isBeforeEnd){
         easter.active = true;
         if (cur_month >= easter.hintDate[0] && cur_day >= easter.hintDate[1] && cur_month <= easter.endDate[0] && cur_day <= easter.endDate[1]){
             easter.hint = true;
@@ -3115,30 +3118,30 @@ export function getEaster(){
     return easter;
 }
 
-export function getHalloween(num,size,trick){
+export function getHalloween(){
     const date = new Date();
     let year = date.getFullYear();
 
-    if (!global.special.trick.hasOwnProperty(year)||1){
-        for(let i in global.special.trick[year]){
-            global.special.trick[year][i]=false;
-        }
-        // global.special.trick[year] = {
-        //     trick1: false,
-        //     trick2: false,
-        //     trick3: false,
-        //     trick4: false,
-        //     trick5: false,
-        //     trick6: false,
-        //     trick7: false,
-        //     treat1: false,
-        //     treat2: false,
-        //     treat3: false,
-        //     treat4: false,
-        //     treat5: false,
-        //     treat6: false,
-        //     treat7: false
-        // };
+    if (!global.special.trick.hasOwnProperty(year)||0){
+        // for(let i in global.special.trick[year]){
+            // global.special.trick[year][i]=false;
+        // }
+        global.special.trick[year] = {
+            trick1: false,
+            trick2: false,
+            trick3: false,
+            trick4: false,
+            trick5: false,
+            trick6: false,
+            trick7: false,
+            treat1: false,
+            treat2: false,
+            treat3: false,
+            treat4: false,
+            treat5: false,
+            treat6: false,
+            treat7: false
+        };
     }
 
     let halloween = {
@@ -3158,7 +3161,7 @@ export function getHalloween(num,size,trick){
     let start = new Date(`${halloween.date[0]+1}/${halloween.date[1]}/${year}`);
     let end = new Date(`${halloween.endDate[0]+1}/${halloween.endDate[1]}/${year}`);
 
-    if ((date >= start && date <= end) || true){
+    if ((date >= start && date <= end)){
         halloween.active = true;
         let hint = new Date(`${halloween.hintDate[0]+1}/${halloween.hintDate[1]}/${year}`);
         if (date >= hint && date <= end){

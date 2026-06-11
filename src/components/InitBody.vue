@@ -148,7 +148,9 @@
                 </div>
             </div>
 
-            <div id="queueColumn" class="queueCol column"></div>
+            <div id="queueColumn" class="queueCol column">
+                <message-queue />
+            </div>
 
         </div>
     </div>
@@ -165,7 +167,7 @@
         <span class="left">
             <h1>
                 <span class="has-text-warning">
-                    Ev<season-hunt :event="'easter'" :num="15" :size="10" :inactive="'o'" />lve <!--  -->
+                    Ev<season-hunt :event="'easter'" :num="15" :size="10" :inactive="'o'" />lve
                 </span>
                 by
                 <span class="has-text-success">Demagorddon</span>

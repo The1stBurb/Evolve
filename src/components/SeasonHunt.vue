@@ -95,11 +95,11 @@
                     count=12;
                     if (global.race.universe === 'antimatter'){
                         prest='AntiPlasmid';
-                        msg[0]='AntiPlamsid_plural';
+                        msg[0]='AntiPlasmid_plural';
                     }
                     else {
                         prest='Plasmid';
-                        msg[0]='Plamsid_plural';
+                        msg[0]='Plasmid_plural';
                     }
                 }
                 setTimeout(function(){
