@@ -13,6 +13,7 @@ import { defineGovernor, govActive } from './governor.js';
 import { ascend, terraform, apotheosis } from './resets.js';
 import { loadTab } from './index.js';
 import { loc } from './locale.js';
+import { reachedLocation } from './client.js'
 
 const spaceProjects = {
     spc_home: {
@@ -6700,7 +6701,7 @@ const structDefinitions = {
     attractor: { count: 0, on: 0 },
 };
 
-export function incrementStruct(c_action,sector){
+export function incrementStruct(c_action,sector,args){
     let struct = c_action;
     if (typeof c_action === 'object'){
         struct = c_action.struct().p[0];
@@ -6712,10 +6713,21 @@ export function incrementStruct(c_action,sector){
     if (!global[sector][struct]){
         global[sector][struct] = typeof c_action === 'object' ? c_action.struct().d : structDefinitions[struct];
     }
-    if (global.race['living_materials'] || global[sector][struct]['l_m']){
+    if (global.race['living_materials'] || (global[sector][struct].hasOwnProperty('l_m')&&global[sector[struct]["l_m"]])){
         global[sector][struct]['l_m'] = 0;
     }
-    global[sector][struct].count++;
+    if(global[sector][struct].count==0){
+        reachedLocation("build",struct)
+    }
+    // if(struct.includes("ap")){
+    //     if(args=="itemTrigger"){
+    //         global[sector][struct].count++;
+    //     }
+    // }
+    // else{
+        // console.log(struct)
+        global[sector][struct].count++;
+    // }
 }
 
 export function spaceTech(r,k){

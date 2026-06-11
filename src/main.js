@@ -17,11 +17,13 @@ import { events, eventList } from './events.js';
 import { defineGovernor, govern, govActive, removeTask } from './governor.js';
 import { production, highPopAdjust, teamster, factoryBonus } from './prod.js';
 import { swissKnife } from './tech.js';
-import { vacuumCollapse } from './resets.js';
+import { vacuumCollapse } from './resets.js';//maybe
 import { index, mainVue, initTabs, loadTab } from './index.js';
 import { setWeather, seasonDesc, astrologySign, astroVal } from './seasons.js';
 import { getTopChange } from './wiki/change.js';
 import { enableDebug, updateDebugData } from './debug.js';
+
+import { login, initChatModule, triggerDeathLink } from './client.js';
 
 {
     $(document).ready(function() {
@@ -168,6 +170,8 @@ $(document).mousemove(function(e){
 });
 
 index();
+// login();
+initChatModule();
 var revision = global['revision'] ? global['revision'] : '';
 if (global['beta']){
     $('#topBar .version > a').html(`v${global.version} Beta ${global.beta}${revision}`);
@@ -894,6 +898,12 @@ function fastLoop(){
     var global_multiplier = 1;
     let applyPlasmid = false;
     let pBonus = plasmidBonus('raw');
+    if(global.city.hasOwnProperty("ap_prod_bonus")){
+        breakdown.p['Global'][loc("ap_bonus")]=(global.city.ap_prod_bonus.count*5)+'%'
+    }
+    if(global.city.hasOwnProperty("ap_prod_malus")){
+        breakdown.p['Global'][loc("ap_malus")]=(-global.city.ap_prod_malus.count*2)+'%'
+    }
     if (global.prestige.Plasmid.count > 0 && ((global.race.universe !== 'antimatter') || (global.genes['bleed'] && global.race.universe === 'antimatter'))){
         breakdown.p['Global'][loc('resource_Plasmid_name')] = (pBonus[1] * 100) + '%';
         applyPlasmid = true;
@@ -914,6 +924,7 @@ function fastLoop(){
         if (faithTempleCount()){
             let faith = faithBonus();
             breakdown.p['Global'][loc('faith')] = (faith * 100) + '%';
+            // breakdown.p['Global'][loc('faith')] = (faith * 100) + '%';
             global_multiplier *= (1 + faith);
         }
     }
@@ -1193,6 +1204,9 @@ function fastLoop(){
         breakdown.p['Global'][loc('arpa_syphon_damage')] = `-${entropy}%`;
         global_multiplier *= 1 - (entropy / 100);
     }
+    
+    if(global.city.hasOwnProperty("ap_prod_bonus")){global_multiplier*=1+global.city.ap_prod_bonus.count*5/100}
+    if(global.city.hasOwnProperty("ap_prod_malus")){global_multiplier*=1-global.city.ap_prod_malus.count*2/100}
 
     let resList = [
         'Money','Knowledge','Omniscience','Food','Lumber','Stone','Chrysotile','Crystal','Furs','Copper','Iron',
@@ -1859,14 +1873,17 @@ function fastLoop(){
 
         [
             {r:'city',s:'coal_power'},{r:'city',s:'oil_power'},{r:'city',s:'fission_power'},{r:'spc_hell',s:'geothermal'},{r:'spc_dwarf',s:'e_reactor'},
-            {r:'int_alpha',s:'fusion'},{r:'tau_home',s:'fusion_generator'},{r:'tau_gas2',s:'alien_space_station'}
+            {r:'int_alpha',s:'fusion'},{r:'tau_home',s:'fusion_generator'},{r:'tau_gas2',s:'alien_space_station'},{r:'city',s:'ap_power_bonus'}
         ].forEach(function(generator){
+            var isap=generator.s=="ap_power_bonus"
+            // console.log(generator)
             let space = convertSpaceSector(generator.r);
             let region = generator.r === 'city' ? generator.r : space;
             let c_action = generator.r === 'city' ? actions.city : actions[space][generator.r];
             let title = typeof c_action[generator.s].title === 'string' ? c_action[generator.s].title : c_action[generator.s].title();
 
             if (global[region][generator.s] && global[region][generator.s]['on']){
+                // if(isap)console.log("is enabled")
                 let watts = c_action[generator.s].powered();
                 p_on[generator.s] = global[region][generator.s].on;
 
@@ -1909,6 +1926,7 @@ function fastLoop(){
                 }
             }
             else {
+                // if(isap)console.log("not enabled",global[region][generator.s])
                 power_generated[title] = 0;
                 p_on[generator.s] = 0;
                 $(`#${region}-${generator.s} .on`).removeClass('warn');
@@ -3859,11 +3877,13 @@ function fastLoop(){
                                 global.resource[global.race.species].amount -= starved;
                                 global.stats.starved += starved;
                                 blubberFill(starved);
+                                triggerDeathLink({cause:"starve",count:starved});
                             }
                             else if (generated < consume / threshold){
                                 global['resource'][global.race.species].amount--;
                                 global.stats.starved++;
                                 blubberFill(1);
+                                triggerDeathLink({cause:"starve",count:1});
                             }
                         }
                     }
@@ -8822,6 +8842,11 @@ function midLoop(){
                 breakdown.c.Money[housingLabel('large')] = gain+'v';
             }
         }
+        if (global.city['ap_pop_bonus']){
+            let pop = global.city.ap_pop_bonus.count * actions.city.ap_pop_bonus.citizens();
+            caps[global.race.species] += pop;
+            breakdown.c[global.race.species][loc('city-ap_pop_bonus')] = pop + 'v';
+        }
         if (global.eden['rectory']){
             let pop = p_on['rectory'] * actions.eden.eden_asphodel.rectory.citizens();
             caps[global.race.species] += pop;
@@ -12970,6 +12995,9 @@ function spyCaught(i){
         }
     }
     else {
+        if(!escape){
+            triggerDeathLink({cause:"spy",count:1,"loc":govTitle(i)})
+        }
         messageQueue(loc(escape ? 'event_spy_fail' : 'event_spy',[govTitle(i)]),'danger',false,['spy']);
     }
 }

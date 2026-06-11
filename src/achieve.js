@@ -6,6 +6,15 @@ import { universe_affixes, universe_types, piracy } from './space.js';
 import { monsters } from './portal.js';
 import { loc } from './locale.js'
 
+function cautionSpan(data){
+    return `<span class="has-text-caution">${data}`
+}
+function warningText(data,data2){
+    return `<div><span class="has-text-warning">${data}</span>${data2}</div>`
+}
+
+
+
 const achieve_list = {
     misc: [
         'apocalypse','ascended','dreaded','anarchist','second_evolution','blackhole','warmonger',
@@ -1025,7 +1034,7 @@ export const perkList = {
                 if (universe === 'standard'){
                     desc += `
                     <span class="row">
-                        <span class="has-text-caution">${universe_types[universe].name}</span>:
+                        ${cautionSpan(universe_types[universe].name)}:
                         <span>${loc('perks_mastery_general',[`<span class="has-text-advanced">${+(mastery.g).toFixed(2)}%</span>`])}
                         </span>
                     </span>`;
@@ -1033,7 +1042,7 @@ export const perkList = {
                 else if (global.stats.achieve['whitehole']){
                     desc += `
                     <span class="row">
-                        <span class="has-text-caution">${universe_types[universe].name}</span>:
+                        ${cautionSpan(universe_types[universe].name)}:
                         <span>
                             ${loc('perks_mastery_general',[`<span class="has-text-advanced">${+(mastery.g).toFixed(2)}%</span>`])},
                             ${loc('perks_mastery_universe',[`<span class="has-text-advanced">${+(mastery.u).toFixed(2)}%</span>`])},
@@ -1048,7 +1057,7 @@ export const perkList = {
             return global.genes['challenge'] && global.genes['challenge'] >= 2 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_unlocked_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_unlocked_title`))}`]),
         ]
     },
     blackhole: {
@@ -1061,8 +1070,8 @@ export const perkList = {
             return global.stats.achieve['blackhole'] && global.stats.achieve.blackhole.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_blackhole_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_blackhole_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_blackhole_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_blackhole_name`))}`])
         ]
     },
     trade: {
@@ -1076,8 +1085,8 @@ export const perkList = {
             return global.stats.achieve['trade'] && global.stats.achieve.trade.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_trade_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_trade_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_trade_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_trade_name`))}`])
         ]
     },
     creator: {
@@ -1090,8 +1099,8 @@ export const perkList = {
             return global.stats.achieve['creator'] && global.stats.achieve.creator.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_creator_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_creator_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_creator_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_creator_name`))}`])
         ]
     },
     mass_extinction: {
@@ -1117,8 +1126,8 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_mass_extinction_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_mass_extinction_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_mass_extinction_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_mass_extinction_name`))}`])
         ]
     },
     doomed: {
@@ -1130,7 +1139,7 @@ export const perkList = {
             return global.stats.portals >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_doomed_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_doomed_name`))}`])
         ]
     },
     explorer: {
@@ -1143,8 +1152,8 @@ export const perkList = {
             return global.stats.achieve['explorer'] && global.stats.achieve.explorer.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_explorer_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_explorer_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_explorer_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_explorer_name`))}`])
         ]
     },
     miners_dream: {
@@ -1157,8 +1166,8 @@ export const perkList = {
             return global.stats.achieve['miners_dream'] && global.stats.achieve.miners_dream.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_miners_dream_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_miners_dream_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_miners_dream_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_miners_dream_name`))}`])
         ]
     },
     extinct_junker: {
@@ -1170,7 +1179,7 @@ export const perkList = {
             return global.stats.achieve['extinct_junker'] && global.stats.achieve.extinct_junker.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_extinct_junker_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_extinct_junker_name`))}`])
         ]
     },
     joyless: {
@@ -1183,8 +1192,8 @@ export const perkList = {
             return global.stats.achieve['joyless'] && global.stats.achieve.joyless.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_joyless_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_joyless_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_joyless_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_joyless_name`))}`])
         ]
     },
     steelen: {
@@ -1197,8 +1206,8 @@ export const perkList = {
             return global.stats.achieve['steelen'] && global.stats.achieve.steelen.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_steelen_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_steelen_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_steelen_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_steelen_name`))}`])
         ]
     },
     wheelbarrow: {
@@ -1211,8 +1220,8 @@ export const perkList = {
             return global.stats.achieve['wheelbarrow'] && global.stats.achieve.wheelbarrow.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_wheelbarrow_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_wheelbarrow_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_wheelbarrow_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_wheelbarrow_name`))}`])
         ]
     },
     extinct_sludge: {
@@ -1274,8 +1283,8 @@ export const perkList = {
             },
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_extinct_sludge_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_universe_scale`,[`<span class="has-text-caution">${loc(`achieve_extinct_sludge_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_extinct_sludge_name`))}`]),
+            loc(`wiki_perks_achievement_note_universe_scale`,[`${cautionSpan(loc(`achieve_extinct_sludge_name`))}`])
         ]
     },
     whitehole: {
@@ -1309,8 +1318,8 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_whitehole_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_whitehole_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_whitehole_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_whitehole_name`))}`])
         ]
     },
     heavyweight: {
@@ -1323,8 +1332,8 @@ export const perkList = {
             return global.stats.achieve['heavyweight'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_heavyweight_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_heavyweight_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_heavyweight_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_heavyweight_name`))}`])
         ]
     },
     dissipated: {
@@ -1365,8 +1374,8 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_dissipated_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_dissipated_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_dissipated_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_dissipated_name`))}`])
         ]
     },
     banana: {
@@ -1414,8 +1423,8 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_banana_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_task`,[`<span class="has-text-caution">${loc(`achieve_banana_name`)}</span>`]),
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_banana_name`))}`]),
+            loc(`wiki_perks_achievement_note_task`,[`${cautionSpan(loc(`achieve_banana_name`))}`]),
             loc(`wiki_perks_achievement_note_task_num`,[1,`<span class="has-text-${global.stats.banana.b1.l ? `success` : `danger`}">${loc(`wiki_achieve_banana1`)}</span>`]),
             loc(`wiki_perks_achievement_note_task_num`,[2,`<span class="has-text-${global.stats.banana.b2.l ? `success` : `danger`}">${loc(`wiki_achieve_banana2`)}</span>`]),
             loc(`wiki_perks_achievement_note_task_num`,[3,`<span class="has-text-${global.stats.banana.b3.l ? `success` : `danger`}">${loc(`wiki_achieve_banana3`)}</span>`]),
@@ -1433,8 +1442,8 @@ export const perkList = {
             return global.stats.achieve['anarchist'] && global.stats.achieve['anarchist'].l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_anarchist_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_anarchist_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_anarchist_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_anarchist_name`))}`])
         ]
     },
     ascended: {
@@ -1472,9 +1481,9 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_ascended_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_ascended_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_universe`,[`<span class="has-text-caution">${loc(`achieve_ascended_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_ascended_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_ascended_name`))}`]),
+            loc(`wiki_perks_achievement_note_universe`,[`${cautionSpan(loc(`achieve_ascended_name`))}`])
         ]
     },
     technophobe: {
@@ -1547,9 +1556,9 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_technophobe_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_technophobe_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_universe`,[`<span class="has-text-caution">${loc(`achieve_technophobe_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_technophobe_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_technophobe_name`))}`]),
+            loc(`wiki_perks_achievement_note_universe`,[`${cautionSpan(loc(`achieve_technophobe_name`))}`])
         ]
     },
     iron_will: {
@@ -1597,13 +1606,13 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_iron_will_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_ironwill`,[`<span class="has-text-caution">${loc(`evo_challenge_cataclysm`)}</span>`]),
-            loc(`wiki_perks_achievement_note_ironwill2`,[1,`<span class="has-text-caution">${loc(`space_red_ziggurat_title`)}</span>`]),
-            loc(`wiki_perks_achievement_note_ironwill3`,[2,`<span class="has-text-caution">${loc(`tech_elerium_mining`)}</span>`]),
-            loc(`wiki_perks_achievement_note_ironwill3`,[3,`<span class="has-text-caution">${loc(`tech_lasers`)}</span>`]),
-            loc(`wiki_perks_achievement_note_ironwill3`,[4,`<span class="has-text-caution">${loc(`tech_generational_ship`)}</span>`]),
-            loc(`wiki_perks_achievement_note_ironwill4`,[5,`<span class="has-text-caution">${loc(`wiki_resets_bioseed`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_iron_will_name`))}`]),
+            loc(`wiki_perks_achievement_note_ironwill`,[`${cautionSpan(loc(`evo_challenge_cataclysm`))}`]),
+            loc(`wiki_perks_achievement_note_ironwill2`,[1,`${cautionSpan(loc(`space_red_ziggurat_title`))}`]),
+            loc(`wiki_perks_achievement_note_ironwill3`,[2,`${cautionSpan(loc(`tech_elerium_mining`))}`]),
+            loc(`wiki_perks_achievement_note_ironwill3`,[3,`${cautionSpan(loc(`tech_lasers`))}`]),
+            loc(`wiki_perks_achievement_note_ironwill3`,[4,`${cautionSpan(loc(`tech_generational_ship`))}`]),
+            loc(`wiki_perks_achievement_note_ironwill4`,[5,`${cautionSpan(loc(`wiki_resets_bioseed`))}`])
         ]
     },
     failed_history: {
@@ -1615,8 +1624,8 @@ export const perkList = {
             return global.stats.achieve['failed_history'] && global.stats.achieve.failed_history.l >= 5 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_failed_history_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_failed_history`,[`<span class="has-text-caution">${loc(`evo_challenge_cataclysm`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_failed_history_name`))}`]),
+            loc(`wiki_perks_achievement_note_failed_history`,[`${cautionSpan(loc(`evo_challenge_cataclysm`))}`])
         ]
     },
     lamentis: {
@@ -1664,8 +1673,8 @@ export const perkList = {
             },
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_lamentis_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_lamentis_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_lamentis_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_lamentis_name`))}`])
         ]
     },
     soul_sponge: {
@@ -1678,8 +1687,8 @@ export const perkList = {
             return global.stats.achieve['soul_sponge'] && global.stats.achieve.soul_sponge.mg >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_soul_sponge_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_soul_sponge_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_soul_sponge_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_soul_sponge_name`))}`])
         ]
     },
     nightmare: {
@@ -1691,8 +1700,8 @@ export const perkList = {
             return global.stats.achieve['nightmare'] && global.stats.achieve.nightmare.mg >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_nightmare_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_nightmare_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_nightmare_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_nightmare_name`))}`])
         ]
     },
     escape_velocity: {
@@ -1705,8 +1714,8 @@ export const perkList = {
             return global.stats.achieve['escape_velocity'] && global.stats.achieve.escape_velocity.h >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_escape_velocity_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_escape_velocity_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_escape_velocity_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_escape_velocity_name`))}`])
         ]
     },
     endless_hunger: {
@@ -1754,8 +1763,8 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_endless_hunger_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_task`,[`<span class="has-text-caution">${loc(`achieve_endless_hunger_name`)}</span>`]),
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_endless_hunger_name`))}`]),
+            loc(`wiki_perks_achievement_note_task`,[`${cautionSpan(loc(`achieve_endless_hunger_name`))}`]),
             loc(`wiki_perks_achievement_note_task_num`,[1,`<span class="has-text-${global.stats.endless_hunger.b1.l ? `success` : `danger`}">${loc(`wiki_achieve_endless_hunger1`)}</span>`]),
             loc(`wiki_perks_achievement_note_task_num`,[2,`<span class="has-text-${global.stats.endless_hunger.b2.l ? `success` : `danger`}">${loc(`wiki_achieve_endless_hunger2`)}</span>`]),
             loc(`wiki_perks_achievement_note_task_num`,[3,`<span class="has-text-${global.stats.endless_hunger.b3.l ? `success` : `danger`}">${loc(`wiki_achieve_endless_hunger3`,[80])}</span>`]),
@@ -1773,8 +1782,8 @@ export const perkList = {
             return global.stats.achieve['gladiator'] && global.stats.achieve.gladiator.l >= 1 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_gladiator_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_scale`,[`<span class="has-text-caution">${loc(`achieve_gladiator_name`)}</span>`])
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_gladiator_name`))}`]),
+            loc(`wiki_perks_achievement_note_scale`,[`${cautionSpan(loc(`achieve_gladiator_name`))}`])
         ]
     },
     what_is_best: {
@@ -1822,8 +1831,8 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_what_is_best_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_task`,[`<span class="has-text-caution">${loc(`achieve_what_is_best_name`)}</span>`]),
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_what_is_best_name`))}`]),
+            loc(`wiki_perks_achievement_note_task`,[`${cautionSpan(loc(`achieve_what_is_best_name`))}`]),
             loc(`wiki_perks_achievement_note_task_num`,[1,`<span class="has-text-${global.stats.warlord.k ? `success` : `danger`}">${loc(`wiki_achieve_what_is_best_k`,[50])}</span>`]),
             loc(`wiki_perks_achievement_note_task_num`,[2,`<span class="has-text-${global.stats.warlord.p ? `success` : `danger`}">${loc(`wiki_achieve_what_is_best_p`)}</span>`]),
             loc(`wiki_perks_achievement_note_task_num`,[3,`<span class="has-text-${global.stats.warlord.a ? `success` : `danger`}">${loc(`wiki_achieve_what_is_best_a`,[250])}</span>`]),
@@ -1876,8 +1885,8 @@ export const perkList = {
             },
         ],
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_pathfinder_name`)}</span>`]),
-            loc(`wiki_perks_achievement_note_pathfinder`,[`<span class="has-text-caution">${loc(`evo_challenge_truepath`)}</span>`]),
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_pathfinder_name`))}`]),
+            loc(`wiki_perks_achievement_note_pathfinder`,[`${cautionSpan(loc(`evo_challenge_truepath`))}`]),
             loc(`wiki_perks_achievement_note_pathfinder_reset`,[`<span class="has-text-${global.stats.achieve['ashanddust'] ? 'success' : 'danger'}">${loc(`wiki_resets_mad`)}</span>`]),
             loc(`wiki_perks_achievement_note_pathfinder_reset`,[`<span class="has-text-${global.stats.achieve['exodus'] ? 'success' : 'danger'}">${loc(`wiki_resets_bioseed`)}</span>`]),
             loc(`wiki_perks_achievement_note_pathfinder_reset`,[`<span class="has-text-${global.stats.achieve['obsolete'] ? 'success' : 'danger'}">${loc(`wiki_resets_ai`)}</span>`]),
@@ -1898,7 +1907,7 @@ export const perkList = {
             return global.stats.achieve['overlord'] && global.stats.achieve.overlord.l >= 5 ? true : false;
         },
         notes: [
-            loc(`wiki_perks_achievement_note`,[`<span class="has-text-caution">${loc(`achieve_overlord_name`)}</span>`]),
+            loc(`wiki_perks_achievement_note`,[`${cautionSpan(loc(`achieve_overlord_name`))}`]),
         ]
     },
     adam_eve: {
@@ -1921,13 +1930,13 @@ export const perkList = {
             return global.genes['creep'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_genetic_memory_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_genetic_memory_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_animus_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_divine_remembrance_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_divine_proportion_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_genetic_repository_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_animus_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_divine_remembrance_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_divine_proportion_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_genetic_repository_title`))}`
                 ].join(', ')
             ])
         ]
@@ -1942,12 +1951,12 @@ export const perkList = {
             return global.genes['store'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_spatial_reasoning_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_spatial_reasoning_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_spatial_superiority_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_spatial_supremacy_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_dimensional_warping_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_spatial_superiority_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_spatial_supremacy_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_dimensional_warping_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2021,16 +2030,16 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_morphogenesis_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_morphogenesis_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_recombination_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_homologous_recombination_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_genetic_reshuffling_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_recombinant_dna_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_chimeric_dna_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_molecular_cloning_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_transgenes_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_recombination_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_homologous_recombination_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_genetic_reshuffling_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_recombinant_dna_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_chimeric_dna_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_molecular_cloning_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_transgenes_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2044,7 +2053,7 @@ export const perkList = {
             return global.genes['birth'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_replication_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_replication_title`))}`]),
         ]
     },
     enhance: {
@@ -2056,7 +2065,7 @@ export const perkList = {
             return global.genes['enhance'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_enhanced_muscle_fiber_title`)}</span>`])
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_enhanced_muscle_fiber_title`))}`])
         ]
     },
     crafty: {
@@ -2081,11 +2090,11 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_artificer_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_artificer_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_detail_oriented_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_rigorous_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_detail_oriented_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_rigorous_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2099,7 +2108,7 @@ export const perkList = {
             return global.genes['governor'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_governance_title`)}</span>`])
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_governance_title`))}`])
         ]
     },
     synthesis: {
@@ -2113,11 +2122,11 @@ export const perkList = {
             return global.genes['synthesis'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_synthesis_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_synthesis_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_karyokinesis_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_cytokinesis_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_karyokinesis_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_cytokinesis_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2162,13 +2171,13 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_hardened_genes_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_hardened_genes_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_unlocked_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_universal_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_standard_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_mastered_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_unlocked_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_universal_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_standard_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_mastered_title`))}`
                 ].join(', ')
             ]),
             loc(`wiki_perks_crispr_note_challenge`,[loc(`arpa_genepool_universal_title`),loc(`arpa_genepool_standard_title`)])
@@ -2203,13 +2212,13 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_ancients_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_ancients_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_faith_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_devotion_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_acolyte_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_conviction_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_faith_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_devotion_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_acolyte_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_conviction_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2223,7 +2232,7 @@ export const perkList = {
             return global.genes['trader'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_negotiator_title`)}</span>`])
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_negotiator_title`))}`])
         ]
     },
     transcendence: {
@@ -2235,7 +2244,7 @@ export const perkList = {
             return global.genes['transcendence'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_transcendence_title`)}</span>`])
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_transcendence_title`))}`])
         ]
     },
     queue: {
@@ -2259,10 +2268,10 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_geographer_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_geographer_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_architect_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_architect_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2277,10 +2286,10 @@ export const perkList = {
             return global.genes['plasma'] ? true : false;
         },
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_mitosis_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_mitosis_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_metaphase_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_metaphase_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2306,11 +2315,11 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_mutation_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_mutation_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_transformation_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_metamorphosis_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_transformation_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_metamorphosis_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2344,14 +2353,14 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_bleeding_effect_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_bleeding_effect_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_synchronicity_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_astral_awareness_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_synchronicity_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_astral_awareness_title`))}`
                 ].join(', ')
             ]),
-            loc(`wiki_perks_crispr_note_bleed`,[`<span class="has-text-caution">${loc(`arpa_genepool_bleeding_effect_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note_bleed`,[`${cautionSpan(loc(`arpa_genepool_bleeding_effect_title`))}`]),
         ]
     },
     blood: {
@@ -2383,11 +2392,11 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_crispr_note`,[`<span class="has-text-caution">${loc(`arpa_genepool_blood_remembrance_title`)}</span>`]),
+            loc(`wiki_perks_crispr_note`,[`${cautionSpan(loc(`arpa_genepool_blood_remembrance_title`))}`]),
             loc(`wiki_perks_crispr_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_genepool_blood_sacrifice_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_genepool_essence_absorber_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_genepool_blood_sacrifice_title`))}`,
+                    `${cautionSpan(loc(`arpa_genepool_essence_absorber_title`))}`
                 ].join(', ')
             ]),
             loc(`wiki_perks_crispr_note_blood`,[loc(`arpa_genepool_blood_remembrance_title`)])
@@ -2414,10 +2423,10 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_purify_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_purify_title`))}`]),
             loc(`wiki_perks_blood_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_blood_chum_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_blood_chum_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2435,7 +2444,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_lust_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_lust_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_lust_title`)])
         ]
     },
@@ -2452,7 +2461,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_illuminate_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_illuminate_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_illuminate_title`)])
         ]
     },
@@ -2469,7 +2478,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_greed_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_greed_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_greed_title`)])
         ]
     },
@@ -2486,7 +2495,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_hoarder_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_hoarder_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_hoarder_title`)])
         ]
     },
@@ -2503,7 +2512,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_artisan_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_artisan_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_artisan_title`)])
         ]
     },
@@ -2520,7 +2529,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_attract_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_attract_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_attract_title`)])
         ]
     },
@@ -2537,7 +2546,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_wrath_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_wrath_title`))}`]),
             loc(`wiki_perks_blood_note_repeat`,[loc(`arpa_blood_wrath_title`)])
         ]
     },
@@ -2562,10 +2571,10 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_prepared_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_prepared_title`))}`]),
             loc(`wiki_perks_blood_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_blood_compact_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_blood_compact_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2599,12 +2608,12 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_unbound_title`)}</span>`]),
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_unbound_title`))}`]),
             loc(`wiki_perks_blood_note_upgrade`,[ 
                 [
-                    `<span class="has-text-caution">${loc(`arpa_blood_unbound_resistance_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_blood_shadow_war_title`)}</span>`,
-                    `<span class="has-text-caution">${loc(`arpa_blood_unbound_immunity_title`)}</span>`
+                    `${cautionSpan(loc(`arpa_blood_unbound_resistance_title`))}`,
+                    `${cautionSpan(loc(`arpa_blood_shadow_war_title`))}`,
+                    `${cautionSpan(loc(`arpa_blood_unbound_immunity_title`))}`
                 ].join(', ')
             ])
         ]
@@ -2622,7 +2631,7 @@ export const perkList = {
             }
         ],
         notes: [
-            loc(`wiki_perks_blood_note`,[`<span class="has-text-caution">${loc(`arpa_blood_blood_aware_title`)}</span>`])
+            loc(`wiki_perks_blood_note`,[`${cautionSpan(loc(`arpa_blood_blood_aware_title`))}`])
         ]
     },
     harmonic: {
@@ -2778,98 +2787,98 @@ export function drawStats(){
 
     // Overall Stats
     stats.append(`<div><span class="has-text-success">${loc("achieve_stats_overall")}</span></div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_plasmid_earned")}</span> {{ s.plasmid | format }}</div>`);
+    stats.append(`${warningText(loc("achieve_stats_plasmid_earned"),' {{ s.plasmid | format }}')}`);
     if (global.stats.antiplasmid > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_antiplasmid_earned")}</span> {{ s.antiplasmid | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_antiplasmid_earned"),' {{ s.antiplasmid | format }}')}`);
     }
     if (global.stats.phage > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_phage_earned")}</span> {{ s.phage | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_phage_earned"),' {{ s.phage | format }}')}`);
     }
     if (global.stats.dark > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_dark_earned")}</span> {{ s.dark | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_dark_earned"),' {{ s.dark | format }}')}`);
     }
     if (global.stats.harmony > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_harmony_earned")}</span> {{ s.harmony | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_harmony_earned"),' {{ s.harmony | format }}')}`);
     }
     if (global.stats.blood > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_blood_earned")}</span> {{ s.blood | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_blood_earned"),' {{ s.blood | format }}')}`);
     }
     if (global.stats.artifact > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_artifact_earned")}</span> {{ s.artifact | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_artifact_earned"),' {{ s.artifact | format }}')}`);
     }
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_knowledge_spent")}</span> {{ s.know | t_know | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_starved_to_death")}</span> {{ s.starved | t_starved | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_died_in_combat")}</span> {{ s.died | t_died | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_game_days_played")}</span> {{ s.days | played | format }}</div>`);
+    stats.append(`${warningText(loc("achieve_stats_knowledge_spent"),' {{ s.know | t_know | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_starved_to_death"),' {{ s.starved | t_starved | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_died_in_combat"),' {{ s.died | t_died | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_game_days_played"),' {{ s.days | played | format }}')}`);
     if (global.stats.portals > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_portals")}</span> {{ s.portals | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_portals"),' {{ s.portals | format }}')}`);
     }
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_total_resets")}</span> {{ s.reset | format }}</div>`);
+    stats.append(`${warningText(loc("achieve_stats_total_resets"),' {{ s.reset | format }}')}`);
     if (global.stats.mad > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_mad_resets")}</span> {{ s.mad | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_mad_resets"),' {{ s.mad | format }}')}`);
     }
     if (global.stats.bioseed > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_bioseed_resets")}</span> {{ s.bioseed | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_bioseed_resets"),' {{ s.bioseed | format }}')}`);
     }
     if (global.stats.cataclysm > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_cataclysm_resets")}</span> {{ s.cataclysm | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_cataclysm_resets"),' {{ s.cataclysm | format }}')}`);
     }
     if (global.stats.blackhole > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_blackhole_resets")}</span> {{ s.blackhole | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_blackhole_resets"),' {{ s.blackhole | format }}')}`);
     }
     if (global.stats.ascend > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_ascension_resets")}</span> {{ s.ascend | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_ascension_resets"),' {{ s.ascend | format }}')}`);
     }
     if (global.stats.descend > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_descension_resets")}</span> {{ s.descend | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_descension_resets"),' {{ s.descend | format }}')}`);
     }
     if (global.stats.apotheosis > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_apotheosis_resets")}</span> {{ s.apotheosis | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_apotheosis_resets"),' {{ s.apotheosis | format }}')}`);
     }
     if (global.stats.aiappoc > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_aiappoc_resets")}</span> {{ s.aiappoc | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_aiappoc_resets"),' {{ s.aiappoc | format }}')}`);
     }
     if (global.stats.matrix > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_matrix_resets")}</span> {{ s.matrix | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_matrix_resets"),' {{ s.matrix | format }}')}`);
     }
     if (global.stats.retire > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_retire_resets")}</span> {{ s.retire | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_retire_resets"),' {{ s.retire | format }}')}`);
     }
     if (global.stats.eden > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_eden_resets")}</span> {{ s.eden | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_eden_resets"),' {{ s.eden | format }}')}`);
     }
     if (global.stats.terraform > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_terraform_resets")}</span> {{ s.terraform | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_terraform_resets"),' {{ s.terraform | format }}')}`);
     }
     if (global.stats.geck > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_gecks")}</span> {{ s.geck | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_gecks"),' {{ s.geck | format }}')}`);
     }
 
     // Current Run Stats
     stats.append(`<div class="cstat"><span class="has-text-success">${loc("achieve_stats_current_game")}</span></div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_knowledge_spent")}</span> {{ s.know | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_starved_to_death")}</span> {{ s.starved | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_died_in_combat")}</span> {{ s.died | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_attacks_made")}</span> {{ s.attacks | format }}</div>`);
-    stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_game_days_played")}</span> {{ s.days | format }}</div>`);
+    stats.append(`${warningText(loc("achieve_stats_knowledge_spent"),' {{ s.know | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_starved_to_death"),' {{ s.starved | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_died_in_combat"),' {{ s.died | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_attacks_made"),' {{ s.attacks | format }}')}`);
+    stats.append(`${warningText(loc("achieve_stats_game_days_played"),' {{ s.days | format }}')}`);
     if (global.stats.dkills > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_demons_kills")}</span> {{ s.dkills | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_demons_kills"),' {{ s.dkills | format }}')}`);
     }
     if (global.stats.sac > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_sacrificed")}</span> {{ s.sac | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_sacrificed"),' {{ s.sac | format }}')}`);
     }
     if (global.stats.murders > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_murders")}</span> {{ s.murders | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_murders"),' {{ s.murders | format }}')}`);
     }
     if (global.stats.psykill > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_psymurders")}</span> {{ s.psykill | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_psymurders"),' {{ s.psykill | format }}')}`);
     }
     if (global.stats.uDead > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_unstable")}</span> {{ s.uDead | format }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_unstable"),' {{ s.uDead | format }}')}`);
     }
 
     if (global.resource.hasOwnProperty('Thermite') && global.resource.Thermite.amount > 0){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_thermite")}</span> {{ r.Thermite.amount | res }}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_thermite"),' {{ r.Thermite.amount | res }}')}`);
     }
 
     let hallowed = getHalloween();
@@ -2878,14 +2887,14 @@ export function drawStats(){
         if (global.stats.cfood >= 13 || global.race['cataclysm'] || global.race['orbit_decayed'] || global.race['warlord']){
             trick = `<span>${trickOrTreat(7,12,true)}</span>`;
         }
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_trickortreat")}</span> {{ s.cfood | format }} ${trick}</div>`);
+        stats.append(`${warningText(loc("achieve_stats_trickortreat"),' {{ s.cfood | format }} ${trick}')}`);
     }
 
     if (global.race.hasOwnProperty('gods') && global.race.gods != 'none'){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_gods")}</span> {{ g.gods | species }}</div>`)
+        stats.append(`${warningText(loc("achieve_stats_gods"),' {{ g.gods | species }}')}`)
     }
     if (global.race.hasOwnProperty('old_gods') && global.race.old_gods != 'none'){
-        stats.append(`<div><span class="has-text-warning">${loc("achieve_stats_old_gods")}</span> {{ g.old_gods | species }}</div>`)
+        stats.append(`${warningText(loc("achieve_stats_old_gods"),' {{ g.old_gods | species }}')}`)
     }
 
     vBind({

@@ -1528,7 +1528,7 @@ function loadAlienSpaceStation(parent,bind){
     });
 }
 
-function loadReplicator(parent,bind){
+function loadReplicator(parent,bind){x
     if (global.race['replicator']){
         parent.append($(`<div>${global.race.universe === 'antimatter' ? loc('tech_antireplicator') : loc('tech_replicator')}</div>`));
 

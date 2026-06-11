@@ -4,6 +4,7 @@ let strings;
 getString(global.settings.locale);
 
 export function loc(key, variables) {
+    // if(key.includes("evo")){return key}
     let string = strings[key];
     if (!string) {
         if (global.settings.expose){
@@ -87,18 +88,4 @@ function getString(locale) {
     strings = defaultString;
 }
 
-export const locales = {
-    'en-US': 'English (US)',
-    'es-ES': 'Spanish (ESP)',
-    'pt-BR': 'Português (BR)',
-    'de-DE': 'Deutsch',
-    'it-IT': 'Italiano',
-    'ru-RU': 'Русский',
-    'cs-CZ': 'Čeština',
-    'pl-PL': 'Polski',
-    'zh-CN': '简体中文',
-    'zh-TW': '繁體中文',
-    'ko-KR': '한국어',
-    'im-PL': 'Igpay-Atinlay',
-    'ja-JP': '日本語' 
-};
+

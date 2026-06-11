@@ -8,8 +8,9 @@ import { govActive, defineGovernor } from './governor.js';
 import { highPopAdjust } from './prod.js';
 import { unlockFeat } from './achieve.js';
 import { loc } from './locale.js';
+import { drawHasCrispr } from './client.js';
 
-export function arpa(type) {
+export function arpa(type,overRide) {
     switch(type){
         case 'Physics':
             physics();
@@ -26,7 +27,7 @@ export function arpa(type) {
         case 'BloodTech':
             return bloodPool;
         case 'Crispr':
-            crispr();
+            crispr(overRide);
             break;
         case 'Blood':
             blood();
@@ -1569,7 +1570,9 @@ export function payBloodPrice(costs){
 export function drawGenes(){
     Object.keys(actions.genes).forEach(function (gene) {
         removeAction(actions.genes[gene].id);
+        // console.log(actions.genes[gene].id)
         if (checkGeneRequirements(gene)){
+            // console.log(actions.genes[gene].id)
             addAction('genes',gene);
         }
     });
@@ -1588,10 +1591,12 @@ export function checkGeneRequirements(gene){
     var isMet = true;
     Object.keys(actions.genes[gene].reqs).forEach(function (req) {
         if (!global.genes[req] || global.genes[req] < actions.genes[gene].reqs[req]){
+            // console.log("failed on",req,global.genes[req],actions.genes[gene].reqs)
             isMet = false;
         }
     });
     if (isMet && (!global.genes[actions.genes[gene].grant[0]] || global.genes[actions.genes[gene].grant[0]] < actions.genes[gene].grant[1])){
+        // console.log("ok is good")
         return true;
     }
     return false;
@@ -2405,12 +2410,17 @@ function bindTrait(breakdown,trait){
     breakdown.append(m_trait);
 }
 
-function crispr(){
-    if ((global.tech['genetics'] && global.tech['genetics'] > 3) || global['sim']){
+function crispr(overRide){
+    console.log("is it work?")
+    if ((global.tech['genetics'] && global.tech['genetics'] > 3) || global['sim']||global.ap||overRide){
+        console.log("it worked?")
         clearElement($('#arpaCrispr'));
         $('#arpaCrispr').append(`<div class="has-text-warning">${loc('arpa_crispr_desc')}</div>`);
         $('#arpaCrispr').append('<div id="genes"></div>');
+        $("#arpaCrispr").append('<div class="has-text-warning">How your DNA has been altered already.</div>')
+        $('#arpaCrispr').append('<div id="has_genes"></div>');
         drawGenes();
+        drawHasCrispr();
     }
 }
 

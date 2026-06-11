@@ -175,7 +175,9 @@ export function loopTimers(){
 // time added. If the parameter is true, it will only add the time if a threshold of 120s has been reached.
 export function addATime(currentTimestamp){
     // The second case is used for the initialization of atrack.t.
+    
     if (exceededATimeThreshold(currentTimestamp) || global.stats.hasOwnProperty('current') && global.settings.at > 0){
+        console.log("tm",currentTimestamp)
         let timeDiff = currentTimestamp - global.stats.current;
         // Removing any accelerated time if the value is larger than the cap.
         if (global.settings.at > 11520){
@@ -213,8 +215,11 @@ window.exportGame = function exportGame(){
 }
 
 window.importGame = function importGame(data,utf16){
+    // console.log("hey guys whats going on");
     let saveState = JSON.parse(utf16 ? LZString.decompressFromUTF16(data) : LZString.decompressFromBase64(data));
+    // console.log(saveState, 'evolution' in saveState, 'settings' in saveState, 'stats' in saveState, 'plasmid' in saveState.stats)
     if (saveState && 'evolution' in saveState && 'settings' in saveState && 'stats' in saveState && 'plasmid' in saveState.stats){
+        // consoel.log("we have access lol")
         if (webWorker.w){
             webWorker.w.terminate();
         }
@@ -277,7 +282,7 @@ export function powerGrid(type,reset){
                 'prtl_gate:infernite_mine','int_sirius:ascension_trigger','spc_kuiper:orichalcum_mine','spc_kuiper:elerium_mine','spc_kuiper:uranium_mine','spc_kuiper:neutronium_mine','spc_dwarf:m_relay',
                 'tau_home:tau_factory','tau_home:infectious_disease_lab','tau_home:alien_outpost','tau_gas:womling_station','spc_red:atmo_terraformer','tau_star:matrix','tau_home:tau_cultural_center',
                 'eden_elysium:sacred_smelter','prtl_pit:soul_capacitor','prtl_lake:oven_complete','eden_elysium:elysanite_mine','eden_elysium:elerium_containment','eden_elysium:pillbox','eden_elysium:archive',
-                'eden_elysium:restaurant','eden_elysium:eden_cement','eden_isle:spirit_battery','eden_isle:spirit_vacuum','city:replicator'
+                'eden_elysium:restaurant','eden_elysium:eden_cement','eden_isle:spirit_battery','eden_isle:spirit_vacuum','city:replicator',"city:ap_power_malus"
             ];
             break;
         case 'moon':
