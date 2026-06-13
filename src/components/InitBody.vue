@@ -67,16 +67,7 @@
         return tabLabel(lbl);
     }
     /* Building Elements (v-html) */
-    function msgQueueFilters(){
-        let filters='';
-        message_filters.forEach(function (filter){
-            filters+=`
-                <span id="msgQueueFilter-${filter}" class="${filter === 'all' ? 'is-active' : ''}" aria-disabled="${filter === 'all' ? 'true' : 'false'}" @click="swapFilter('${filter}')" v-show="s.${filter}.vis" role="button">${loc('message_log_' + filter)}</span>
-            `;
-        });
-        return filters;
-    }
-
+ 
 </script>
 <template>
     <top-bar />

@@ -1,14 +1,27 @@
 <script setup>
     import { ref } from "vue";
 
-    import { global } from '../../vars.js';
+    import { global, message_logs } from '../../vars.js';
     import { loc } from '../../locale.js';
+
     let s = ref(global.settings);
-    let display = ref(global.queue.display);
+    let m = ref(message_logs);
+    let queue = ref(global.queue);
+
+    
+    function msgQueueFilters(){
+        let filters='';
+        message_filters.forEach(function (filter){
+            filters+=`
+                <span id="msgQueueFilter-${filter}" class="${filter === 'all' ? 'is-active' : ''}" aria-disabled="${filter === 'all' ? 'true' : 'false'}" @click="swapFilter('${filter}')" v-show="s.${filter}.vis" role="button">${loc('message_log_' + filter)}</span>
+            `;
+        });
+        return filters;
+    }
 
 </script>
 <template>
-    <div id="buildQueue" class="bldQueue standardqueuestyle has-text-info" v-show="display"></div>
+    <div id="buildQueue" class="bldQueue standardqueuestyle has-text-info" v-show="queue.display"></div>
 
     <div id="msgQueue" class="msgQueue vscroll has-text-info" aria-live="polite">
         <div id="msgQueueHeader">
@@ -35,7 +48,9 @@
 
         <h2 class="is-sr-only">{{ loc('message_filters') }}</h2>
         
-        <div id="msgQueueFilters" class="hscroll msgQueueFilters"></div>
+        <div id="msgQueueFilters" class="hscroll msgQueueFilters">
+            <span v-for="filter in message_filters" :id="'msgQueueFilter-' + filter" :class="(filter === 'all' ? 'is-active' : '')" :aria-disabled="(filter === 'all' ? 'true' : 'false')" @click="swapFilter(filter)" v-show="s[filter].vis" role="button">{{ loc('message_log_' + filter) }}></span>
+        </div>
         
         <h2 class="is-sr-only">{{ loc('messages') }}</h2>
         
