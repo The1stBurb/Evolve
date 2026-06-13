@@ -82,8 +82,7 @@ function initPage(){
             submenu: [
                 { key: 'races' },
                 { key: 'traits' },
-                { key: 'custom' },
-                { key: 'hybrid_custom' }
+                { key: 'custom' }
             ]
         },
         {

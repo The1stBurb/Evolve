@@ -8,7 +8,7 @@ import { clearSpyopDrag } from './governor.js';
 import { defineIndustry, setPowerGrid, gridDefs, clearGrids } from './industry.js';
 import { defineGovernment, defineGarrison, buildGarrison, commisionGarrison, foreignGov } from './civics.js';
 import { races, shapeShift, renderPsychicPowers, renderSupernatural } from './races.js';
-import { drawEvolution, drawCity, initTechWatchers, clearTechWatchers, unmountResearchQueue, clearResearchTab, initResearchQueue, closeModalAnim } from './actions.js';
+import { drawEvolution, drawCity, drawTech, resQueue, clearResDrag, closeModalAnim } from './actions.js';
 import { renderSpace, ascendLab, terraformLab } from './space.js';
 import { renderFortress, buildFortress, drawMechLab, clearMechDrag, drawHellObservations } from './portal.js';
 import { renderEdenic } from './edenic.js';
@@ -113,6 +113,7 @@ export function initTabs() {
 //as it will depend on how preload is handled and other decisions!
 export function loadTab(tab){
     if (!global.settings.tabLoad) {
+        clearResDrag();
         clearGrids();
         clearMechDrag();
         clearGeneticsDrag();
@@ -161,17 +162,9 @@ export function loadTab(tab){
         }
 
         // clear incoming tab immediately so old Vue apps don't block re-mount
-        if (incoming === 'mTabResearch') {
-            clearResearchTab(); // stops watchers before DOM clears
-        }
         clearElement($(`#${incoming}`));
         tabsToClear.splice(tabsToClear.indexOf(incoming), 1);
         global.tabClearTimeout = setTimeout(() => {
-            if (incoming !== 'mTabResearch') {
-                clearResearchTab(); // covers leaving the research tab
-                // TODO I don't like this architecture but for now it will work until further SFC integration
-                // (or we abandon preload-off)
-            }
             tabsToClear.forEach((t) => clearElement($(`#${t}`)));
         }, 350);
     } else {
