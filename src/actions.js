@@ -6077,58 +6077,221 @@ function checkTechPath(){
     return true;
 }
 
-export function drawTech(){
-    if (!global.settings.tabLoad && global.settings.civTabs !== 3){
-        return;
-    }
-    let techs = {};
-    let old_techs = {};
-    let new_techs = {};
-    let tech_categories = [];
-    let old_categories = [];
-    let all_categories = [];
+//---------------------------------------------------------------------------------------------------
+// Reactive Tech List- replaces the imperative drawTech rebuild loop
+// the watcher diffs the visible tech set and only adds/removes individual cards when the set changes,
+// rather than tearing down and rebuilding all cards on every state change
+// TODO this should be converted into an SFC sooner rather than later
 
-    ['primitive','civilized','discovery','industrialized','globalized','early_space','deep_space','interstellar','intergalactic'].forEach(function (era){
-        new_techs[era] = [];
+let techListWatcher = null;
+const techCardApps = new Map(); // techId -> mounted Vue app instance
+
+// Vue app for the research queue; mounted once per session, null while tab is unloaded
+let researchQueueApp = null;
+
+// stops the tech list watcher and unmounts all tech card apps
+// called at the start of initReactiveTechs() to reset before re-mounting
+// or whenever the Research tab is cleared
+export function clearTechWatchers() {
+    if (techListWatcher) {
+        techListWatcher();
+        techListWatcher = null;
+    }
+    // app.unmount() leaves the .action div in the DOM; remove it too,
+    // or duplicate IDs will break getElementById lookups on re-mount
+    for (const [id, app] of techCardApps) {
+        app.unmount();
+        document.getElementById(id)?.remove();
+    }
+    techCardApps.clear();
+}
+
+// unmounts the research queue Vue app; called when the Research tab DOM is cleared
+export function unmountResearchQueue() {
+    if (researchQueueApp) {
+        researchQueueApp.unmount();
+        researchQueueApp = null;
+    }
+}
+
+// tears down all Vue apps mounted inside the Research tab
+export function clearResearchTab() {
+    clearTechWatchers();
+    unmountResearchQueue();
+}
+
+// all reads go through the reactive global object, so watchEffect tracks them automatically
+function computeTechState() {
+    const newTechs = {};
+    const oldTechs = {};
+    let preReq = {};
+
+    TechDB.eraOrder.forEach(era => { newTechs[era] = []; });
+
+    const path = global.race['truepath'] ? 'truepath' : 'standard';
+
+    Object.keys(actions.tech).forEach(tech_name => {
+        if (!TechDB.isOnPath(tech_name, path)) return;
+
+        const isOld = checkOldTech(tech_name);
+        const c_action = actions.tech[tech_name];
+        const category = c_action.category ?? 'research';
+
+        if (isOld) {
+            if (!oldTechs[category]) oldTechs[category] = [];
+            oldTechs[category].push(tech_name);
+        } else {
+            if (!checkTechQualifications(c_action, tech_name)) return;
+            const availability = checkTechRequirements(tech_name, preReq);
+            if (!availability) return;
+
+            const era = TechDB.getDisplayEra(c_action.era, path);
+            if (!newTechs[era]) newTechs[era] = [];
+            newTechs[era].push({ t: tech_name, isPrecog: availability === 'precog', id: c_action.id });
+        }
     });
 
-    const tp_era = {
-        interstellar: 'solar'
-    };
-
-    let preReq = {};
-    Object.keys(actions.tech).forEach(function (tech_name){
-        if (!checkTechPath(tech_name)){
-            return;
+    TechDB.eraOrder.forEach(era => {
+        if (newTechs[era].length > 1) {
+            newTechs[era].sort((a, b) => {
+                const ta = actions.tech[a.t].cost;
+                const tb = actions.tech[b.t].cost;
+                if (ta.Knowledge == null) return -1;
+                if (tb.Knowledge == null) return 1;
+                if (ta.Omniscience != null && tb.Omniscience != null) {
+                    return ta.Omniscience() > tb.Omniscience() ? 1 : -1;
+                }
+                return ta.Knowledge() > tb.Knowledge() ? 1 : -1;
+            });
         }
-        removeAction(actions.tech[tech_name].id);
+    });
 
-        let isOld = checkOldTech(tech_name);
+    return { newTechs, oldTechs, preReq };
+}
 
-        let action = actions.tech[tech_name];
-        let category = 'category' in action ? action.category : 'research';
+// reorders the list of era headers + action cards inside #tech to match intended order
+// uses insertBefore and only moves nodes that are already out of position, so unchanged cards cost nothing
+function reorderTechList(newTechs) {
+    const techContainer = document.getElementById('tech');
+    if (!techContainer) return;
 
-        if (!isOld && tech_categories.indexOf(category) === -1) {
-            tech_categories.push(category);
+    const desired = [];
+    for (const era of TechDB.eraOrder) {
+        if (!newTechs[era]?.length) continue;
+        const header = techContainer.querySelector(`.era-header[data-era="${era}"]`);
+        if (header) desired.push(header);
+        for (const { id } of newTechs[era]) {
+            const el = document.getElementById(id);
+            if (el) desired.push(el);
         }
-        if (isOld && old_categories.indexOf(category) === -1) {
-            old_categories.push(category);
-        }
-        if (all_categories.indexOf(category) === -1) {
-            all_categories.push(category);
-        }
+    }
 
-        if (isOld === true) {
-            if (!(category in old_techs)){
-                old_techs[category] = [];
+    for (let i = 0; i < desired.length; i++) {
+        if (techContainer.children[i] !== desired[i]) {
+            techContainer.insertBefore(desired[i], techContainer.children[i] ?? null);
+        }
+    }
+}
+
+// Tech Card Vue components: replaces addAction/setAction for the Research tab
+
+// unmounts a card's Vue app and removes its host element from the DOM
+function unmountTechCard(id) {
+    const app = techCardApps.get(id);
+    if (app) {
+        app.unmount();
+        techCardApps.delete(id);
+    }
+    document.getElementById(id)?.remove();
+}
+
+// mounts a Vue app for a researchable (new) tech card inside the given container
+// affordability classes (cna/cnam) are updated reactively inside the component's watchEffect
+function mountTechCard(techName, isPrecog, preReq, container) {
+    const c_action = actions.tech[techName];
+    const id = c_action.id;
+    const title = typeof c_action.title === 'string' ? c_action.title : c_action.title();
+
+    // resource cost data attributes and classes
+    const costClasses = [];
+    const costData = {};
+    if (c_action.cost) {
+        const costs = adjustCosts(c_action);
+        for (const res of Object.keys(costs)) {
+            const amount = costs[res]();
+            if (amount > 0) {
+                costClasses.push(`res-${res}`);
+                costData[`data-${res}`] = amount;
+            }
+        }
+    }
+
+    // extra CSS class on the button; 'precog' overrides any action-defined class
+    const buttonExtraClass = isPrecog
+        ? 'precog'
+        : c_action['class']
+          ? typeof c_action['class'] === 'function'
+              ? c_action['class']()
+              : c_action['class']
+          : '';
+
+    const buttonClass = ['button', 'is-dark', ...costClasses, buttonExtraClass]
+        .filter(Boolean)
+        .join(' ');
+
+    const hostEl = document.createElement('div');
+    hostEl.id = id;
+    hostEl.className = 'action';
+
+    // remove any stale card with this ID before mounting a fresh one
+    document.getElementById(id)?.remove();
+
+    // Precog techs carry data-req-* attributes on the outer div for display purposes
+    if (isPrecog && c_action.reqs && preReq) {
+        for (const req of Object.keys(c_action.reqs)) {
+            if (preReq[req]) hostEl.setAttribute(`data-req-${req}`, preReq[req].a);
+        }
+    }
+
+    container.appendChild(hostEl);
+
+    const app = Vue.createApp({
+        setup() {
+            // reactively toggle cna/cnam on techs when resource amounts change
+            Vue.watchEffect(() => {
+                hostEl.classList.toggle('cna', !checkAffordable(c_action, false, false));
+                hostEl.classList.toggle('cnam', !checkAffordable(c_action, true, false));
+            });
+
+            Vue.onMounted(() => {
+                popover(id, () => undefined, {
+                    in: (obj) =>
+                        actionDesc(
+                            obj.popper,
+                            c_action,
+                            global['tech'][techName],
+                            false,
+                            'tech',
+                            techName,
+                        ),
+                    out: () => vBind({ el: '#popTimer' }, 'destroy'),
+                    attach: '#main',
+                    wide: c_action['wide'],
+                    classes: c_action['class'] ?? false,
+                });
+            });
+
+            Vue.onUnmounted(() => clearPopper(id));
+
+            function handleClick() {
+                const isMobile =
+                    'ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/);
+                if (isMobile && global.settings.touch) return;
+                runAction(c_action, 'tech', techName);
             }
 
-            old_techs[category].push(tech_name);
-        }
-        else {
-            let c_action = actions['tech'][tech_name];
-            if (!checkTechQualifications(c_action,tech_name)){
-                return;
+            function handleDescribe() {
+                srSpeak(srDesc(c_action, false));
             }
 
             let techAvail = checkTechRequirements(tech_name,preReq);
@@ -6486,6 +6649,35 @@ export function setAction(c_action,action,type,old,prediction){
     });
 }
 
+// adds a tech to the research queue; returns true if it was added, or false if it was
+// blocked (queue full, already queued, no_queue flag, or r_queue tech not unlocked)
+export function addTechToQueue(techName) {
+    const c_action = actions.tech[techName];
+    if (!c_action) return false;
+
+    const isQueueBlocked = c_action['no_queue'] && c_action['no_queue']();
+    if (isQueueBlocked || !global.tech['r_queue']) return false;
+
+    const isQueueFull = global.r_queue.queue.length >= global.r_queue.max;
+    if (isQueueFull) return false;
+
+    const isAlreadyQueued = global.r_queue.queue.some(item => item.id === c_action.id);
+    if (isAlreadyQueued) return false;
+
+    const label = typeof c_action.title === 'string' ? c_action.title : c_action.title();
+    global.r_queue.queue.push({
+        id: c_action.id,
+        action: 'tech',
+        type: techName,
+        label,
+        cna: false,
+        time: 0,
+        bres: false,
+        req: true,
+    });
+    return true;
+}
+
 function runAction(c_action,action,type){
     if (c_action.id === 'spcdock-launch_ship'){
         c_action.action({isQueue: false});
@@ -6500,22 +6692,11 @@ function runAction(c_action,action,type){
                     }
                 }
                 else {
-                    if (!(c_action['no_queue'] && c_action['no_queue']()) && global.tech['r_queue']){
-                        if (global.r_queue.queue.length < global.r_queue.max){
-                            let queued = false;
-                            for (let tech in global.r_queue.queue){
-                                if (global.r_queue.queue[tech].id === c_action.id){
-                                    queued = true;
-                                    break;
-                                }
-                            }
-                            if (!queued){
-                                global.r_queue.queue.push({ id: c_action.id, action: action, type: type, label: typeof c_action.title === 'string' ? c_action.title : c_action.title(), cna: false, time: 0, bres: false, req: true });
-                                resQueue();
-                                drawTech();
-                            }
-                        }
-                    }
+                    // queue is reactive; addTechToQueue mutates the array and Vue handles the UI update
+                    addTechToQueue(type);
+                    // drawTech is a no-op while the reactive watcher is active,
+                    // but serves as a fallback to refresh the tech list
+                    drawTech();
                 }
                 break;
             case 'genes':
@@ -8365,6 +8546,11 @@ function sentience(){
     if (evolving) return;
     evolving = true; // sentience only ever runs once per page lifetime so we don't need to ever reset it
 
+    // stop the tech watcher immediately so it doesn't fire while sentience() mutates
+    // global.race, global.tech, global.genes etc; 
+    // a firing watcher mid-mutation can cause Vue scheduler flush errors
+    clearTechWatchers();
+
     if (global.race['simulation']){
         simulation();
     }
@@ -8956,6 +9142,10 @@ function sentience(){
         arpa('Genetics');
         arpa('Crispr');
         arpa('Blood');
+        // re-init research tab tech list; sentience changes the species, so the watcher
+        // must be restarted. #tech already exists in the DOM from preload. nextTick ensures
+        // Vue has finished rendering any pending updates before the watcher first runs.
+        Vue.nextTick(() => initTechWatchers());
     }
     else {
         loadTab(1);
@@ -9558,107 +9748,6 @@ function fanaticTrait(trait,rank){
         cleanAddTrait(trait);
     }
     arpa('Genetics');
-}
-
-export function resQueue(){
-    if (!global.settings.tabLoad && global.settings.civTabs !== 3){
-        return;
-    }
-    clearResDrag();
-    clearElement($('#resQueue'));
-    $('#resQueue').append($(`
-        <h2 class="has-text-success">${loc('research_queue')} ({{ queue.length }}/{{ max }})</h2>
-        <span id="pauserqueue" class="${global.r_queue.pause ? 'pause' : 'play'}" role="button" @click="pauseRQueue()" :aria-label="pausedesc()"></span>
-    `));
-
-    let queue = $(`<ul class="buildList"></ul>`);
-    $('#resQueue').append(queue);
-
-    queue.append($(`<li v-for="(item, index) in queue"><a v-bind:id="setID(index)" class="queued" v-bind:class="{ 'qany': item.qa }" @click="remove(index)" role="link"><span class="has-text-warning">{{ item.label }}</span> [<span v-bind:class="{ 'has-text-danger': item.cna, 'has-text-success': !item.cna && item.req, 'has-text-caution': !item.req && !item.cna }">{{ time(item.time) }}</span>]</a></li>`));
-
-    try {
-        vBind({
-            el: '#resQueue',
-            data: global.r_queue,
-            methods: {
-                remove(index){
-                    clearPopper(`rq${global.r_queue.queue[index].id}`);
-                    global.r_queue.queue.splice(index,1);
-                    resQueue();
-                    drawTech();
-                },
-                setID(index){
-                    return `rq${global.r_queue.queue[index].id}`;
-                },
-                pauseRQueue(){
-                    $(`#pauserqueue`).removeClass('play');
-                    $(`#pauserqueue`).removeClass('pause');
-                    if (global.r_queue.pause){
-                        global.r_queue.pause = false;
-                        $(`#pauserqueue`).addClass('play');
-                    }
-                    else {
-                        global.r_queue.pause = true;
-                        $(`#pauserqueue`).addClass('pause');
-                    }
-                },
-                pausedesc(){
-                    return global.r_queue.pause ? loc('r_queue_play') : loc('r_queue_pause');
-                },
-                time(time){
-                    return timeFormat(time);
-                }
-            }
-        });
-        resDragQueue();
-    }
-    catch {
-        global.r_queue.queue = [];
-    }
-}
-
-export function clearResDrag(){
-    let el = $('#resQueue .buildList')[0];
-    if (el){
-        let sort = Sortable.get(el);
-        if (sort){
-            sort.destroy();
-        }
-    }
-}
-
-function resDragQueue(){
-    let el = $('#resQueue .buildList')[0];
-    Sortable.create(el,{
-        onEnd(e){
-            let order = global.r_queue.queue;
-            order.splice(e.newDraggableIndex, 0, order.splice(e.oldDraggableIndex, 1)[0]);
-            global.r_queue.queue = order;
-            resQueue();
-        }
-    });
-    attachQueuePopovers();
-}
-
-function attachQueuePopovers(){
-    for (let i=0; i<global.r_queue.queue.length; i++){
-        let id = `rq${global.r_queue.queue[i].id}`;
-        clearPopper(id);
-
-        let c_action;
-        let segments = global.r_queue.queue[i].id.split("-");
-        c_action = actions[segments[0]][segments[1]];
-
-        popover(id,function(){ return undefined; },{
-            in: function(obj){
-                actionDesc(obj.popper,c_action,global[segments[0]][segments[1]],false);
-            },
-            out: function(){
-                clearPopper(id);
-            },
-            wide: c_action['wide']
-        });
-    }
 }
 
 function bananaPerk(val){
